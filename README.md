@@ -27,21 +27,16 @@ This will open a command prompt inside the docker container, containing the file
 
 ## Once inside...
 
-Install the dependencies in both the client and the server
+To start the server locate to the server directory, and start nodemon:
 
 ```
-cd server && npm install
-cd client && npm install
-```
-
-To start the server, run:
-
-```
-cd server && npm start
+cd server
+npm start
 ```
 
 To bundle the client files, run:
 
 ```
-cd client && npm run dev
+cd client
+npm run dev
 ```
