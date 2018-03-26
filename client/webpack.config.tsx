@@ -1,12 +1,12 @@
-var path = require("path");
+const path = require("path");
 
-var DIST_DIR   = path.join(__dirname, "dist"),
-    CLIENT_DIR = path.join(__dirname, "src");
+const DIST_DIR   = path.join(__dirname, "public/dist"),
+      CLIENT_DIR = path.join(__dirname, "src");
 
 module.exports = {
 	context: CLIENT_DIR,
 
-	entry: "./public/index",
+	entry: "./index",
 
 	output: {
 		path:     DIST_DIR,
@@ -22,7 +22,7 @@ module.exports = {
     module: {
         rules: [
             { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
-
+            { test: /\.css$/, use: [ "style-loader", "css-loader" ] },
             { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
         ]
     },
@@ -30,5 +30,5 @@ module.exports = {
     externals: {
         "react": "React",
         "react-dom": "ReactDOM"
-    },
+    }
 };

@@ -4,19 +4,44 @@ The futurum project for the 1dv611 Course
 ## Docker
 
 1. Install Docker
-2. On Linux/Mac or in Windows PowerShell, stand in the directory you want to run inside the Docker container and run command:
+2. Create a .dockerignore-file that will prevent your local modules and debug logs from being copied onto your Docker image and possibly overwriting modules installed within your image, and add this:
 
 ```
-docker run -t -i --rm -v "$(pwd)":/app -w /app -p 8080:8080 google/nodejs sh -c '/bin/bash'
+node_modules
+npm-debug.log
+```
+
+3. On Linux/Mac or in Windows PowerShell, build the docker image and get the container id:
+
+```
+docker build -t <your username>/boilerplate .
+```
+
+4. Enter the container using the container id:
+
+```
+docker run -t -i --rm -v "$(pwd)":/app -w /app -p 8080:8080 <your username>/boilerplate sh -c '/bin/bash'
 ```
 
 This will open a command prompt inside the docker container, containing the files from your current directory, and map port 8080 inside the container to port 8080 on your host machine.
 
-To try, pull the package.json and server.js files, run the above command and then, inside the container, run `npm start`   
-Alternatively, run following command directly, instead of the above:   
+## Once inside...
+
+Install the dependencies in both the client and the server
 
 ```
-docker run -t -i --rm -v "$(pwd)":/app -w /app -p 8080:8080 google/nodejs sh -c 'npm start'
+cd server && npm install
+cd client && npm install
 ```
 
-Hot reloading should work when you change `server.js` on your host machine.
+To start the server, run:
+
+```
+cd server && npm start
+```
+
+To bundle the client files, run:
+
+```
+cd client && npm run dev
+```
