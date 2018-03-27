@@ -1,0 +1,35 @@
+{
+  "name": "boilerplate",
+  "version": "1.0.0",
+  "description": "boilerplate: client side",
+  "main": "index.tsx",
+  "scripts": {
+    "dev": "webpack --mode development",
+    "build": "webpack --mode production"
+  },
+  "keywords": [
+    "react",
+    "webpack"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1dv611-futurum-project/futurum-project.git"
+  },
+  "author": "Jesper Landmér Pedersen",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^9.3.0",
+    "@types/react": "^16.0.34",
+    "@types/react-dom": "^16.0.3",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
+  },
+  "devDependencies": {
+    "awesome-typescript-loader": "^3.4.1",
+    "source-map-loader": "^0.2.3",
+    "ts-node": "^4.1.0",
+    "typescript": "^2.6.2",
+    "webpack": "^4.2.0",
+    "webpack-cli": "^2.0.13"
+  }
+}

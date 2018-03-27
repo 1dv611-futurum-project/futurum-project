@@ -1,0 +1,33 @@
+{
+  "name": "boilerplate",
+  "version": "1.0.0",
+  "description": "boilerplate: server side",
+  "main": "server.js",
+  "scripts": {
+    "start": "npm run build:live",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/index.tsx"
+  },
+  "keywords": [
+    "node",
+    "express"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1dv611-futurum-project/futurum-project.git"
+  },
+  "author": "Jesper Landmér Pedersen",
+  "license": "ISC",
+  "dependencies": {
+    "@types/mocha": "^5.0.0",
+    "@types/node": "^9.6.0",
+    "body-parser": "^1.18.2",
+    "express": "^4.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^5.0.1",
+    "mocha": "^4.1.0",
+    "nodemon": "1.17.2",
+    "ts-node": "^4.1.0",
+    "typescript": "^2.6.2"
+  }
+}

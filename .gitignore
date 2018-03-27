@@ -1,0 +1,6 @@
+node_modules
+.DS_Store
+client/public/dist
+npm-debug.log
+.dockerignore
+package-lock.json
