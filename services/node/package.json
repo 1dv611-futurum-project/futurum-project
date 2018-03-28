@@ -4,8 +4,8 @@
   "description": "An Express/Node.js boilerplate for the server.",
   "main": "app.js",
   "scripts": {
-    "start": "./node_modules/.bin/nodemon app",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run build:live",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./index.tsx"
   },
   "keywords": [
     "node",
@@ -18,6 +18,13 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.3",
+    "http": "0.0.0",
     "nodemon": "^1.17.2"
+  },
+  "devDependencies": {
+    "awesome-typescript-loader": "^4.0.1",
+    "source-map-loader": "^0.2.3",
+    "ts-node": "^5.0.1",
+    "typescript": "^2.8.1"
   }
 }

@@ -1,6 +1,5 @@
 import * as express from 'express';
 import { Application, Router, Request, Response, NextFunction, Error } from 'express';
-import * as path from 'path';
 import * as bodyParser from 'body-parser';
 
 class App {
@@ -18,8 +17,6 @@ class App {
   private middleware(): void {
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
-    this.express.use(express.static(path.join(__dirname, App.PUBLIC_DIR)));
-    this.express.use('/scripts', express.static(path.join(__dirname + App.RESOURCE_DIR)));
     this.express.use(this.errorHandler);
   }
 
@@ -29,7 +26,7 @@ class App {
   }
 
   private route(req: Request, res: Response): void {
-    res.render("Test");
+    res.status(200).json("Test");
   }
 
   private emptyHandler(req: Request, res: Response, next: NextFunction): void {
