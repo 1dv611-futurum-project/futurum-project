@@ -1,7 +1,7 @@
 const path = require("path");
 
-const DIST_DIR   = path.join(__dirname, "client/public/dist"),
-      CLIENT_DIR = path.join(__dirname, "client/src");
+const DIST_DIR   = path.join(__dirname, "src/client/public/dist"),
+      CLIENT_DIR = path.join(__dirname, "src/client/src");
 
 module.exports = {
 	context: CLIENT_DIR,

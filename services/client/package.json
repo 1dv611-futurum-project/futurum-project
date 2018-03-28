@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "npm run client && npm run build:live",
-    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./server/src/index.tsx",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/server/src/index.tsx",
     "client": "webpack --mode development"
   },
   "keywords": [
@@ -36,7 +36,7 @@
     "source-map-loader": "^0.2.3",
     "ts-node": "^4.1.0",
     "typescript": "^2.6.2",
-    "webpack": "^4.2.0",
+    "webpack": "^4.3.0",
     "webpack-cli": "^2.0.13"
   }
 }
