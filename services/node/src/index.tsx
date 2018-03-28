@@ -1,7 +1,7 @@
 import * as http from 'http';
 import App from './App';
 
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 3000
 const server = http.createServer(App);
 
 App.listen(port, (err) => {

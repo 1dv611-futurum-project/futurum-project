@@ -1,0 +1,68 @@
+version: '3'
+services:
+
+    # Reverse proxy (Nginx)
+    reverse-proxy:
+        build: 
+            context: ./services/reverse-proxy/
+            args:
+                CONFIG_FILE: 'nginx.conf'
+        restart: on-failure:10
+        depends_on:
+            - node
+        networks:
+            - futurum-network
+        ports:
+            - '8080:80'
+
+    # Node (NodeJS/Express)
+    node:
+        build: ./services/node/
+        restart: on-failure:10
+        depends_on:
+            - futurum-db
+        networks:
+            - futurum-network
+        volumes:
+            - ./services/node/:/app/
+            - /app/node_modules/
+        # healthcheck:
+        #     test: curl -f http://localhost:3001/healthcheck
+        # ports:
+        #     - '3001:3000'
+
+    # Client (NodeJS)
+    client:
+        build: ./services/client/
+        restart: on-failure:10
+        networks:
+            - futurum-network
+        volumes:
+            - ./services/client/:/app/
+            - /app/node_modules/
+        # healthcheck:
+        #     test: curl -f http://localhost:3000/healthcheck
+        # ports:
+        #     - '3000:3000'
+
+    # Database (MongoDB)
+    futurum-db:
+        image: mongo:3.6.2
+        restart: on-failure:10
+        networks:
+            - futurum-network
+        volumes:
+            - data-db-futurum:/data/db
+            - data-db-futurum:/data/configdb
+        healthcheck:
+            test: echo 'db.stats().ok' | mongo --quiet || exit1
+        ports:
+            - '27017:27017'
+
+networks:
+  futurum-network:
+    driver: bridge
+
+volumes:
+    data-db-futurum:
+        driver: local

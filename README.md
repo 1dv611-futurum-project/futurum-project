@@ -1,42 +1,18 @@
-# futurum-project
-The futurum project for the 1dv611 Course
+# Futurum Support application
 
-## Docker
 
-1. Install Docker
-2. Create a .dockerignore-file that will prevent your local modules and debug logs from being copied onto your Docker image and possibly overwriting modules installed within your image, and add this:
+#### Running with Docker
 
-```
-node_modules
-npm-debug.log
-```
+1. If you are running Docker for the first time, set up all containers running the command `docker-compose up -d --build` in your terminal.
+2. If you've already built the project before, run `docker-compose up -d` in your terminal.
+3. The client application is now running at `localhost:8080` and the server at `localhost:8080/node`.
+4. When you're finished with your developing, stop the containers by running `docker-compose stop`.
 
-3. On Linux/Mac or in Windows PowerShell, build the docker image and get the container id:
 
-```
-docker build -t <your username>/boilerplate .
-```
+#### Useful commands while developing:
 
-4. Enter the container using the container id:
-
-```
-docker run -t -i --rm -v "$(pwd)":/app -w /app -p 8080:8080 <your username>/boilerplate sh -c '/bin/bash'
-```
-
-This will open a command prompt inside the docker container, containing the files from your current directory, and map port 8080 inside the container to port 8080 on your host machine.
-
-## Once inside...
-
-To start the server locate to the server directory, and start nodemon:
-
-```
-cd server
-npm start
-```
-
-To bundle the client files, run:
-
-```
-cd client
-npm run dev
-```
+* `docker-compose ps` - Writes out a list of currently running containers, mainly useful to see the current statuses of all containers (if running correctly, status is _Up_).
+* `docker-compose up -d ${container}` - Starts a specific container.
+* `docker-compose stop ${container}` - Stops a specific container.
+* `docker-compose logs --tail 50 -f ${container}` - Shows the 50 latest rows from the logs for the specified container.
+* `docker-compose exec ${container} sh` - Enter a specific container.

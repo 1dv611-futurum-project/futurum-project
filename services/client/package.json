@@ -1,15 +1,16 @@
 {
   "name": "boilerplate",
   "version": "1.0.0",
-  "description": "boilerplate: client side",
-  "main": "index.tsx",
+  "description": "boilerplate: server side",
+  "main": "server.js",
   "scripts": {
-    "dev": "webpack --mode development",
-    "build": "webpack --mode production"
+    "start": "npm run client && npm run build:live",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/server/src/index.tsx",
+    "client": "webpack --mode development"
   },
   "keywords": [
-    "react",
-    "webpack"
+    "node",
+    "express"
   ],
   "repository": {
     "type": "git",
@@ -18,18 +19,24 @@
   "author": "Jesper Landmér Pedersen",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^9.3.0",
+    "@types/mocha": "^5.0.0",
+    "@types/node": "^9.6.0",
     "@types/react": "^16.0.34",
     "@types/react-dom": "^16.0.3",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^3.4.1",
+    "dotenv": "^5.0.1",
+    "mocha": "^4.1.0",
+    "nodemon": "1.17.2",
     "source-map-loader": "^0.2.3",
     "ts-node": "^4.1.0",
     "typescript": "^2.6.2",
-    "webpack": "^4.2.0",
+    "webpack": "^4.3.0",
     "webpack-cli": "^2.0.13"
   }
 }

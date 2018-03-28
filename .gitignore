@@ -1,6 +1,5 @@
-node_modules
 .DS_Store
-client/public/dist
-npm-debug.log
-.dockerignore
-package-lock.json
+services/client/package-lock.json
+services/node/package-lock.json
+node_modules
+services/client/src/client/public/dist
