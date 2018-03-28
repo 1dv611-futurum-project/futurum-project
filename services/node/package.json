@@ -1,0 +1,23 @@
+{
+  "name": "server-boilerplate",
+  "version": "1.0.0",
+  "description": "An Express/Node.js boilerplate for the server.",
+  "main": "app.js",
+  "scripts": {
+    "start": "./node_modules/.bin/nodemon app",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "boilerplate",
+    "server"
+  ],
+  "author": "Miranda Hammarstedt",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
+    "nodemon": "^1.17.2"
+  }
+}

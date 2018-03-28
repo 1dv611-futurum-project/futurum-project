@@ -1,22 +1,18 @@
-# futurum-project
-The futurum project for the 1dv611 Course
+# Futurum Support application
 
-## Docker
 
-1. Install Docker
-2. On Linux/Mac or in Windows PowerShell, stand in the directory you want to run inside the Docker container and run command:
+#### Running with Docker
 
-```
-docker run -t -i --rm -v "$(pwd)":/app -w /app -p 8080:8080 google/nodejs sh -c '/bin/bash'
-```
+1. If you are running Docker for the first time, set up all containers running the command `docker-compose up -d --build` in your terminal.
+2. If you've already built the project before, run `docker-compose up -d` in your terminal.
+3. The client application is now running at `localhost:8080` and the server at `localhost:8080/node`.
+4. When you're finished with your developing, stop the containers by running `docker-compose stop`.
 
-This will open a command prompt inside the docker container, containing the files from your current directory, and map port 8080 inside the container to port 8080 on your host machine.
 
-To try, pull the package.json and server.js files, run the above command and then, inside the container, run `npm start`   
-Alternatively, run following command directly, instead of the above:   
+#### Useful commands while developing:
 
-```
-docker run -t -i --rm -v "$(pwd)":/app -w /app -p 8080:8080 google/nodejs sh -c 'npm start'
-```
-
-Hot reloading should work when you change `server.js` on your host machine.
+* `docker-compose ps` - Writes out a list of currently running containers, mainly useful to see the current statuses of all containers (if running correctly, status is _Up_).
+* `docker-compose up -d ${container}` - Starts a specific container.
+* `docker-compose stop ${container}` - Stops a specific container.
+* `docker-compose logs --tail 50 -f ${container}` - Shows the 50 latest rows from the logs for the specified container.
+* `docker-compose exec ${container} sh` - Enter a specific container.
