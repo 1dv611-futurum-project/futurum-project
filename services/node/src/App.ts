@@ -36,10 +36,6 @@ class App {
   }
 
   // 404
-  private route(req: Request, res: Response): void {
-    res.status(200).json('Test');
-  }
-
   private emptyHandler(req: Request, res: Response, next: NextFunction): void {
     res.status(404).send({
       success: false,
