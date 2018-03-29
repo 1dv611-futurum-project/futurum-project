@@ -3,10 +3,7 @@ import { Application, Router, Request, Response, NextFunction, Error } from 'exp
 import * as bodyParser from 'body-parser';
 
 class App {
-
   public express: Application;
-  static PUBLIC_DIR = '/../../client/public';
-  static RESOURCE_DIR = '/../../client/node_modules/';
 
   constructor() {
     this.express = express();
@@ -26,7 +23,7 @@ class App {
   }
 
   private route(req: Request, res: Response): void {
-    res.status(200).json("Test");
+    res.status(200).json('Test');
   }
 
   private emptyHandler(req: Request, res: Response, next: NextFunction): void {

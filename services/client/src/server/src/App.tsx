@@ -5,9 +5,9 @@ import * as bodyParser from 'body-parser';
 
 class App {
 
+  private static PUBLIC_DIR = '/../../client/public';
+  private static RESOURCE_DIR = '/../../client/node_modules/';
   public express: Application;
-  static PUBLIC_DIR = '/../../client/public';
-  static RESOURCE_DIR = '/../../client/node_modules/';
 
   constructor() {
     this.express = express();
@@ -29,7 +29,7 @@ class App {
   }
 
   private route(req: Request, res: Response): void {
-    res.render("Test");
+    res.render('Test');
   }
 
   private emptyHandler(req: Request, res: Response, next: NextFunction): void {
