@@ -16,6 +16,7 @@
   "author": "Miranda Hammarstedt",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^9.6.1",
     "body-parser": "^1.18.2",
     "express": "^4.16.3",
     "http": "0.0.0",

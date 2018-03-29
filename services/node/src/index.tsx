@@ -1,3 +1,5 @@
+/// <reference types="@types/node" />
+
 import * as http from 'http';
 import App from './App';
 

@@ -19,7 +19,6 @@
   "author": "Jesper Landmér Pedersen",
   "license": "ISC",
   "dependencies": {
-    "@types/mocha": "^5.0.0",
     "@types/node": "^9.6.0",
     "@types/react": "^16.0.34",
     "@types/react-dom": "^16.0.3",
@@ -31,7 +30,6 @@
   "devDependencies": {
     "awesome-typescript-loader": "^3.4.1",
     "dotenv": "^5.0.1",
-    "mocha": "^4.1.0",
     "nodemon": "1.17.2",
     "source-map-loader": "^0.2.3",
     "ts-node": "^4.1.0",
