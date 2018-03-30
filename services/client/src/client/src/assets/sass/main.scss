@@ -2,4 +2,8 @@
  * Importing stylesheets
  */
 
-@import "base";
+/* General */
+@import "variables";
+
+/* Components */
+@import "components/header";
