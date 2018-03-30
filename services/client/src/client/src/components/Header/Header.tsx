@@ -33,7 +33,7 @@ export class Header extends React.Component<any, any> {
     return (
       <Paper style={style.paper}>
       <Menu>
-        <MenuItem primaryText='Alla ärenden' rightIcon={<RemoveRedEye />} />
+        <MenuItem primaryText='Alla ärenden' />
         <span className='header__color header__color--red' />
         <MenuItem primaryText='Ej påbörjade ärenden' />
         <span className='header__color header__color--blue' />
