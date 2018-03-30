@@ -8,7 +8,6 @@ import { lightBaseTheme, MuiThemeProvider, getMuiTheme } from 'material-ui/style
 
 import { Header } from '../../components/Header/Header';
 
-
 /**
  * App class
  */
