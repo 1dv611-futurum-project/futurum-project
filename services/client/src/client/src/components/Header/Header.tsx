@@ -24,7 +24,7 @@ const style = {
   },
 };
 
-export class Navigation extends React.Component<any, any> {
+export class Header extends React.Component<any, any> {
   public render() {
     return (
     <Paper style={style.paper}>

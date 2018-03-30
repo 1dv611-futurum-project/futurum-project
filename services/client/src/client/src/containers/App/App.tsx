@@ -3,13 +3,13 @@ import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
-import { Navigation } from '../../components/Header/Navigation';
+import { Header } from '../../components/Header/Header';
 
 export class App extends React.Component<any, any> {
   public render() {
     return (
       <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
-        <Navigation />
+        <Header />
       </MuiThemeProvider>
     );
   }
