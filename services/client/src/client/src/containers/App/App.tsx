@@ -4,9 +4,7 @@
  */
 
 import * as React from 'react';
-import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import { lightBaseTheme, MuiThemeProvider, getMuiTheme } from 'material-ui/styles';
 
 import { Header } from '../../components/Header/Header';
 

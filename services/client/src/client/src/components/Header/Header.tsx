@@ -4,18 +4,8 @@
  */
 
 import * as React from 'react';
-import Paper from 'material-ui/Paper';
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
-import Divider from 'material-ui/Divider';
-import {
-	RemoveRedEye,
-	Help,
-	WatchLater,
-	CheckCircle,
-	AccountCircle,
-	Settings
-} from 'material-ui-icons';
+import { Paper, Menu, MenuItem, Divider } from 'material-ui';
+import { RemoveRedEye, AccountCircle, Settings } from 'material-ui-icons';
 
 
 /* Custom Material Design styling */
