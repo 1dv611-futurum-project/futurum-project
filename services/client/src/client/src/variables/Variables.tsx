@@ -33,11 +33,34 @@ const ticketStyle = {
 		fontSize: '12px'
 	},
 	text: {
+		paddingTop: 0,
+		paddingBottom: 0
+	},
+	actions: {
 		paddingTop: 0
+	}
+};
+
+const menuStyle = {
+	menu: {
+		width: '40%',
+		fontSize: '12px',
+		float: 'right'
+	},
+	menuItem: {
+		fontSize: '12px'
+	},
+	icon: {
+		padding: 0,
+		width: '20px'
+	},
+	label: {
+		paddingRight: 0
 	}
 };
 
 export {
 	headerStyle,
-	ticketStyle
+	ticketStyle,
+	menuStyle
 };

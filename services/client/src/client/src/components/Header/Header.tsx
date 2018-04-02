@@ -8,7 +8,6 @@ import { Paper, Menu, MenuItem, Divider } from 'material-ui';
 import { RemoveRedEye, AccountCircle, Settings } from 'material-ui-icons';
 import { Link } from 'react-router';
 
-/* Custom Material Design styling */
 import { headerStyle } from '../../variables/Variables';
 
 /**

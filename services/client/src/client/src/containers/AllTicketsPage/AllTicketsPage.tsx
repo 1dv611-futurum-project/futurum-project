@@ -16,9 +16,16 @@ export class AllTicketsPage extends React.Component<any, any> {
 
 	constructor(props: any) {
 		super(props);
-		this.state = { tickets: [] };
+		this.state = {
+			tickets: []
+		};
 	}
 
+	/**
+	 * componentDidMount
+	 * Creating tickets to display
+	 * @public
+	 */
 	public componentDidMount() {
 		this.tickets = [];
 		this.index = 0;
@@ -26,6 +33,7 @@ export class AllTicketsPage extends React.Component<any, any> {
 		const colors = ['red', 'blue', 'green'];
 		const titles = ['Vi har ett problem', 'Applikationen fungerar inte', 'Kan ni hjälpa oss?',
 			'Vi har ett problem', 'Applikationen fungerar inte', 'Kan ni hjälpa oss?'];
+		const statuses = ['Ej påbörjad', 'Påbörjad', 'Genomförd'];
 		const author = 'Johan Andersson';
 		const assigned = 'Anton Myrberg';
 		const received = '2 april 2018';
@@ -37,6 +45,7 @@ export class AllTicketsPage extends React.Component<any, any> {
 				author: author,
 				assigned: assigned,
 				received: received,
+				status: statuses[this.index],
 				id: i
 			});
 			this.index === 2 ? this.index = 0 : this.index++;
