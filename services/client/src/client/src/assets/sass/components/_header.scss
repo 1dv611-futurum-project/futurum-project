@@ -2,6 +2,10 @@
  * Header component
  */
 .header {
+	&__link {
+		text-decoration: none;
+	}
+	
 	&__color {
 		position: absolute;
 		right: 0;

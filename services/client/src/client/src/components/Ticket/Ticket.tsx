@@ -4,6 +4,7 @@
  */
 
 import * as React from 'react';
+import { Link } from 'react-router';
 import { Card, CardHeader, CardText } from 'material-ui';
 
 /* Custom Material Design styling */
@@ -41,7 +42,7 @@ export class Ticket extends React.Component<any, any> {
 			<Card style={style.card}>
 				<span className={colorClasses} />
 				<p className='ticket__id'>#{id}</p>
-				<a href='#' className='ticket__header'>
+				<Link to={`ticket-${id}`} className='ticket__header'>
 					<CardHeader
 						title={title}
 						subtitle={author}
@@ -49,7 +50,7 @@ export class Ticket extends React.Component<any, any> {
 						titleStyle={style.title}
 						subtitleStyle={style.subtitle}
 					/>
-				</a>
+				</Link>
 				<CardText style={style.text}>
 					<p className='ticket__information'>Mottaget: {received}</p>
 					<p className='ticket__information'>Tilldelat: <span className='ticket__information--bold'>{assigned}</span></p>

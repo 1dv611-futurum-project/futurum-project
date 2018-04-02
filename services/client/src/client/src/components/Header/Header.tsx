@@ -6,6 +6,7 @@
 import * as React from 'react';
 import { Paper, Menu, MenuItem, Divider } from 'material-ui';
 import { RemoveRedEye, AccountCircle, Settings } from 'material-ui-icons';
+import { Link } from 'react-router';
 
 /* Custom Material Design styling */
 const style = {
@@ -33,16 +34,33 @@ export class Header extends React.Component<any, any> {
 		return (
 			<Paper style={style.paper}>
 				<Menu>
-					<MenuItem primaryText='Alla ärenden' />
+					<Link to='/' className='header__link'>
+						<MenuItem primaryText='Alla ärenden' />
+					</Link>
 					<span className='header__color header__color--red' />
-					<MenuItem primaryText='Ej påbörjade ärenden' />
+					<Link to='/' className='header__link'>
+						<MenuItem primaryText='Ej påbörjade ärenden' />
+					</Link>
 					<span className='header__color header__color--blue' />
-					<MenuItem primaryText='Påbörjade ärenden' />
+					<Link to='/' className='header__link'>
+						<MenuItem primaryText='Påbörjade ärenden' />
+					</Link>
 					<span className='header__color header__color--green' />
-					<MenuItem primaryText='Avslutade ärenden' />
+					<Link to='/' className='header__link'>
+						<MenuItem primaryText='Påbörjade ärenden' />
+					</Link>
+					<Link to='/' className='header__link'>
+						<MenuItem primaryText='Avslutade ärenden' />
+					</Link>
+
 					<Divider style={style.divider} />
-					<MenuItem primaryText='Kundlista' rightIcon={<AccountCircle />} />
-					<MenuItem primaryText='Inställningar' rightIcon={<Settings />} />
+
+					<Link to='/clients' className='header__link'>
+						<MenuItem primaryText='Kundlista' rightIcon={<AccountCircle />} />
+					</Link>
+					<Link to='/settings' className='header__link'>
+						<MenuItem primaryText='Inställningar' rightIcon={<Settings />} />
+					</Link>
 				</Menu>
 			</Paper>
 		);
