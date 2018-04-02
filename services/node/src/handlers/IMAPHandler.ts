@@ -4,11 +4,20 @@
 
 // Imports
 import * as Imap from 'imap';
+import * as util from 'util';
 
+/**
+ * Sets up a connection to the server and
+ * listens for incoming messages.
+ */
 class IMAPHandler {
 
   private imap : Imap
+  private unread : Array
 
+  /**
+   * Sets configs and imap-connaction listeners.
+   */
   constructor() {
     const password = process.env.IMAP_PASSWORD
     const user = process.env.IMAP_USER
@@ -21,15 +30,114 @@ class IMAPHandler {
       tls: true
     });
 
-    this.imap.once('ready', this.collectUnreadAndSetUpListeners)
-    this.imap.once('error', this.handleConnectionError);
-    this.imap.once('end', this.handleConnectionEnd);
+    this.imap.once('ready', this.collectUnreadAndSetUpListeners.bind(this))
+    this.imap.once('error', this.handleConnectionError.bind(this));
+    this.imap.once('end', this.handleConnectionEnd.bind(this));
 
+    this.unread = []
+  }
+
+  /**
+   * Connects to the imap server.
+   */
+  public connect(): void {
     this.imap.connect()
   }
 
+  /**
+   * Returns an array of all unread emails - will return each email as an object
+   * in the array with attributes recieved, sender, title and body.
+   */
+  public getUnread(): Array {
+    return this.unread
+  }
+
+  /**
+   * Collects the unread emails from the Imap-connection,
+   * marks them as read, and saves them in unread.
+   */
   private collectUnreadAndSetUpListeners(): void {
-    console.log('Collecting unread and setting up listeners')
+    this.openInbox()
+    .then((box) => {
+      return this.collectUnread(box)
+    })
+    .then((emails) => {
+      console.log(emails)
+    })
+    .catch((err) => {
+      console.log('Got error, need to handle this')
+    })
+  }
+
+  /**
+   * Opens the inbox.
+   * Returns a Promise that resolves with the open box.
+   */
+  private openInbox(): Promise {
+    return new Promise((resolve, reject) => {
+      this.imap.openBox('INBOX', true, (err, box) => {
+        if (err) reject(err)
+
+        resolve(box)
+      });
+    })
+  }
+
+  /**
+   * Collects all the unread messages in the open box provided.
+   */
+  private collectUnread(box): Promise {
+    return new Promise((resolve, reject) => {
+      let messages = []
+
+      this.imap.search([ 'UNSEEN' ], (err, results) => {
+        if (err) reject(err)
+        
+        let f = this.imap.seq.fetch(results, {
+          bodies: ['HEADER.FIELDS (FROM SUBJECT DATE)', '1']
+        });
+
+        f.on('message', (msg, seqno) => {
+          let message = {}
+          let prefix = '(#' + seqno + ') ';
+
+          msg.on('body', (stream, info) => {
+            let buffer = '';
+            let count = 0;
+            
+            stream.on('data', (chunk) => {
+              count += chunk.length;
+              buffer += chunk.toString('utf8');
+            });
+
+            stream.once('end', () => {
+              if (info.which !== '1') {
+                let headers = Imap.parseHeader(buffer)
+
+                message.date = headers.date[0]
+                message.sender = headers.from[0]
+                message.title = headers.subject[0]
+              } else {
+                message.body = buffer
+              }
+            });
+          });
+
+          msg.once('end', function() {
+            messages.push(message)
+          });
+        });
+
+        f.once('error', (err) => {
+          reject(err)
+        });
+
+        f.once('end', () => {
+          resolve(messages)
+          resolve()
+        });
+      });
+    });
   }
 
   private handleConnectionError(err): void {
@@ -43,4 +151,4 @@ class IMAPHandler {
 }
 
 // Exports.
-export default IMAPHandler;
+export default new IMAPHandler();
