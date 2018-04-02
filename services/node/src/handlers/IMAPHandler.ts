@@ -12,44 +12,41 @@ import * as util from 'util';
  */
 class IMAPHandler {
 
-  private imap : Imap
-  private unread : Array
+  private imap: Imap;
+  private unread: object[];
 
   /**
-   * Sets configs and imap-connaction listeners.
+   * Sets local variables, configs and imap-connaction listeners.
    */
   constructor() {
-    const password = process.env.IMAP_PASSWORD
-    const user = process.env.IMAP_USER
-
     this.imap = new Imap({
-      user: user,
-      password: password,
+      user: process.env.IMAP_USER,
+      password: process.env.IMAP_PASSWORD,
       host: 'imap.gmail.com',
       port: 993,
       tls: true
     });
 
-    this.imap.once('ready', this.collectUnreadAndSetUpListeners.bind(this))
+    this.imap.once('ready', this.collectUnreadAndSetUpListeners.bind(this));
     this.imap.once('error', this.handleConnectionError.bind(this));
     this.imap.once('end', this.handleConnectionEnd.bind(this));
 
-    this.unread = []
+    this.unread = [];
   }
 
   /**
    * Connects to the imap server.
    */
   public connect(): void {
-    this.imap.connect()
+    this.imap.connect();
   }
 
   /**
    * Returns an array of all unread emails - will return each email as an object
    * in the array with attributes recieved, sender, title and body.
    */
-  public getUnread(): Array {
-    return this.unread
+  public getUnread(): object[] {
+    return this.unread;
   }
 
   /**
@@ -59,14 +56,14 @@ class IMAPHandler {
   private collectUnreadAndSetUpListeners(): void {
     this.openInbox()
     .then((box) => {
-      return this.collectUnread(box)
+      return this.collectUnread(box);
     })
     .then((emails) => {
-      console.log(emails)
+      console.log(emails);
     })
     .catch((err) => {
-      console.log('Got error, need to handle this')
-    })
+      console.log('Got error, need to handle this');
+    });
   }
 
   /**
@@ -76,11 +73,13 @@ class IMAPHandler {
   private openInbox(): Promise {
     return new Promise((resolve, reject) => {
       this.imap.openBox('INBOX', true, (err, box) => {
-        if (err) reject(err)
+        if (err) {
+          reject(err);
+        }
 
-        resolve(box)
+        resolve(box);
       });
-    })
+    });
   }
 
   /**
@@ -88,23 +87,25 @@ class IMAPHandler {
    */
   private collectUnread(box): Promise {
     return new Promise((resolve, reject) => {
-      let messages = []
+      const messages = [];
 
       this.imap.search([ 'UNSEEN' ], (err, results) => {
-        if (err) reject(err)
-        
-        let f = this.imap.seq.fetch(results, {
+        if (err) {
+          reject(err);
+        }
+
+        const f = this.imap.seq.fetch(results, {
           bodies: ['HEADER.FIELDS (FROM SUBJECT DATE)', '1']
         });
 
         f.on('message', (msg, seqno) => {
-          let message = {}
-          let prefix = '(#' + seqno + ') ';
+          const message = {};
+          const prefix = '(#' + seqno + ') ';
 
           msg.on('body', (stream, info) => {
             let buffer = '';
             let count = 0;
-            
+
             stream.on('data', (chunk) => {
               count += chunk.length;
               buffer += chunk.toString('utf8');
@@ -112,36 +113,36 @@ class IMAPHandler {
 
             stream.once('end', () => {
               if (info.which !== '1') {
-                let headers = Imap.parseHeader(buffer)
+                const headers = Imap.parseHeader(buffer);
 
-                message.date = headers.date[0]
-                message.sender = headers.from[0]
-                message.title = headers.subject[0]
+                message.date = headers.date[0];
+                message.sender = headers.from[0];
+                message.title = headers.subject[0];
               } else {
-                message.body = buffer
+                message.body = buffer;
               }
             });
           });
 
-          msg.once('end', function() {
-            messages.push(message)
+          msg.once('end', () => {
+            messages.push(message);
           });
         });
 
-        f.once('error', (err) => {
-          reject(err)
+        f.once('error', (error) => {
+          reject(error);
         });
 
         f.once('end', () => {
-          resolve(messages)
-          resolve()
+          resolve(messages);
+          resolve();
         });
       });
     });
   }
 
   private handleConnectionError(err): void {
-    console.log('Got connection error')
+    console.log('Got connection error');
     console.log(err);
   }
 
