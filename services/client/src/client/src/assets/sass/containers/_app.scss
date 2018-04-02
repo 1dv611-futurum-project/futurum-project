@@ -1,0 +1,27 @@
+/**
+ * Application styling
+ */
+.app {
+	&__wrapper {
+		margin: 0 auto;
+		width: 1000px;
+		padding: 15px 0;
+	}
+	
+	&__sidebar {
+		float: left;
+		width: 300px;
+	}
+	
+	&__content {
+		width: 700px;
+		float: left;
+	}
+}
+
+
+// To be added to AllTicketsPage container SASS-file
+.tickets__wrapper {
+	display: flex;
+	flex-wrap: wrap;
+}

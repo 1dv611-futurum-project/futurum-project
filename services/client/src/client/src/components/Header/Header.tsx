@@ -12,7 +12,7 @@ const style = {
   paper: {
     display: 'inline-block',
     float: 'left',
-    margin: '16px 32px 16px 32px',
+    margin: '0 32px 16px 32px',
     position: 'relative' as 'relative'
   },
   rightIcon: {
