@@ -9,22 +9,7 @@ import { RemoveRedEye, AccountCircle, Settings } from 'material-ui-icons';
 import { Link } from 'react-router';
 
 /* Custom Material Design styling */
-const style = {
-	paper: {
-		display: 'inline-block',
-		float: 'left',
-		margin: '0 32px 16px 32px',
-		position: 'relative' as 'relative'
-	},
-	rightIcon: {
-		textAlign: 'center',
-		lineHeight: '24px'
-	},
-	divider: {
-		marginTop: '0',
-		marginBottom: '0'
-	}
-};
+import { headerStyle } from '../../variables/Variables';
 
 /**
  * Header class
@@ -32,7 +17,7 @@ const style = {
 export class Header extends React.Component<any, any> {
 	public render() {
 		return (
-			<Paper style={style.paper}>
+			<Paper style={headerStyle.paper}>
 				<Menu>
 					<Link to='/' className='header__link'>
 						<MenuItem primaryText='Alla ärenden' />
@@ -50,7 +35,7 @@ export class Header extends React.Component<any, any> {
 						<MenuItem primaryText='Avslutade ärenden' />
 					</Link>
 
-					<Divider style={style.divider} />
+					<Divider style={headerStyle.divider} />
 
 					<Link to='/clients' className='header__link'>
 						<MenuItem primaryText='Kundlista' rightIcon={<AccountCircle />} />
