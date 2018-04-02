@@ -15,7 +15,14 @@
         "object-literal-sort-keys": false,
         "trailing-comma": false,
         "ordered-imports": false,
-        "no-console": false
+        "member-ordering": false,
+        "object-literal-shorthand": false,
+        "no-console": false,
+        "jsx-wrap-multiline": true,
+        "jsx-alignment": true,
+        "jsx-equals-spacing": [true, "never"],
+        "jsx-self-close": true
+
     },
     "rulesDirectory": []
 }
