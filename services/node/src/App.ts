@@ -22,7 +22,6 @@ class App {
     this.express = express();
     this.mainRouter = mainRouter
     IMAP.connect();
-    IMAP.getUnread();
     this.middleware();
     this.mountRoutes();
   }

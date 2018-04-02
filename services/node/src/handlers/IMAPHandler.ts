@@ -6,6 +6,10 @@
 import * as Imap from 'imap';
 import * as util from 'util';
 
+
+//This should be a database, only array for development
+const whitelist = ['mopooy@gmail.com']
+
 /**
  * Sets up a connection to the server and
  * listens for incoming messages.
@@ -13,7 +17,6 @@ import * as util from 'util';
 class IMAPHandler {
 
   private imap: Imap;
-  private unread: object[];
 
   /**
    * Sets local variables, configs and imap-connaction listeners.
@@ -27,11 +30,9 @@ class IMAPHandler {
       tls: true
     });
 
-    this.imap.once('ready', this.collectUnreadAndSetUpListeners.bind(this));
+    this.imap.once('ready', this.handleInitialConnect.bind(this));
     this.imap.once('error', this.handleConnectionError.bind(this));
     this.imap.once('end', this.handleConnectionEnd.bind(this));
-
-    this.unread = [];
   }
 
   /**
@@ -42,26 +43,43 @@ class IMAPHandler {
   }
 
   /**
-   * Returns an array of all unread emails - will return each email as an object
-   * in the array with attributes recieved, sender, title and body.
-   */
-  public getUnread(): object[] {
-    return this.unread;
-  }
-
-  /**
    * Collects the unread emails from the Imap-connection,
-   * marks them as read, and saves them in unread.
+   * marks them as read, and listens for incoming mails.
    */
-  private collectUnreadAndSetUpListeners(): void {
+  private handleInitialConnect(): void {
     this.openInbox()
     .then((box) => {
       return this.collectUnread(box);
     })
     .then((emails) => {
+      //emit out all the unread messages as if they came in now
+      console.log('got old mails')
+      console.log(emails);
+      this.imap.once('mail', this.handleNewMailEvent.bind(this));
+    })
+    .catch((err) => {
+      // Send email somewhere
+      console.log('Got error, need to handle this');
+    });
+  }
+
+    /**
+   * Collects the unread emails from the Imap-connection,
+   * marks them as read, and saves them in unread.
+   */
+  private handleNewMailEvent(): void {
+    console.log('handling new mail event')
+    this.openInbox()
+    .then((box) => {
+      return this.collectUnread(box);
+    })
+    .then((emails) => {
+      console.log('got new mails:')
+      //emit out all the unread messages
       console.log(emails);
     })
     .catch((err) => {
+      // Send email somewhere
       console.log('Got error, need to handle this');
     });
   }
@@ -72,7 +90,7 @@ class IMAPHandler {
    */
   private openInbox(): Promise {
     return new Promise((resolve, reject) => {
-      this.imap.openBox('INBOX', true, (err, box) => {
+      this.imap.openBox('INBOX', false, (err, box) => {
         if (err) {
           reject(err);
         }
@@ -95,7 +113,8 @@ class IMAPHandler {
         }
 
         const f = this.imap.seq.fetch(results, {
-          bodies: ['HEADER.FIELDS (FROM SUBJECT DATE)', '1']
+          bodies: ['HEADER.FIELDS (FROM SUBJECT DATE)', '1'],
+          markSeen: true
         });
 
         f.on('message', (msg, seqno) => {
@@ -141,12 +160,20 @@ class IMAPHandler {
     });
   }
 
+  /**
+   * Logs connection errors.
+   */
   private handleConnectionError(err): void {
+    //TODO: Handle error? Send note to client about error? Log emails? Investigate.
     console.log('Got connection error');
     console.log(err);
   }
 
+  /**
+   * Notifies that the connection has ended.
+   */
   private handleConnectionEnd(): void {
+    //TODO: Handle end? Send note to client that connection is not up?
     console.log('Connection ended');
   }
 }
