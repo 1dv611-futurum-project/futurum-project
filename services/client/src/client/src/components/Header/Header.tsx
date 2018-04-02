@@ -47,9 +47,6 @@ export class Header extends React.Component<any, any> {
 					</Link>
 					<span className='header__color header__color--green' />
 					<Link to='/' className='header__link'>
-						<MenuItem primaryText='Påbörjade ärenden' />
-					</Link>
-					<Link to='/' className='header__link'>
 						<MenuItem primaryText='Avslutade ärenden' />
 					</Link>
 
