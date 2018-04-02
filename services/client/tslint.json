@@ -8,7 +8,10 @@
     "jsRules": {},
     "rules": {
         "quotemark": [true, "single"],
-        "ter-indent": [true, "tabs", 2],
+        "indent": [true, "tabs"],
+		"ter-indent": [true, "tab", {
+			"SwitchCase": 1
+		}],
         "object-literal-sort-keys": false,
         "trailing-comma": false,
         "ordered-imports": false,
