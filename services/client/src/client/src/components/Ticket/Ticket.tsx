@@ -31,29 +31,36 @@ const style = {
 };
 
 /**
+ * Ticket Props Interface
+ */
+export interface ITicket { data: any; }
+
+/**
  * Ticket class
  */
-export class Ticket extends React.Component<any, any> {
+export class Ticket extends React.Component<ITicket, any> {
+
 	public render() {
-		const { id, assigned, received, title, author, color } = this.props;
-		const colorClasses = `ticket__color ticket__color--${color}`;
+		const ticket = this.props.data;
+		const colorClasses = `ticket__color ticket__color--${ticket.color}`;
 
 		return (
 			<Card style={style.card}>
 				<span className={colorClasses} />
-				<p className='ticket__id'>#{id}</p>
-				<Link to={`ticket-${id}`} className='ticket__header'>
+				<p className='ticket__id'>#{ticket.id}</p>
+				<Link to={`ticket-${ticket.id}`} className='ticket__header'>
 					<CardHeader
-						title={title}
-						subtitle={author}
+						title={ticket.title}
+						subtitle={ticket.author}
 						textStyle={style.header}
 						titleStyle={style.title}
 						subtitleStyle={style.subtitle}
 					/>
 				</Link>
 				<CardText style={style.text}>
-					<p className='ticket__information'>Mottaget: {received}</p>
-					<p className='ticket__information'>Tilldelat: <span className='ticket__information--bold'>{assigned}</span></p>
+					<p className='ticket__information'>Mottaget: {ticket.received}</p>
+					<p className='ticket__information'>Tilldelat:
+					<span className='ticket__information--bold'>{ticket.assigned}</span></p>
 				</CardText>
 			</Card>
 		);
