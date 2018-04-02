@@ -8,12 +8,12 @@ import { Route, IndexRoute } from 'react-router';
 /**
  * Containers
  */
-import { App } from './containers/App/App';
-import { AllTicketsPage } from './containers/AllTicketsPage/AllTicketsPage';
-import { ClientListPage } from './containers/ClientListPage/ClientListPage';
-import { SettingsPage } from './containers/SettingsPage/SettingsPage';
-import { TicketPage } from './containers/TicketPage/TicketPage';
-import { LoginPage } from './containers/LoginPage/LoginPage';
+import { App } from '../containers/App/App';
+import { AllTicketsPage } from '../containers/AllTicketsPage/AllTicketsPage';
+import { ClientListPage } from '../containers/ClientListPage/ClientListPage';
+import { SettingsPage } from '../containers/SettingsPage/SettingsPage';
+import { TicketPage } from '../containers/TicketPage/TicketPage';
+import { LoginPage } from '../containers/LoginPage/LoginPage';
 
 /**
  * Routes to export
