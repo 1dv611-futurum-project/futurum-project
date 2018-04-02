@@ -5,16 +5,17 @@
 // Imports
 import * as Imap from 'imap';
 import * as util from 'util';
+import * as events from 'events';
+import * as MailParser from 'mailparser-mit';
 
-
-//This should be a database, only array for development
-const whitelist = ['mopooy@gmail.com']
+// This should be a database, only array for development
+const whitelist = ['mopooy@gmail.com'];
 
 /**
  * Sets up a connection to the server and
  * listens for incoming messages.
  */
-class IMAPHandler {
+class IMAPHandler extends events.EventEmitter {
 
   private imap: Imap;
 
@@ -22,6 +23,8 @@ class IMAPHandler {
    * Sets local variables, configs and imap-connaction listeners.
    */
   constructor() {
+    super();
+
     this.imap = new Imap({
       user: process.env.IMAP_USER,
       password: process.env.IMAP_PASSWORD,
@@ -52,35 +55,41 @@ class IMAPHandler {
       return this.collectUnread(box);
     })
     .then((emails) => {
-      //emit out all the unread messages as if they came in now
-      console.log('got old mails')
-      console.log(emails);
       this.imap.once('mail', this.handleNewMailEvent.bind(this));
+
+      if (emails) {
+        emails.forEach((message) => {
+          this.emitMessage(message);
+        });
+      }
     })
     .catch((err) => {
       // Send email somewhere
       console.log('Got error, need to handle this');
+      console.log(err);
     });
   }
 
-    /**
+  /**
    * Collects the unread emails from the Imap-connection,
-   * marks them as read, and saves them in unread.
+   * marks them as read, and emits them as events.
    */
   private handleNewMailEvent(): void {
-    console.log('handling new mail event')
     this.openInbox()
     .then((box) => {
       return this.collectUnread(box);
     })
     .then((emails) => {
-      console.log('got new mails:')
-      //emit out all the unread messages
-      console.log(emails);
+      if (emails) {
+        emails.forEach((message) => {
+          this.emitMessage(message);
+        });
+      }
     })
     .catch((err) => {
       // Send email somewhere
       console.log('Got error, need to handle this');
+      console.log(err);
     });
   }
 
@@ -106,65 +115,61 @@ class IMAPHandler {
   private collectUnread(box): Promise {
     return new Promise((resolve, reject) => {
       const messages = [];
-
       this.imap.search([ 'UNSEEN' ], (err, results) => {
         if (err) {
           reject(err);
         }
 
+        if (results.length === 0) {
+          return resolve();
+        }
+
         const f = this.imap.seq.fetch(results, {
-          bodies: ['HEADER.FIELDS (FROM SUBJECT DATE)', '1'],
-          markSeen: true
+          bodies: [''],
+          markSeen: false
         });
 
         f.on('message', (msg, seqno) => {
-          const message = {};
           const prefix = '(#' + seqno + ') ';
 
           msg.on('body', (stream, info) => {
-            let buffer = '';
-            let count = 0;
+            const mp = new MailParser.MailParser();
+            stream.pipe(mp);
 
-            stream.on('data', (chunk) => {
-              count += chunk.length;
-              buffer += chunk.toString('utf8');
-            });
+            mp.on('end', (obj) => {
+              const message = {};
+              message.recieved = obj.date;
+              message.title = obj.subject;
+              message.from = obj.from[0].address;
+              message.body = obj.text;
+              messages.push(message);
 
-            stream.once('end', () => {
-              if (info.which !== '1') {
-                const headers = Imap.parseHeader(buffer);
-
-                message.date = headers.date[0];
-                message.sender = headers.from[0];
-                message.title = headers.subject[0];
-              } else {
-                message.body = buffer;
+              if (messages.length === results.length) {
+                resolve(messages);
               }
             });
-          });
-
-          msg.once('end', () => {
-            messages.push(message);
           });
         });
 
         f.once('error', (error) => {
           reject(error);
         });
-
-        f.once('end', () => {
-          resolve(messages);
-          resolve();
-        });
       });
     });
+  }
+
+  /**
+   * Emits a message-event with the message.
+   */
+  private emitMessage(message: object): void {
+    this.emit('message', message);
   }
 
   /**
    * Logs connection errors.
    */
   private handleConnectionError(err): void {
-    //TODO: Handle error? Send note to client about error? Log emails? Investigate.
+    // TODO: Handle error? Send note to client about error? Log emails? Investigate.
     console.log('Got connection error');
     console.log(err);
   }
@@ -173,7 +178,7 @@ class IMAPHandler {
    * Notifies that the connection has ended.
    */
   private handleConnectionEnd(): void {
-    //TODO: Handle end? Send note to client that connection is not up?
+    // TODO: Handle end? Send note to client that connection is not up?
     console.log('Connection ended');
   }
 }

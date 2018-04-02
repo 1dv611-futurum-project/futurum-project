@@ -22,6 +22,7 @@ class App {
     this.express = express();
     this.mainRouter = mainRouter
     IMAP.connect();
+    IMAP.on('message', (message) => {console.log('Got message:'); console.log(message)})
     this.middleware();
     this.mountRoutes();
   }
