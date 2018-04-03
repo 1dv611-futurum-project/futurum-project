@@ -49,9 +49,15 @@ class App {
     })
 
     IMAPHandler.on('message', (message) => {
-      console.log('Got message:'); 
+      console.log('Got imap message, means imap connection is probably going to go down in a calculated way. Action?:'); 
       console.log(message)
-      console.log('Make call to we  to send notification of message.')
+      console.log('Make call to ws to send notification of message.')
+    })
+
+    IMAPHandler.on('tamper', (message) => {
+      console.log('Got tamper message, means emails are being accesses externally and possible reload should happen:'); 
+      console.log(message)
+      console.log('Make call to ws to send notification of tamper.')
     })
 
     IMAPHandler.on('error', (error) => {

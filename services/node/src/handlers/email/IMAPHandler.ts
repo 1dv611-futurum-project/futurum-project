@@ -58,44 +58,40 @@ class IMAPHandler extends events.EventEmitter {
    * Emits the new mail as a message.
    */
   private handleNewMailEvent(mail: object): void {
-    // TODO: Check against whitelist to take different actions.
-    // TODO: Save the mail in the database, or notify database handler? Or is that done from somewhere else?
+    // TODO: Check against whitelist to take different actions. emit it out under differend event-names?.
     this.emitMessage(mail);
   }
 
   /**
-   * Emits a message-event with the email.
+   * Emits a mail-event with the email.
    */
   private emitMessage(message: object): void {
-    this.emit('message', message);
+    this.emit('mail', message);
   }
 
   /**
-   * Logs connection errors.
+   * Emits connection errors.
    */
   private handleConnectionError(err: Error): void {
-    // TODO: Handle error? Send note to client about error? Log emails? Investigate.
-    // skicka ut mail + note to client
     console.log('Got connection error');
     console.log(err);
+    this.emit('error', err);
   }
 
   /**
-   * Notifies that the server has sent a message.
+   * Emits that the server has sent a message.
    */
   private handleServerMessage(payload: object): void {
-    // TODO: Handle message? Send note to client that connection might go down?
-    // skicka ut mail + note to client
     console.log('Server Message');
+    this.emit('message', payload);
   }
 
   /**
-   * Notifies that the server has changed.
+   * Emits that the server has changed.
    */
   private handleServerChange(payload: object): void {
-    // TODO: Handle change? Send note to client that connection is being tampered with?
-    // skicka ut mail + note to client
     console.log('Server changed');
+    this.emit('tamper', payload);
   }
 
   /**
