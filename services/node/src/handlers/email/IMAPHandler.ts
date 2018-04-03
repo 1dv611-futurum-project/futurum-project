@@ -47,7 +47,10 @@ class IMAPHandler extends events.EventEmitter {
     })
     .then(() => {
       // Set up timeout to check for new emails every other minute, to make sure they are not lost
-      this.ongoingTimeout = setTimeout(this.imapConnection.getUnreadEmails(), 20000);
+      if (this.ongoingTimeout) {
+        clearTimeout(this.ongoingTimeout);
+      }
+      this.ongoingTimeout = setTimeout(() => {this.getUnreadEmails()}, 50000);
     })
     .catch((err) => {
       this.handleConnectionError(err);
@@ -59,7 +62,22 @@ class IMAPHandler extends events.EventEmitter {
    */
   private handleNewMailEvent(mail: object): void {
     // TODO: Check against whitelist to take different actions. emit it out under differend event-names?.
+    if (this.ongoingTimeout) {
+      clearTimeout(this.ongoingTimeout);
+    }
     this.emitMessage(mail);
+    this.ongoingTimeout = setTimeout(() => {this.getUnreadEmails()}, 50000);
+  }
+
+  /**
+   * Collects unread emails and sets timeout for collecting them again.
+   */
+  private getUnreadEmails() {
+    this.imapConnection.getUnreadEmails();
+    if (this.ongoingTimeout) {
+      clearTimeout(this.ongoingTimeout);
+    }
+    this.ongoingTimeout = setTimeout(() => {this.getUnreadEmails()}, 50000);
   }
 
   /**
@@ -98,7 +116,6 @@ class IMAPHandler extends events.EventEmitter {
    * Removes the connection and the interval.
    */
   private handleCleanup(): void {
-    console.log('Process exit');
     if (this.ongoingTimeout) {
       clearTimeout(this.ongoingTimeout);
     }

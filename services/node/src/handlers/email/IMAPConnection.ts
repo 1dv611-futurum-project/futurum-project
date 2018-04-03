@@ -143,6 +143,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Collects all the unread messages in the open box.
    */
   private collectUnread(): Promise {
+    console.log('collecting unread')
     return new Promise((resolve, reject) => {
       const messages = [];
       this.imap.search([ 'UNSEEN' ], (err: Error, indicesToFetch: number[]) => {
@@ -155,8 +156,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
         }
 
         const fetchMessages = this.imap.seq.fetch(indicesToFetch, {
-          bodies: [''],
-          markSeen: true
+          bodies: ['']
         });
 
         fetchMessages.on('message', (msg: ImapMessage, seqno: number) => {
@@ -176,6 +176,17 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
                 resolve(messages);
               }
             });
+          });
+        });
+
+        fetchMessages.on('end', () => {
+          this.imap.setFlags(indicesToFetch, ['\\Seen'], (err: Error) => {
+            if (!err) {
+                console.log("marked all as read");
+            } else {
+              console.log('got error')
+                console.log(JSON.stringify(err, null, 2));
+            }
           });
         });
 
