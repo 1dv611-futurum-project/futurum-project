@@ -44,11 +44,11 @@ class IMAPHandler extends events.EventEmitter {
       return this.imapConnection.listenForNewEmails();
     })
     .then(() => {
-      //TODO: Set up interval to check for new emails, to make sure they are not lost
+      // TODO: Set up interval to check for new emails, to make sure they are not lost
     })
     .catch((err) => {
-      this.handleConnectionError({message: err.message})
-    })
+      this.handleConnectionError(err);
+    });
   }
 
   /**
@@ -89,7 +89,6 @@ class IMAPHandler extends events.EventEmitter {
    */
   private handleServerChange(payload: object): void {
     // TODO: Handle change? Send note to client that connection is being tampered with?
-    console.log(payload)
     console.log('Server changed');
   }
 }

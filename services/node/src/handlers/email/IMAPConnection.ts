@@ -62,13 +62,13 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
     return new Promise((resolve, reject) => {
       this.collectAndEmitUnread()
       .then(() => {
-        resolve()
+        resolve();
       })
       .catch((err) => {
-        this.handleConnectionError({message: err.message})
-      })
+        this.handleConnectionError({message: err.message});
+      });
     });
-  } 
+  }
 
   /**
    * Listen for incoming emails and emits a message when they are recieved.
@@ -76,7 +76,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   public listenForNewEmails(): Promise {
     return new Promise((resolve, reject) => {
       this.imap.once('mail', this.collectAndEmitUnread.bind(this));
-      resolve()
+      resolve();
     });
   }
 
@@ -87,10 +87,10 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   private handleInitialConnect(): void {
     this.openInbox()
     .then(() => {
-      this.emitMessage('ready')
+      this.emitMessage('ready');
     })
     .catch((err: Error) => {
-      this.handleConnectionError({message: err.message})
+      this.handleConnectionError({message: err.message});
     });
   }
 
@@ -100,7 +100,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    */
   private openInbox(): Promise {
     return new Promise((resolve, reject) => {
-      const readonly = false
+      const readonly = false;
       this.imap.openBox(this.boxName, readonly, (err: Error, box: Box) => {
         if (err) {
           return reject(err);
@@ -123,11 +123,11 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
             this.emitMessage('mail', message);
           });
         }
-        return resolve()
+        return resolve();
       })
       .catch((err: Error) => {
-        this.handleConnectionError({message: err.message})
-        return reject({message: err.message})
+        this.handleConnectionError(err);
+        return reject(err);
       });
     });
   }
@@ -173,8 +173,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
         });
 
         fetchMessages.once('error', (error: Error) => {
-          // TODO: Log what message it concerned? Do something to make emails unread again?
-          reject({message: 'An error occured while fetching unread messages.'});
+          reject({type: 'fetch', message: 'An error occured while fetching unread messages.'});
         });
       });
     });
@@ -183,22 +182,25 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   /**
    * Emits connection errors.
    */
-  private handleConnectionError(err): void {
-    this.emitMessage('error', {message: 'An error with the IMAP-connection occured.'})
+  private handleConnectionError(err: object): void {
+    const error = {};
+    error.message = err.message || 'An error with the IMAP-connection occured.';
+    error.type = err.type || 'Connection';
+    this.emitMessage('error', error);
   }
 
   /**
    * Emits connection-end events.
    */
   private handleConnectionEnd(): void {
-    this.emitMessage('server', {message: 'Connection to the IMAP-server has ended.'})
+    this.emitMessage('server', {message: 'Connection to the IMAP-server has ended.'});
   }
 
   /**
    * Emits connection-end events.
    */
   private handleServerMessage(message: string): void {
-    this.emitMessage('server', {message: message})
+    this.emitMessage('server', {message});
   }
 
   /**
@@ -206,7 +208,10 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    */
   private handleServerChange(seqno, info): void {
     if (info.flags.indexOf('\\Seen') === -1) {
-      this.emitMessage('change', {message: 'Someone or something is accessing the emails externally, server should probably be restarted to ensure continued validity.'})
+      this.emitMessage('change', {
+        message: 'Someone or something is accessing the emails externally, ' +
+        'server should probably be restarted to ensure continued validity.'
+      });
     }
   }
 
