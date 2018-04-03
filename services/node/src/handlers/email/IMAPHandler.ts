@@ -16,6 +16,7 @@ const whitelist = ['mopooy@gmail.com'];
 class IMAPHandler extends events.EventEmitter {
 
   private imapConnection: IMAPConnectionInterface;
+  private ongoingTimeout: number;
 
   /**
    * Connects to the imap server.
@@ -28,6 +29,7 @@ class IMAPHandler extends events.EventEmitter {
     this.imapConnection.on('mail', this.handleNewMailEvent.bind(this));
     this.imapConnection.on('change', this.handleServerChange.bind(this));
     this.imapConnection.on('server', this.handleServerMessage.bind(this));
+    process.on('exit', this.handleCleanup.bind(this));
 
     this.imapConnection.connect();
   }
@@ -44,7 +46,8 @@ class IMAPHandler extends events.EventEmitter {
       return this.imapConnection.listenForNewEmails();
     })
     .then(() => {
-      // TODO: Set up interval to check for new emails, to make sure they are not lost
+      // Set up timeout to check for new emails every other minute, to make sure they are not lost
+      this.ongoingTimeout = setTimeout(this.imapConnection.getUnreadEmails(), 20000);
     })
     .catch((err) => {
       this.handleConnectionError(err);
@@ -72,6 +75,7 @@ class IMAPHandler extends events.EventEmitter {
    */
   private handleConnectionError(err: Error): void {
     // TODO: Handle error? Send note to client about error? Log emails? Investigate.
+    // skicka ut mail + note to client
     console.log('Got connection error');
     console.log(err);
   }
@@ -81,6 +85,7 @@ class IMAPHandler extends events.EventEmitter {
    */
   private handleServerMessage(payload: object): void {
     // TODO: Handle message? Send note to client that connection might go down?
+    // skicka ut mail + note to client
     console.log('Server Message');
   }
 
@@ -89,7 +94,20 @@ class IMAPHandler extends events.EventEmitter {
    */
   private handleServerChange(payload: object): void {
     // TODO: Handle change? Send note to client that connection is being tampered with?
+    // skicka ut mail + note to client
     console.log('Server changed');
+  }
+
+  /**
+   * Removes the connection and the interval.
+   */
+  private handleCleanup(): void {
+    console.log('Process exit');
+    if (this.ongoingTimeout) {
+      clearTimeout(this.ongoingTimeout);
+    }
+
+    this.imapConnection.closeConnection();
   }
 }
 

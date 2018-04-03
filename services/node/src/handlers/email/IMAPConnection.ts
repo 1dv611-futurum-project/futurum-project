@@ -81,6 +81,13 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   }
 
   /**
+   * Closes the imap-connection.
+   */
+  public closeConnection(): void {
+    this.imap.end();
+  }
+
+  /**
    * Collects the unread emails from the Imap-connection,
    * marks them as read, and listens for incoming mails.
    */

@@ -12,6 +12,7 @@ interface IMAPConnectionInterface extends events.EventEmitter {
   connect(): void;
   getUnreadEmails(): Promise;
   listenForNewEmails(): Promise;
+  closeConnection(): void;
 }
 
 // Exports.
