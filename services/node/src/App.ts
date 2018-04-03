@@ -7,7 +7,8 @@ import * as express from 'express';
 import { Application, Router, Request, Response, NextFunction, Error } from 'express';
 import * as bodyParser from 'body-parser';
 import mainRouter from './routes/mainRouter'
-import IMAP from './handlers/IMAPHandler'
+import IMAPConnection from './handlers/email/IMAPConnection';
+import IMAPHandler from './handlers/email/IMAPHandler'
 
 /**
  * Express app.
@@ -21,8 +22,8 @@ class App {
   constructor() {
     this.express = express();
     this.mainRouter = mainRouter
-    IMAP.connect();
-    IMAP.on('message', (message) => {console.log('Got message:'); console.log(message)})
+    IMAPHandler.connect(IMAPConnection);
+    IMAPHandler.on('message', (message) => {console.log('Got message:'); console.log(message)})
     this.middleware();
     this.mountRoutes();
   }
