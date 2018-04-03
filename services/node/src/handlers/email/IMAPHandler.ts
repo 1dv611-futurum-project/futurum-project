@@ -50,7 +50,7 @@ class IMAPHandler extends events.EventEmitter {
       if (this.ongoingTimeout) {
         clearTimeout(this.ongoingTimeout);
       }
-      this.ongoingTimeout = setTimeout(() => {this.getUnreadEmails()}, 50000);
+      this.ongoingTimeout = setTimeout(() => {this.getUnreadEmails()}, 300000);
     })
     .catch((err) => {
       this.handleConnectionError(err);
@@ -66,7 +66,7 @@ class IMAPHandler extends events.EventEmitter {
       clearTimeout(this.ongoingTimeout);
     }
     this.emitMessage(mail);
-    this.ongoingTimeout = setTimeout(() => {this.getUnreadEmails()}, 50000);
+    this.ongoingTimeout = setTimeout(() => {this.getUnreadEmails()}, 300000);
   }
 
   /**
@@ -77,7 +77,7 @@ class IMAPHandler extends events.EventEmitter {
     if (this.ongoingTimeout) {
       clearTimeout(this.ongoingTimeout);
     }
-    this.ongoingTimeout = setTimeout(() => {this.getUnreadEmails()}, 50000);
+    this.ongoingTimeout = setTimeout(() => {this.getUnreadEmails()}, 300000);
   }
 
   /**

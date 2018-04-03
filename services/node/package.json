@@ -23,7 +23,10 @@
     "http": "0.0.0",
     "imap": "^0.8.19",
     "mailparser-mit": "^0.6.2",
-    "nodemon": "^1.17.2"
+    "nodemon": "^1.17.2",
+    "passport": "^0.4.0",
+    "passport-google-oauth20": "^1.0.0",
+    "xoauth2": "^1.2.0"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^4.0.1",

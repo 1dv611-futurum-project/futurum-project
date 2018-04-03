@@ -6,9 +6,12 @@
 import * as express from 'express';
 import { Application, Router, Request, Response, NextFunction, Error } from 'express';
 import * as bodyParser from 'body-parser';
+import * as passport from 'passport';
 import mainRouter from './routes/mainRouter'
 import IMAPConnection from './handlers/email/IMAPConnection';
-import IMAPHandler from './handlers/email/IMAPHandler'
+import IMAPHandler from './handlers/email/IMAPHandler';
+
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 /**
  * Express app.
@@ -31,6 +34,7 @@ class App {
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
     this.express.use(this.errorHandler);
+    this.express.use(passport.initialize());
   }
 
   private mountRoutes(): void {
@@ -39,7 +43,25 @@ class App {
   }
 
   private handleImap(): void {
-    IMAPHandler.connect(IMAPConnection);
+    passport.use(new GoogleStrategy({
+      clientID: process.env.IMAP_CLIENT_ID,
+      clientSecret: process.env.IMAP_CLIENT_SECRET,
+      callbackURL: 'http://127.0.0.1:8080/node/auth/google/callback'
+    },
+    (accessToken, refreshToken, profile, done) => {
+      console.log('accessToken:')
+      console.log(accessToken)
+      console.log('refreshToken:')
+      console.log(refreshToken)
+      if (profile) {
+        profile.accessToken = accessToken
+        done(null, profile)
+      } else {
+        done({message: 'User did not allow delegation.'})
+      }
+    }
+  ));
+    /**IMAPHandler.connect(IMAPConnection);**/
 
     IMAPHandler.on('mail', (mail) => {
       console.log('Got mail:'); 
