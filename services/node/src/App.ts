@@ -21,11 +21,10 @@ class App {
 
   constructor() {
     this.express = express();
-    this.mainRouter = mainRouter
-    IMAPHandler.connect(IMAPConnection);
-    IMAPHandler.on('message', (message) => {console.log('Got message:'); console.log(message)})
+    this.mainRouter = mainRouter;
     this.middleware();
     this.mountRoutes();
+    this.handleImap();
   }
 
   private middleware(): void {
@@ -37,6 +36,30 @@ class App {
   private mountRoutes(): void {
     this.express.use('/', this.mainRouter);
     this.express.all('*', this.emptyHandler);
+  }
+
+  private handleImap(): void {
+    IMAPHandler.connect(IMAPConnection);
+
+    IMAPHandler.on('mail', (mail) => {
+      console.log('Got mail:'); 
+      console.log(mail); 
+      console.log('Make call to database to save the mail.');
+      console.log('Make call to ws to send notification of mail.');
+    })
+
+    IMAPHandler.on('message', (message) => {
+      console.log('Got message:'); 
+      console.log(message)
+      console.log('Make call to we  to send notification of message.')
+    })
+
+    IMAPHandler.on('error', (error) => {
+      console.log('Got error:'); 
+      console.log(error)
+      console.log('Make call to ws to send notification of error.')
+      console.log('Possibly make call to email module to email the error to different email address.')
+    })
   }
 
   // 404
