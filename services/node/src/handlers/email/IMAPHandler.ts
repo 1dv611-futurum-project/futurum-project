@@ -32,7 +32,7 @@ class IMAPHandler extends events.EventEmitter {
     this.imapConnection.on('server', this.handleServerMessage.bind(this));
     process.on('exit', this.handleCleanup.bind(this));
 
-    this.imapConnection.connect();
+    this.imapConnection.updateCredentials();
   }
 
   /**

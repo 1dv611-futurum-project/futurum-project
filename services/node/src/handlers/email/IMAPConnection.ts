@@ -8,7 +8,7 @@ import { Box, ImapMessage } from 'imap';
 import * as events from 'events';
 import * as MailParser from 'mailparser-mit';
 import IMAPConnectionInterface from './IMAPConnectionInterface';
-import XOauth from './../../config/xoauth2';
+import XOauth from './Xoauth2Generator';
 
 /**
  * Sets up a connection to the imap-server.
@@ -29,9 +29,21 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   private isConnected: boolean;
 
   /**
+   * Updates or creates the imap connection with the credentials
+   * in environment variables.
+   */
+  public updateCredentials(): void {
+    if (this.imap) {
+      this.imap.closeConnection();
+    }
+    
+    this.connect();
+  }
+
+  /**
    * Connects to the imap server.
    */
-  public connect(): void {
+  private connect(): void {
     let credentials = this.getCredentials();
     if (!credentials) {
       this.emitMessage('unauth');
@@ -60,14 +72,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
         this.handleConnectionError(error);
       })
     }
-  }
-
-  public updateCredentials(): void {
-    if (this.imap) {
-      this.imap.closeConnection();
-    }
-    
-    this.connect();
   }
 
   /**

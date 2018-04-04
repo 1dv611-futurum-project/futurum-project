@@ -10,8 +10,6 @@ import middleware from './config/middleware'
 import passportStrategies from "./config/passport";
 import mainRouter from './routes/mainRouter';
 import IMAPHandler from './handlers/email/IMAPHandler';
-import IMAPConnection from './handlers/email/IMAPConnection';
-
 
 /**
  * Express app.
@@ -35,7 +33,7 @@ class App {
     this.express.use(bodyParser.urlencoded({ extended: false }));
     this.express.use(this.errorHandler);
     passportStrategies.make();
-    this.express.use(middleware.updateIMAPCredentials);
+    this.express.use(middleware.updateIMAPConnection);
   }
 
   private mountRoutes(): void {
@@ -75,9 +73,6 @@ class App {
       console.log('Make call to ws to send notification of error.')
       console.log('Possibly make call to email module to email the error to different email address.')
     })
-
-    console.log('will be connecting')
-    IMAPHandler.connect(IMAPConnection);
   }
 
   // 404
