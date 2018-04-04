@@ -24,8 +24,9 @@ class IMAPHandler extends events.EventEmitter {
   public connect(imapConnection: IMAPConnectionInterface): void {
     this.imapConnection = imapConnection;
 
-    this.imapConnection.once('ready', this.handleInitialConnect.bind(this));
+    this.imapConnection.on('ready', this.handleInitialConnect.bind(this));
     this.imapConnection.on('error', this.handleConnectionError.bind(this));
+    this.imapConnection.on('unauth', this.handleConnectionAuth.bind(this));
     this.imapConnection.on('mail', this.handleNewMailEvent.bind(this));
     this.imapConnection.on('change', this.handleServerChange.bind(this));
     this.imapConnection.on('server', this.handleServerMessage.bind(this));
@@ -46,7 +47,7 @@ class IMAPHandler extends events.EventEmitter {
       return this.imapConnection.listenForNewEmails();
     })
     .then(() => {
-      // Set up timeout to check for new emails every other minute, to make sure they are not lost
+      // Set up timeout to check for new emails every five minutes, to make sure they are not lost
       if (this.ongoingTimeout) {
         clearTimeout(this.ongoingTimeout);
       }
@@ -91,9 +92,14 @@ class IMAPHandler extends events.EventEmitter {
    * Emits connection errors.
    */
   private handleConnectionError(err: Error): void {
-    console.log('Got connection error');
-    console.log(err);
     this.emit('error', err);
+  }
+
+  /**
+   * Emits unauth errors.
+   */
+  private handleConnectionAuth(): void {
+    this.emit('unauth', {message: 'User credentails are missing.'});
   }
 
   /**

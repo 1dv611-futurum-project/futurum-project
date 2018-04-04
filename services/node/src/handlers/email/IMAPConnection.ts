@@ -8,50 +8,66 @@ import { Box, ImapMessage } from 'imap';
 import * as events from 'events';
 import * as MailParser from 'mailparser-mit';
 import IMAPConnectionInterface from './IMAPConnectionInterface';
+import XOauth from './../../config/xoauth2';
 
 /**
  * Sets up a connection to the imap-server.
- * Emits events ['ready', 'error', 'mail', 'server', 'change']
+ * Emits events ['ready', 'error', 'mail', 'server', 'change', 'unauth']
  * Ready when connection is up and inbox is open.
  * Error on any error, with a payload with the error message.
  * Mail when a new unread email is found.
  * Server on any message from the imap server.
  * Change when someone is accessing the emails externally in some way
  * and validity of server might be compromised.
+ * Unauth when credentials are missing and the connection cannot be established.
  */
 class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterface {
 
   private boxName = 'INBOX';
   private imap: Imap;
-
-  /**
-   * Sets local variables, configs and imap-connection listeners.
-   */
-  constructor() {
-    super();
-
-    this.imap = new Imap({
-      user: process.env.IMAP_USER,
-      password: process.env.IMAP_PASSWORD,
-      host: 'imap.gmail.com',
-      port: 993,
-      tls: true
-    });
-
-    this.imap.once('ready', this.handleInitialConnect.bind(this));
-    this.imap.once('error', this.handleConnectionError.bind(this));
-    this.imap.once('end', this.handleConnectionEnd.bind(this));
-    this.imap.on('alert', this.handleServerMessage.bind(this));
-    this.imap.on('expunge', this.handleServerChange.bind(this));
-    this.imap.on('update', this.handleServerChange.bind(this));
-    this.imap.on('uidvalidity', this.handleServerChange.bind(this));
-  }
+  private xoauthGenerator: XOauth;
+  private isConnected: boolean;
 
   /**
    * Connects to the imap server.
    */
   public connect(): void {
-    this.imap.connect();
+    let credentials = this.getCredentials();
+    if (!credentials) {
+      this.emitMessage('unauth');
+    } else {
+      this.xoauthGenerator = new XOauth(credentials);
+      this.xoauthGenerator.getToken()
+      .then((token) => {
+        this.imap = new Imap({
+          xoauth2: token,
+          host: 'imap.gmail.com',
+          port: 993,
+          tls: true
+        });
+
+        this.imap.once('ready', this.handleInitialConnect.bind(this));
+        this.imap.once('error', this.handleConnectionError.bind(this));
+        this.imap.once('end', this.handleConnectionEnd.bind(this));
+        this.imap.on('alert', this.handleServerMessage.bind(this));
+        this.imap.on('expunge', this.handleServerChange.bind(this));
+        this.imap.on('update', this.handleServerChange.bind(this));
+        this.imap.on('uidvalidity', this.handleServerChange.bind(this));
+
+        this.imap.connect();
+      })
+      .catch((error) => {
+        this.handleConnectionError(error);
+      })
+    }
+  }
+
+  public updateCredentials(): void {
+    if (this.imap) {
+      this.imap.closeConnection();
+    }
+    
+    this.connect();
   }
 
   /**
@@ -59,6 +75,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * and emits a message event for each unread email.
    */
   public getUnreadEmails(): Promise {
+    console.log('geting unread')
     return new Promise((resolve, reject) => {
       this.collectAndEmitUnread()
       .then(() => {
@@ -94,6 +111,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   private handleInitialConnect(): void {
     this.openInbox()
     .then(() => {
+      this._isConnected = true;
       this.emitMessage('ready');
     })
     .catch((err: Error) => {
@@ -143,7 +161,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Collects all the unread messages in the open box.
    */
   private collectUnread(): Promise {
-    console.log('collecting unread')
     return new Promise((resolve, reject) => {
       const messages = [];
       this.imap.search([ 'UNSEEN' ], (err: Error, indicesToFetch: number[]) => {
@@ -198,9 +215,31 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   }
 
   /**
+   * Checks that the correct credentials are set as environment variables and 
+   * returns them in an object, otherwise
+   * emits unauth-error.
+   */
+  private getCredentials(): object {
+    if (process.env.IMAP_USER
+        && process.env.IMAP_CLIENT_ID
+        && process.env.IMAP_CLIENT_SECRET
+        && process.env.IMAP_ACCESS_TOKEN
+        && process.env.IMAP_REFRESH_TOKEN) {
+          let credentials = {};
+          credentials.user = process.env.IMAP_USER;
+          credentials.clientID = process.env.IMAP_CLIENT_ID;
+          credentials.clientSecret = process.env.IMAP_CLIENT_SECRET;
+          credentials.accessToken = process.env.IMAP_ACCESS_TOKEN;
+          credentials.refreshToken = process.env.IMAP_REFRESH_TOKEN;
+          return credentials;
+        }
+  }
+
+  /**
    * Emits connection errors.
    */
   private handleConnectionError(err: object): void {
+    this._isConnected = false;
     const error = {};
     error.message = err.message || 'An error with the IMAP-connection occured.';
     error.type = err.type || 'Connection';
@@ -211,6 +250,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Emits connection-end events.
    */
   private handleConnectionEnd(): void {
+    this._isConnected = false;
     this.emitMessage('server', {message: 'Connection to the IMAP-server has ended.'});
   }
 

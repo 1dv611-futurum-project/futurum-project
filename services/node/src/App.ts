@@ -6,12 +6,12 @@
 import * as express from 'express';
 import { Application, Router, Request, Response, NextFunction, Error } from 'express';
 import * as bodyParser from 'body-parser';
-import * as passport from 'passport';
-import mainRouter from './routes/mainRouter'
-import IMAPConnection from './handlers/email/IMAPConnection';
+import middleware from './config/middleware'
+import passportStrategies from "./config/passport";
+import mainRouter from './routes/mainRouter';
 import IMAPHandler from './handlers/email/IMAPHandler';
+import IMAPConnection from './handlers/email/IMAPConnection';
 
-var GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 /**
  * Express app.
@@ -34,7 +34,8 @@ class App {
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
     this.express.use(this.errorHandler);
-    this.express.use(passport.initialize());
+    passportStrategies.make();
+    this.express.use(middleware.updateIMAPCredentials);
   }
 
   private mountRoutes(): void {
@@ -43,31 +44,17 @@ class App {
   }
 
   private handleImap(): void {
-    passport.use(new GoogleStrategy({
-      clientID: process.env.IMAP_CLIENT_ID,
-      clientSecret: process.env.IMAP_CLIENT_SECRET,
-      callbackURL: 'http://127.0.0.1:8080/node/auth/google/callback'
-    },
-    (accessToken, refreshToken, profile, done) => {
-      console.log('accessToken:')
-      console.log(accessToken)
-      console.log('refreshToken:')
-      console.log(refreshToken)
-      if (profile) {
-        profile.accessToken = accessToken
-        done(null, profile)
-      } else {
-        done({message: 'User did not allow delegation.'})
-      }
-    }
-  ));
-    /**IMAPHandler.connect(IMAPConnection);**/
-
     IMAPHandler.on('mail', (mail) => {
       console.log('Got mail:'); 
       console.log(mail); 
       console.log('Make call to database to save the mail.');
       console.log('Make call to ws to send notification of mail.');
+    })
+
+    IMAPHandler.on('unauth', (payload) => {
+      console.log('Got unauth:'); 
+      console.log(payload)
+      console.log('We are missing authorization details for the email, should direct user to auth-route?.');
     })
 
     IMAPHandler.on('message', (message) => {
@@ -88,6 +75,9 @@ class App {
       console.log('Make call to ws to send notification of error.')
       console.log('Possibly make call to email module to email the error to different email address.')
     })
+
+    console.log('will be connecting')
+    IMAPHandler.connect(IMAPConnection);
   }
 
   // 404
