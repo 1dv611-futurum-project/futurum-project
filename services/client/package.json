@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --hot --inline --mode development",
     "build": "webpack -p --mode production",
-    "server": "nodemon --exec ts-node -- ./src/server/src/index.tsx",
+    "server": "nodemon --exec ts-node -- ./server/index.tsx",
     "test": "karma start"
   },
   "keywords": [
