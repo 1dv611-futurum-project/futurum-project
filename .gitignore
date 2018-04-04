@@ -2,4 +2,4 @@
 services/client/package-lock.json
 services/node/package-lock.json
 node_modules
-services/client/src/client/public/dist
+services/client/src/public/dist

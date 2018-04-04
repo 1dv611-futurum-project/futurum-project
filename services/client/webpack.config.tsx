@@ -5,8 +5,8 @@ import path = require('path');
 import process = require('process');
 
 const env = process.env.NODE_ENV || 'development';
-const CLIENT_DIR = path.join(__dirname, 'src/client/src');
-const DIST_DIR   = path.join(__dirname, 'src/client/public/dist');
+const CLIENT_DIR = path.join(__dirname, 'src');
+const DIST_DIR   = path.join(__dirname, 'src/public/dist');
 
 module.exports = {
 	context: CLIENT_DIR,
@@ -28,7 +28,7 @@ module.exports = {
 			{
 				test: /(\.css|.scss)$/,
 				exclude: /node_modules/,
-				include: path.join(__dirname, 'src/client/src/assets'),
+				include: path.join(__dirname, 'src/assets'),
 				use: [ 'style-loader', 'css-loader', 'sass-loader' ]
 			},
 			{
