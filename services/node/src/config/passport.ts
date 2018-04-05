@@ -8,6 +8,9 @@ import * as Google from 'passport-google-oauth20';
 
 class PassportStrategies {
 
+  private static accessTokenEnv = 'IMAP_ACCESS_TOKEN';
+  private static refreshTokenEnv = 'IMAP_REFRESH_TOKEN';
+
   /**
    * Initiates the passport strategies.
    */
@@ -24,20 +27,20 @@ class PassportStrategies {
         let authorized;
 
         if (!profile) {
-          return done({message: 'You have to allow delegation to the account for the app to work.'})
+          return done({message: 'You have to allow delegation to the account for the app to work.'});
         } else {
           authorized = profile.emails.find((email) => {
             return email.value === process.env.IMAP_USER;
           });
-        } 
-        
+        }
+
         if (authorized) {
-          process.env['IMAP_ACCESS_TOKEN'] = accessToken;
-          process.env['IMAP_REFRESH_TOKEN'] = refreshToken;
-          return done(null, profile)
+          process.env[PassportStrategies.accessTokenEnv] = accessToken;
+          process.env[PassportStrategies.refreshTokenEnv] = refreshToken;
+          return done(null, profile);
 
         } else {
-          return done({message: 'You are not authorized to use this app with this email.'})
+          return done({message: 'You are not authorized to use this app with this email.'});
         }
       }
     ));
@@ -45,4 +48,4 @@ class PassportStrategies {
 }
 
 // Exports
-export default new PassportStrategies()
+export default new PassportStrategies();

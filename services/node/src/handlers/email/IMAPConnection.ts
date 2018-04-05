@@ -34,44 +34,10 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    */
   public updateCredentials(): void {
     if (this.imap) {
-      this.imap.closeConnection();
+      this.closeConnection();
     }
-    
+
     this.connect();
-  }
-
-  /**
-   * Connects to the imap server.
-   */
-  private connect(): void {
-    let credentials = this.getCredentials();
-    if (!credentials) {
-      this.emitMessage('unauth');
-    } else {
-      this.xoauthGenerator = new XOauth(credentials);
-      this.xoauthGenerator.getToken()
-      .then((token) => {
-        this.imap = new Imap({
-          xoauth2: token,
-          host: 'imap.gmail.com',
-          port: 993,
-          tls: true
-        });
-
-        this.imap.once('ready', this.handleInitialConnect.bind(this));
-        this.imap.once('error', this.handleConnectionError.bind(this));
-        this.imap.once('end', this.handleConnectionEnd.bind(this));
-        this.imap.on('alert', this.handleServerMessage.bind(this));
-        this.imap.on('expunge', this.handleServerChange.bind(this));
-        this.imap.on('update', this.handleServerChange.bind(this));
-        this.imap.on('uidvalidity', this.handleServerChange.bind(this));
-
-        this.imap.connect();
-      })
-      .catch((error) => {
-        this.handleConnectionError(error);
-      })
-    }
   }
 
   /**
@@ -79,7 +45,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * and emits a message event for each unread email.
    */
   public getUnreadEmails(): Promise {
-    console.log('geting unread')
     return new Promise((resolve, reject) => {
       this.collectAndEmitUnread()
       .then(() => {
@@ -106,6 +71,40 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    */
   public closeConnection(): void {
     this.imap.end();
+  }
+
+  /**
+   * Connects to the imap server.
+   */
+  private connect(): void {
+    const credentials = this.getCredentials();
+    if (!credentials) {
+      this.emitMessage('unauth');
+    } else {
+      this.xoauthGenerator = new XOauth(credentials);
+      this.xoauthGenerator.getToken()
+      .then((token) => {
+        this.imap = new Imap({
+          xoauth2: token,
+          host: 'imap.gmail.com',
+          port: 993,
+          tls: true
+        });
+
+        this.imap.once('ready', this.handleInitialConnect.bind(this));
+        this.imap.once('error', this.handleConnectionError.bind(this));
+        this.imap.once('end', this.handleConnectionEnd.bind(this));
+        this.imap.on('alert', this.handleServerMessage.bind(this));
+        this.imap.on('expunge', this.handleServerChange.bind(this));
+        this.imap.on('update', this.handleServerChange.bind(this));
+        this.imap.on('uidvalidity', this.handleServerChange.bind(this));
+
+        this.imap.connect();
+      })
+      .catch((error) => {
+        this.handleConnectionError(error);
+      });
+    }
   }
 
   /**
@@ -201,12 +200,9 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
         });
 
         fetchMessages.on('end', () => {
-          this.imap.setFlags(indicesToFetch, ['\\Seen'], (err: Error) => {
-            if (!err) {
-                console.log("marked all as read");
-            } else {
-              console.log('got error')
-                console.log(JSON.stringify(err, null, 2));
+          this.imap.setFlags(indicesToFetch, ['\\Seen'], (error: Error) => {
+            if (error) {
+              this.emitMessage('error', {message: 'Error marking messages as read in the inbox.'});
             }
           });
         });
@@ -219,7 +215,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   }
 
   /**
-   * Checks that the correct credentials are set as environment variables and 
+   * Checks that the correct credentials are set as environment variables and
    * returns them in an object, otherwise
    * emits unauth-error.
    */
@@ -229,14 +225,14 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
         && process.env.IMAP_CLIENT_SECRET
         && process.env.IMAP_ACCESS_TOKEN
         && process.env.IMAP_REFRESH_TOKEN) {
-          let credentials = {};
-          credentials.user = process.env.IMAP_USER;
-          credentials.clientID = process.env.IMAP_CLIENT_ID;
-          credentials.clientSecret = process.env.IMAP_CLIENT_SECRET;
-          credentials.accessToken = process.env.IMAP_ACCESS_TOKEN;
-          credentials.refreshToken = process.env.IMAP_REFRESH_TOKEN;
-          return credentials;
-        }
+      const credentials = {};
+      credentials.user = process.env.IMAP_USER;
+      credentials.clientID = process.env.IMAP_CLIENT_ID;
+      credentials.clientSecret = process.env.IMAP_CLIENT_SECRET;
+      credentials.accessToken = process.env.IMAP_ACCESS_TOKEN;
+      credentials.refreshToken = process.env.IMAP_REFRESH_TOKEN;
+      return credentials;
+    }
   }
 
   /**

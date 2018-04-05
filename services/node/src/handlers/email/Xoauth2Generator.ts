@@ -37,8 +37,8 @@ class XOauth {
           reject(err);
         }
         resolve(token);
+      });
     });
-    })
   }
 }
 
