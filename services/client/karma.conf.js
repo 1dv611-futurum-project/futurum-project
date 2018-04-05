@@ -5,7 +5,7 @@ module.exports = function(config) {
 
     basePath: '',
 
-    frameworks: ['mocha', 'chai'],
+    frameworks: ['es6-shim', 'mocha', 'chai'],
 
     files: [
       'test/index.test.tsx'

@@ -1,10 +1,3 @@
-import { expect } from 'chai';
-import * as mocha from 'mocha';
+import './config/setup';
 
-describe('Something abstract', () => {
-	describe('Something specific', () => {
-		it('Something', () => {
-			expect(1).equal(1);
-		});
-	});
-});
+import './components/header.test';
