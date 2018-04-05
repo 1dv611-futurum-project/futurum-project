@@ -1,7 +1,7 @@
 const headerStyle = {
 	paper: {
 		display: 'inline-block',
-		float: 'left',
+		float: 'left' as 'left',
 		margin: '0 32px 16px 32px',
 		position: 'relative' as 'relative'
 	},
@@ -45,7 +45,7 @@ const menuStyle = {
 	menu: {
 		width: '40%',
 		fontSize: '12px',
-		float: 'right'
+		float: 'right' as 'right'
 	},
 	menuItem: {
 		fontSize: '12px'
