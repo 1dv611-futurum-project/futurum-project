@@ -18,6 +18,7 @@
         "member-ordering": false,
         "object-literal-shorthand": false,
         "no-console": false,
+        "no-shadowed-variable": false,
         "jsx-wrap-multiline": true,
         "jsx-alignment": true,
         "jsx-equals-spacing": [true, "never"],
