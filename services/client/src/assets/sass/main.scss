@@ -1,0 +1,13 @@
+/**
+ * Importing stylesheets
+ */
+
+/* General */
+@import "variables";
+
+/* Containers */
+@import "containers/app";
+
+/* Components */
+@import "components/header";
+@import "components/ticket";

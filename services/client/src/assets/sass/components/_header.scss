@@ -1,0 +1,27 @@
+/**
+ * Header component
+ */
+.header {
+	&__link {
+		text-decoration: none;
+	}
+	
+	&__color {
+		position: absolute;
+		right: 0;
+		width: 10px;
+		height: 48px;
+		
+		&--red {
+			background-color: $red;
+		}
+		
+		&--blue {
+			background-color: $blue;
+		}
+		
+		&--green {
+			background-color: $green;
+		}
+	}
+}
