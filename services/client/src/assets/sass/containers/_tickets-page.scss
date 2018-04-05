@@ -1,0 +1,16 @@
+/**
+ * Tickets page container
+ */
+.tickets {
+	&__header {
+		font-size: 20px;
+		margin: 0 0 20px 10px;
+		font-family: 'Source Sans Pro', sans-serif;
+		font-weight: bold;
+	}
+
+	&__wrapper {
+		display: flex;
+		flex-wrap: wrap;
+	}
+}

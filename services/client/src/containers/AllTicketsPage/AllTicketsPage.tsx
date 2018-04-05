@@ -60,8 +60,11 @@ export class AllTicketsPage extends React.Component<any, any> {
 		const tickets = this.state.tickets.map((ticket: any, i: any) => <Ticket key={i} data={ticket} />);
 
 		return (
-			<div className='tickets__wrapper'>
-				{tickets}
+			<div className='tickets'>
+				<h1 className='tickets__header'>Alla ärenden (20)</h1>
+				<div className='tickets__wrapper'>
+					{tickets}
+				</div>
 			</div>
 		);
 	}
