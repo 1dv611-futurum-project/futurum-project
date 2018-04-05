@@ -14,21 +14,12 @@ describe('<StatusSelect />', () => {
 		wrapper = shallow(<StatusSelect {...props}/>);
 	});
 
-	it('should have a SelectField', () => {
+	it('should have a SelectField with value & onChange', () => {
 		expect(wrapper.find(SelectField)).to.have.length(1);
+		expect(wrapper.find(SelectField).props()).to.include.all.keys('value', 'onChange');
 	});
 
-	it('should have value & onChange-properties for SelectField', () => {
-		expect(wrapper.find(SelectField).props())
-			.to.include.all.keys('value', 'onChange');
-	});
-
-	it('should have style-properties for SelectField', () => {
-		expect(wrapper.find(SelectField).props())
-			.to.include.all.keys('style', 'menuItemStyle', 'iconStyle', 'labelStyle');
-	});
-
-	it('should have 4 MenuItems', () => {
+	it('should have MenuItems', () => {
 		expect(wrapper.find(MenuItem)).to.have.length(4);
 	});
 
