@@ -1,0 +1,46 @@
+/**
+ * Ticket component
+ */
+.ticket {
+	&__color {
+		position: absolute;
+		top: 0;
+		height: 10px;
+		width: 100%;
+		
+		&--red {
+			background-color: $red;
+		}
+		
+		&--blue {
+			background-color: $blue;
+		}
+		
+		&--green {
+			background-color: $green;
+		}
+	}
+	
+	&__id {
+		position: absolute;
+		right: 15px;
+		top: 14px;
+		font-size: 13px;
+	}
+	
+	&__header {
+		max-width: 90%;
+		display: block;
+	}
+	
+	&__information {
+		margin: 0;
+		padding: 0;
+		font-size: 12px;
+		color: $grey;
+		
+		&--bold {
+			font-weight: bold;
+		}
+	}
+}
