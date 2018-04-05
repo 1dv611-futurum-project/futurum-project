@@ -21,7 +21,11 @@ export class TicketPage extends React.Component<any, any> {
 		return (
 			<div className='ticket__wrapper'>
 				Ticket page.
-				<Message data={message}/>
+				<div className='ticket__wrapper__messages'>
+					<Message data={message}/>
+					<Message data={message}/>
+					<Message data={message}/>
+				</div>
 			</div>
 		);
 	}

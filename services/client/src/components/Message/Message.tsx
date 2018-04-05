@@ -5,7 +5,7 @@
 
 import * as React from 'react';
 import { Avatar, Paper } from 'material-ui';
-import { AccountCircle } from 'material-ui-icons';
+import { Person } from 'material-ui-icons';
 
 /**
  * Message Props Interface
@@ -24,7 +24,7 @@ export class Message extends React.Component<IMessage, any> {
 		return (
 			<Paper className='message'>
 				<Avatar className='message__avatar'>
-					<AccountCircle className='message__avatar__icon'/>
+					<Person className='message__avatar__icon'/>
 				</Avatar>
 				<div className='message__content'>
 					<p className='message__content__title'>{from}, <span className='message__content__title--regular'>{date}</span></p>
