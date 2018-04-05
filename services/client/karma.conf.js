@@ -1,4 +1,5 @@
 var webpackConfig = require('./webpack.config.tsx');
+process.env.CHROME_BIN = require('puppeteer').executablePath();
 
 module.exports = function(config) {
   config.set({
@@ -24,17 +25,27 @@ module.exports = function(config) {
 
     webpack: webpackConfig,
 
+    webpackMiddleware: {
+      noInfo: true,
+    },
+
     reporters: ['mocha'],
 
     port: 9876,
 
     colors: true,
 
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_DEBUG,
 
     autoWatch: true,
 
-    browsers: ['PhantomJS'],
+    browsers: ['Chromium_no_sandbox'],
+    customLaunchers: {
+      Chromium_no_sandbox: {
+        base: 'ChromiumHeadless',
+        flags: ['--no-sandbox']
+      }
+    },
 
     singleRun: false,
 
