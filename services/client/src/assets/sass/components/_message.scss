@@ -1,0 +1,38 @@
+/**
+ * Message component
+ */
+.message {
+	background-color: $white;
+	padding: 10px;
+
+	&__avatar {
+		width: 7% !important;
+		height: 7% !important;
+		float: left;
+		margin-left: 10px;
+		margin-top: 5px;
+
+		&__icon {
+			height: 50px;
+			width: 50px;
+		}
+	}
+
+	&__content {
+		margin-left: 11%;
+		font-size: 12px;
+
+		&__title {
+			font-weight: bold;
+			margin-bottom: 0;
+
+			&--regular {
+				font-weight: normal;
+			}
+		}
+
+		&__text {
+			margin-top: 5px;
+		}
+	}
+}
