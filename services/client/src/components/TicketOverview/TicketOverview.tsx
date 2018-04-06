@@ -35,7 +35,7 @@ export class TicketOverview extends React.Component<{}, any> {
 				<div className='ticket-overview__info'>
 					<p className='ticket-overview__info__text'>Ärende skapat av Johan Andersson</p>
 					<p className='ticket-overview__info__text'>Mottaget 6 april 2018</p>
-					<AddButton text='Skriv ett svar' />
+					<AddButton text='Skriv ett svar' onClick={() => {}} />
 				</div>
 				<div className='ticket-overview__actions'>
 					<StatusSelect status='Ej påbörjad' onChange={() => {}} />
