@@ -18,3 +18,4 @@
 * `docker-compose exec containerName sh` - Enter a specific container.
 * `docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)` - KILL ALL
 * `docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker system prune -a -f --volumes` - NUKE ALL
+* `docker rmi $(docker images -q)` - NUKE ALL
