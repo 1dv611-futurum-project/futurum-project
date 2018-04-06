@@ -8,6 +8,7 @@ import { Paper } from 'material-ui';
 import { PlayArrow } from 'material-ui-icons';
 
 import { StatusSelect } from '../StatusSelect/StatusSelect';
+import { AddButton } from '../AddButton/AddButton';
 
 /**
  * TicketOverview class
@@ -31,7 +32,14 @@ export class TicketOverview extends React.Component<{}, any> {
 						Applikationen fungerar inte
 					</h1>
 				</div>
-				<StatusSelect status='Ej påbörjad' onChange={() => {}} />
+				<div className='ticket-overview__info'>
+					<p className='ticket-overview__info__text'>Ärende skapat av Johan Andersson</p>
+					<p className='ticket-overview__info__text'>Mottaget 6 april 2018</p>
+					<AddButton text='Skriv ett svar' />
+				</div>
+				<div className='ticket-overview__actions'>
+					<StatusSelect status='Ej påbörjad' onChange={() => {}} />
+				</div>
 			</Paper>
 		);
 	}

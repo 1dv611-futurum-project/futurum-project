@@ -1,0 +1,14 @@
+/**
+ * Add button component
+ */
+.add-btn {
+	display: flex;
+	align-items: flex-start;
+
+	&__text {
+		display: inline-block;
+		margin-left: 10px;
+		font-size: 14px;
+		font-weight: 600;
+	}
+}
