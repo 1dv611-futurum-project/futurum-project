@@ -1,8 +1,17 @@
 /**
  * Header component
  */
-.clientlist {
+.client-list {
+
+	&__wrapper {
+		overflow: visible;
+	}
+
 	&__table {
+
+		&--body {
+			overflow: visible;
+		}
 
 		&--header {
 			width: 30%;
@@ -14,6 +23,7 @@
 
 		&--icon {
 			width: 17%;
+			overflow: visible !important;
 		}
 
 		&--btn {

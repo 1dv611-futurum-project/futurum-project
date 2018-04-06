@@ -15,6 +15,16 @@ import {
 	IconButton
 	} from 'material-ui';
 
+import { ClientRow } from './ClientRow';
+import { clientListStyle } from '../../variables/Variables';
+
+/**
+ * Ticket Props Interface
+ */
+export interface IClientList {
+	data: any[];
+}
+
 /**
  * ClientList class
  */
@@ -27,33 +37,24 @@ export class ClientList extends React.Component<any, any> {
 	}
 
 	public render() {
-		const otherstyle       = { width: '30%'};
-		const gunnarStyle       = { width: '10%'};
+		const rows = this.props.data.map((client: any, i: any) => <ClientRow key={i} data={client}/>);
 
 		return (
-			<Table onRowSelection={this.handleRowSelection}>
+			<Table
+				onRowSelection={this.handleRowSelection}
+				wrapperStyle={clientListStyle.wrapper}
+				bodyStyle={clientListStyle.body}
+			>
 			<TableHeader displaySelectAll={false} adjustForCheckbox={false}>
 				<TableRow>
-					<TableHeaderColumn className='clientlist__table--header'>Företag</TableHeaderColumn>
-					<TableHeaderColumn className='clientlist__table--header'>Epost</TableHeaderColumn>
-					<TableHeaderColumn className='clientlist__table--header'>Ärenden</TableHeaderColumn>
-					<TableHeaderColumn className='clientlist__table--icon' />
+					<TableHeaderColumn className='client-list__table--header'>Företag</TableHeaderColumn>
+					<TableHeaderColumn className='client-list__table--header'>Epost</TableHeaderColumn>
+					<TableHeaderColumn className='client-list__table--header'>Ärenden</TableHeaderColumn>
+					<TableHeaderColumn className='client-list__table--icon' />
 				</TableRow>
 			</TableHeader>
 			<TableBody displayRowCheckbox={false}>
-				<TableRow selected={this.isSelected(0)}>
-					<TableRowColumn className='clientlist__table--row'>Företaget AB</TableRowColumn>
-					<TableRowColumn className='clientlist__table--row'>foretaget@foretaget.com</TableRowColumn>
-					<TableRowColumn className='clientlist__table--row'>2</TableRowColumn>
-					<TableRowColumn className='clientlist__table--icon'>
-						<IconButton className='clientlist__table--btn'>
-							<ModeEdit />
-						</IconButton>
-						<IconButton className='clientlist__table--btn'>
-							<Delete />
-						</IconButton>
-					</TableRowColumn>
-				</TableRow>
+				{rows}
 			</TableBody>
 			</Table>
 		);
