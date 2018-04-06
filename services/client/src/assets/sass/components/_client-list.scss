@@ -1,0 +1,19 @@
+/**
+ * Header component
+ */
+.clientlist {
+	&__table {
+
+		&--header {
+			width: 30%;
+		}
+
+		&--row {
+			width: 30%;
+		}
+
+		&--icon {
+			width: 10%;
+		}
+	}
+}
