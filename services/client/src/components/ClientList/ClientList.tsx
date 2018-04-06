@@ -4,7 +4,7 @@
  */
 
 import * as React from 'react';
-import { ModeEdit } from 'material-ui-icons';
+import { ModeEdit, Delete } from 'material-ui-icons';
 import {
 	Table,
 	TableBody,
@@ -46,8 +46,11 @@ export class ClientList extends React.Component<any, any> {
 					<TableRowColumn className='clientlist__table--row'>foretaget@foretaget.com</TableRowColumn>
 					<TableRowColumn className='clientlist__table--row'>2</TableRowColumn>
 					<TableRowColumn className='clientlist__table--icon'>
-						<IconButton>
+						<IconButton className='clientlist__table--btn'>
 							<ModeEdit />
+						</IconButton>
+						<IconButton className='clientlist__table--btn'>
+							<Delete />
 						</IconButton>
 					</TableRowColumn>
 				</TableRow>
