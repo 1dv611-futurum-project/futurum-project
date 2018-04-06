@@ -11,9 +11,16 @@ import { StatusSelect } from '../StatusSelect/StatusSelect';
 import { AddButton } from '../AddButton/AddButton';
 
 /**
+ * TicketOverview Props Interface
+ */
+export interface ITicketOverview {
+	handleClick(): any;
+}
+
+/**
  * TicketOverview class
  */
-export class TicketOverview extends React.Component<{}, any> {
+export class TicketOverview extends React.Component<ITicketOverview, any> {
 
 	constructor(props: any) {
 		super(props);
@@ -21,6 +28,7 @@ export class TicketOverview extends React.Component<{}, any> {
 
 	public render() {
 		// const { title, created, status, assigned, id, author } = this.props.data;
+		const { handleClick } = this.props;
 
 		return (
 			<Paper className='ticket-overview'>
@@ -35,7 +43,7 @@ export class TicketOverview extends React.Component<{}, any> {
 				<div className='ticket-overview__info'>
 					<p className='ticket-overview__info__text'>Ärende skapat av Johan Andersson</p>
 					<p className='ticket-overview__info__text'>Mottaget 6 april 2018</p>
-					<AddButton text='Skriv ett svar' onClick={() => {}} />
+					<AddButton text='Skriv ett svar' onClick={handleClick} />
 				</div>
 				<div className='ticket-overview__actions'>
 					<StatusSelect status='Ej påbörjad' onChange={() => {}} />

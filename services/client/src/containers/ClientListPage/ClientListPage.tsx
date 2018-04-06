@@ -38,8 +38,13 @@ export class ClientListPage extends React.Component<any, any> {
 
 	public render() {
 		return (
-			<div className='client-list__wrapper'>
-				<AddButton text={'Lägg till kund'} onClick={this.addClient}/>
+			<div className='client-list-page__wrapper'>
+				<div className='client-list-page__header'>
+					<h1 className='client-list-page__header__title'>Kundlista</h1>
+					<div className='client-list-page__header__btn'>
+						<AddButton text={'Lägg till kund'} onClick={this.addClient}/>
+					</div>
+				</div>
 				<ClientList data={this.state.clients}/>
 			</div>
 		);

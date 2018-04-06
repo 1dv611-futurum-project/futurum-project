@@ -1,0 +1,39 @@
+/**
+ * Message input component
+ */
+.message-input {
+	margin-top: 25px;
+	padding: 15px 20px;
+	@include arrow(lighten($grey-light, 30%), 15px, 'top');
+
+	&--hidden {
+		display: none;
+	}
+
+	&__textarea {
+		width: 100%;
+		min-height: 80px;
+		margin-top: 2px;
+		border: 1px solid $grey-light;
+		border-radius: 3px;
+		padding: 5px;
+	}
+
+	&__label {
+		font-size: 10px;
+		font-weight: bold;
+		text-transform: uppercase;
+	}
+
+	&__footer {
+		text-align: right;
+
+		&__btn {
+			margin-top: 10px;
+
+			span {
+				font-size: 12px !important;
+			}
+		}
+	}
+}

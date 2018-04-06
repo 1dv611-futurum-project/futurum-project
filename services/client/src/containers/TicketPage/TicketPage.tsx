@@ -6,11 +6,22 @@
 import * as React from 'react';
 import { TicketOverview } from '../../components/TicketOverview/TicketOverview';
 import { Message } from '../../components/Message/Message';
+import { MessageInput } from '../../components/MessageInput/MessageInput';
 
 /**
  * TicketPage class
  */
 export class TicketPage extends React.Component<any, any> {
+
+	constructor(props: any) {
+		super(props);
+
+		this.state = {
+			showNewMessage: false
+		};
+
+		this.handleNewMessageClick = this.handleNewMessageClick.bind(this);
+	}
 
 	public render() {
 		const message = {
@@ -21,13 +32,32 @@ export class TicketPage extends React.Component<any, any> {
 
 		return (
 			<div className='ticket__wrapper'>
-				<TicketOverview />
+				<TicketOverview handleClick={this.handleNewMessageClick} />
 				<div className='ticket__wrapper__messages'>
+					<MessageInput onClick={this.handleSend} open={this.state.showNewMessage} />
 					<Message data={message}/>
 					<Message data={message}/>
 					<Message data={message}/>
 				</div>
 			</div>
 		);
+	}
+
+	/**
+	 * Handles click on New message button
+	 * @private
+	 */
+	private handleNewMessageClick() {
+		this.setState({ showNewMessage: true });
+	}
+
+	/**
+	 * Handles a new message being sent
+	 * @private
+	 */
+	private handleSend(message: string) {
+		console.log(message);
+
+		// TODO! Handle message here.
 	}
 }

@@ -24,7 +24,7 @@ export class AddButton extends React.Component<IAddButton, any> {
 
 		return (
 			<div className='add-btn'>
-				<FloatingActionButton onClick={onClick()} color='primary' aria-label='add' mini={true} className='add-btn__icon' >
+				<FloatingActionButton onClick={onClick} color='primary' aria-label='add' mini={true} className='add-btn__icon' >
 					<Add />
 				</FloatingActionButton>
 				<p className='add-btn__text'>{text}</p>
