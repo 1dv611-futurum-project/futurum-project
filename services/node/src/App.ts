@@ -6,9 +6,12 @@
 import * as express from 'express';
 import { Application, Router, Request, Response, NextFunction, Error } from 'express';
 import * as bodyParser from 'body-parser';
-import middleware from './config/middleware'
+import * as cookieParser from 'cookie-parser';
+import * as jwt from 'express-jwt'; 
+import middleware from './config/middleware';
 import passportStrategies from "./config/passport";
 import mainRouter from './routes/mainRouter';
+import authRouter from './routes/authRouter';
 import IMAPHandler from './handlers/email/IMAPHandler';
 
 /**
@@ -17,12 +20,12 @@ import IMAPHandler from './handlers/email/IMAPHandler';
 class App {
   public express: Application;
   private mainRouter: Router;
-  static PUBLIC_DIR = '/../../client/public';
-  static RESOURCE_DIR = '/../../client/node_modules/';
+  private authRouter: Router;
 
   constructor() {
     this.express = express();
     this.mainRouter = mainRouter;
+    this.authRouter = authRouter;
     this.middleware();
     this.mountRoutes();
     this.handleImap();
@@ -31,13 +34,30 @@ class App {
   private middleware(): void {
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
-    this.express.use(this.errorHandler);
+    this.express.use(cookieParser());
     passportStrategies.make();
-    this.express.use(middleware.updateIMAPConnection);
+    this.express.use(jwt({ 
+      secret: 'secret',
+      getToken: function fromCookie (req) {
+        if (req.cookies.jwt) {
+            return req.cookies.jwt;
+        }
+        return null;
+      }
+    })
+    .unless({
+      path: ['/node/auth/google', '/node/auth/google/callback', '/node/auth/google/callback/redirect', '/auth/google', '/auth/google/callback', '/auth/google/callback/redirect']
+    }));
+    this.express.use(middleware.checkConnection());
+    this.express.use(middleware.updateIMAPConnection());
+    this.express.use(this.errorHandler); 
   }
 
   private mountRoutes(): void {
     this.express.use('/', this.mainRouter);
+    this.express.use('/node', this.mainRouter);
+    this.express.use('/node/auth', this.authRouter);
+    this.express.use('/auth', this.authRouter);
     this.express.all('*', this.emptyHandler);
   }
 
@@ -85,7 +105,11 @@ class App {
   }
 
   // 500
-  private errorHandler(err: Error, req: Request, res: Response, next: NextFunction): void {
+  private errorHandler(err, req: Request, res: Response, next: NextFunction): void {
+    if (err.name === 'UnauthorizedError') {
+      return res.redirect('/node/auth/google');
+    } 
+
     res.status(500).send({
       success: false,
       message: err.stack

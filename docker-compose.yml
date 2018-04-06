@@ -42,8 +42,8 @@ services:
             - /app/node_modules/
         # healthcheck:
         #     test: curl -f http://localhost:3000/healthcheck
-        # ports:
-        #     - '3000:3000'
+        ports:
+            - '3000:3000'
 
     # Database (MongoDB)
     futurum-db:
