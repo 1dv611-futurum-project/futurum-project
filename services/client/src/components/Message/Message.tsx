@@ -19,7 +19,7 @@ export interface IMessage {
  */
 export class Message extends React.Component<IMessage, any> {
 	public render() {
-		const { message, from, date } = this.props.data;
+		const { message, author, date } = this.props.data;
 
 		return (
 			<Paper className='message'>
@@ -27,7 +27,10 @@ export class Message extends React.Component<IMessage, any> {
 					<Person className='message__avatar__icon'/>
 				</Avatar>
 				<div className='message__content'>
-					<p className='message__content__title'>{from}, <span className='message__content__title--regular'>{date}</span></p>
+					<p className='message__content__title'>
+						{author},
+						<span className='message__content__title--regular'> {date}</span>
+					</p>
 					<p className='message__content__text'>{message}</p>
 				</div>
 			</Paper>

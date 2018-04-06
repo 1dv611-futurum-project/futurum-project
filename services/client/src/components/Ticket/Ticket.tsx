@@ -49,7 +49,7 @@ export class Ticket extends React.Component<ITicket, any> {
 					/>
 				</Link>
 				<CardText style={ticketStyle.text}>
-					<p className='ticket__information'>Mottaget: {ticket.received}</p>
+					<p className='ticket__information'>Mottaget: {ticket.created}</p>
 					<p className='ticket__information'>Tilldelat:
 						<span className='ticket__information--bold'> {ticket.assigned ? ticket.assigned : '-'}</span>
 					</p>

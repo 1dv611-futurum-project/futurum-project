@@ -36,15 +36,15 @@ export class AllTicketsPage extends React.Component<any, any> {
 		const statuses = ['Ej påbörjad', 'Påbörjad', 'Genomförd'];
 		const author = 'Johan Andersson';
 		const assigned = 'Anton Myrberg';
-		const received = '2 april 2018';
+		const created = '2 april 2018';
 
 		titles.forEach((title, i) => {
 			this.tickets.push({
 				color: colors[this.index],
 				title: titles[this.index],
-				author: author,
-				assigned: assigned,
-				received: received,
+				author,
+				assigned,
+				created,
 				status: statuses[this.index],
 				id: i
 			});
