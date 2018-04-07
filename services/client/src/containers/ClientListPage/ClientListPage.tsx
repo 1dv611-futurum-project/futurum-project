@@ -45,12 +45,20 @@ export class ClientListPage extends React.Component<any, any> {
 						<AddButton text={'Lägg till kund'} onClick={this.addClient}/>
 					</div>
 				</div>
-				{/*<ClientList data={this.state.clients}/>*/}
+				{/*<ClientList data={this.state.clients} onEdit={this.editClient} onDelete={this.deleteClient}/>*/}
 			</div>
 		);
 	}
 
 	private addClient() {
 		console.log('La till användare');
+	}
+
+	private editClient(client: any) {
+		console.log('Redigera ' + client);
+	}
+
+	private deleteClient(client: any) {
+		console.log('Ta bort ' + client);
 	}
 }

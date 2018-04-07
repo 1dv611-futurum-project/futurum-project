@@ -14,7 +14,7 @@ describe('<Ticket />', () => {
 		id: '0',
 		title: 'title',
 		author: 'author',
-		received: 'received',
+		created: 'created',
 		assigned: 'assigned',
 		status: 'status'
 	}};
@@ -52,9 +52,9 @@ describe('<Ticket />', () => {
 		expect(wrapper.find('.ticket__id').text()).to.equal('#' + props.data.id);
 	});
 
-	it('should have a ticket received', () => {
+	it('should have a ticket created', () => {
 		expect(wrapper.find('.ticket__information').at(0).text())
-			.to.equal('Mottaget: ' + props.data.received);
+			.to.equal('Mottaget: ' + props.data.created);
 	});
 
 	it('should have a ticket assigned', () => {
