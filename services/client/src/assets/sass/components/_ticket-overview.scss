@@ -62,10 +62,27 @@
 	}
 
 	&__actions {
-		width: 45%;
+		width: 30%;
 		position: absolute;
 		right: 0;
 		top: 60px;
+		right: 30px;
 
+		&--status {
+			margin-left: 22px;
+		}
+
+		&--assigned {
+			clear: both;
+		}
+
+		&__label {
+			display: inline-block;
+			font-size: 14px;
+			margin-top: 17px;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-transform: uppercase;
+		}
 	}
 }
