@@ -4,7 +4,7 @@
  */
 
 import * as React from 'react';
-import { RaisedButton, Paper } from 'material-ui';
+import { Button, Paper } from 'material-ui';
 import TextArea from 'react-textarea-autosize';
 
 /**
@@ -45,7 +45,9 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 					onChange={this.handleChange}
 				/>
 				<div className='message-input__footer'>
-					<RaisedButton label='Skicka' primary={true} className='message-input__footer__btn' onClick={this.handleClick} />
+					<Button variant='raised' size='small' className='message-input__footer__btn' onClick={this.handleClick}>
+						Skicka
+					</Button>
 				</div>
 			</Paper>
 		);

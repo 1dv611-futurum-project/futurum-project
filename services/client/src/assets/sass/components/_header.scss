@@ -2,24 +2,36 @@
  * Header component
  */
 .header {
+	display: inline-block;
+	float: left;
+	margin: 0 32px 16px 32px;
+	position: relative;
+	width: 220px;
+
 	&__link {
 		text-decoration: none;
+		position: relative;
+
+		&__icon {
+			position: absolute;
+			right: 15px;
+		}
 	}
-	
+
 	&__color {
 		position: absolute;
 		right: 0;
 		width: 10px;
 		height: 48px;
-		
+
 		&--red {
 			background-color: $red;
 		}
-		
+
 		&--blue {
 			background-color: $blue;
 		}
-		
+
 		&--green {
 			background-color: $green;
 		}

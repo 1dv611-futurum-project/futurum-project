@@ -5,7 +5,7 @@
 
 import * as React from 'react';
 import { AddButton } from '../../components/AddButton/AddButton';
-import { ClientList } from '../../components/ClientList/ClientList';
+// import { ClientList } from '../../components/ClientList/ClientList';
 
 /**
  * ClientListPage class
@@ -45,7 +45,7 @@ export class ClientListPage extends React.Component<any, any> {
 						<AddButton text={'Lägg till kund'} onClick={this.addClient}/>
 					</div>
 				</div>
-				<ClientList data={this.state.clients}/>
+				{/*<ClientList data={this.state.clients}/>*/}
 			</div>
 		);
 	}

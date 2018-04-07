@@ -4,9 +4,7 @@
  */
 
 import * as React from 'react';
-import { SelectField, MenuItem } from 'material-ui';
-
-import { menuStyle } from '../../variables/Variables';
+import { Select, MenuItem } from 'material-ui';
 
 /**
  * StatusSelect Props Interface
@@ -32,19 +30,16 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 
 	public render() {
 		return (
-			<SelectField
+			<Select
 				value={this.state.selected}
 				onChange={this.handleChange}
-				style={menuStyle.menu}
-				menuItemStyle={menuStyle.menuItem}
-				iconStyle={menuStyle.icon}
-				labelStyle={menuStyle.label}
+				classes={{root: 'status-select', icon: 'status-select__icon'}}
 			>
-				<MenuItem value='Ej påbörjad' primaryText='Ej påbörjad' />
-				<MenuItem value='Påbörjad' primaryText='Påbörjad' />
-				<MenuItem value='Genomförd' primaryText='Genomförd' />
-				<MenuItem value='Stängd' primaryText='Stängd' />
-			</SelectField>
+				<MenuItem value='Ej påbörjad' className='status-select__item'>Ej påbörjad</MenuItem>
+				<MenuItem value='Påbörjad' className='status-select__item'>Påbörjad</MenuItem>
+				<MenuItem value='Genomförd' className='status-select__item'>Genomförd</MenuItem>
+				<MenuItem value='Stängd' className='status-select__item'>Stängd</MenuItem>
+			</Select>
 		);
 	}
 
@@ -52,8 +47,8 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 	 * Handles change when a new status is selected
 	 * @private
 	 */
-	private handleChange(event: any, index: number, value: string): void {
-		this.setState({ selected: value });
-		this.props.onChange(value);
+	private handleChange(event: any): void {
+		this.setState({ selected: event.target.value });
+		this.props.onChange(event.target.value);
 	}
 }

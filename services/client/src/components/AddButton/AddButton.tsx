@@ -4,7 +4,7 @@
  */
 
 import * as React from 'react';
-import { FloatingActionButton } from 'material-ui';
+import { Button } from 'material-ui';
 import { Add } from 'material-ui-icons';
 
 /**
@@ -24,9 +24,9 @@ export class AddButton extends React.Component<IAddButton, any> {
 
 		return (
 			<div className='add-btn'>
-				<FloatingActionButton onClick={onClick} color='primary' aria-label='add' mini={true} className='add-btn__icon' >
+				<Button variant='fab' color='primary' aria-label='add' mini={true} onClick={onClick} className='add-btn__icon'>
 					<Add />
-				</FloatingActionButton>
+				</Button>
 				<p className='add-btn__text'>{text}</p>
 			</div>
 		);
