@@ -20,6 +20,8 @@ import {
  */
 export interface IClientRow {
 	data: any;
+	onEdit: any;
+	onDelete: any;
 }
 
 /**
@@ -35,10 +37,10 @@ export class ClientRow extends React.Component<IClientRow, any> {
 				<TableRowColumn className='client-list__table--row'>{client.email}</TableRowColumn>
 				<TableRowColumn className='client-list__table--row'>{client.errands}</TableRowColumn>
 				<TableRowColumn className='client-list__table--icon'>
-					<IconButton className='client-list__table--btn' tooltip='Redigera'>
+					<IconButton className='client-list__table--btn' tooltip='Redigera' onClick={this.props.onEdit}>
 						<ModeEdit />
 					</IconButton>
-					<IconButton className='client-list__table--btn' tooltip='Ta bort'>
+					<IconButton className='client-list__table--btn' tooltip='Ta bort' onClick={this.props.onDelete}>
 						<Delete />
 					</IconButton>
 				</TableRowColumn>

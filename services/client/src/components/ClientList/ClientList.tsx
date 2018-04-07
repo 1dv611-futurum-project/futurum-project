@@ -23,25 +23,25 @@ import { clientListStyle } from '../../variables/Variables';
  */
 export interface IClientList {
 	data: any[];
+	onEdit: any;
+	onDelete: any;
 }
 
 /**
  * ClientList class
  */
-export class ClientList extends React.Component<any, any> {
-	constructor(props: any) {
-		super(props);
-		this.state = {
-			selected: [1],
-		};
-	}
-
+export class ClientList extends React.Component<IClientList, any> {
 	public render() {
-		const rows = this.props.data.map((client: any, i: any) => <ClientRow key={i} data={client}/>);
+		const rows = this.props.data.map((client: any, i: any) =>
+			<ClientRow 
+				key={i} 
+				data={client} 
+				onEdit={() => this.props.onEdit(client.name)} 
+				onDelete={() => this.props.onDelete(client.name)}
+			/>);
 
 		return (
 			<Table
-				onRowSelection={this.handleRowSelection}
 				wrapperStyle={clientListStyle.wrapper}
 				bodyStyle={clientListStyle.body}
 			>
@@ -59,15 +59,4 @@ export class ClientList extends React.Component<any, any> {
 			</Table>
 		);
 	}
-
-	private isSelected = (index: number) => {
-		return this.state.selected.indexOf(index) !== -1;
-	}
-
-	private handleRowSelection = (selectedRows: any) => {
-		this.setState({
-			selected: selectedRows,
-		});
-	}
-
 }
