@@ -17,13 +17,12 @@
 		}
 
 		&--icon {
-			width: 17%;
-			overflow: visible !important;
+			padding: 0px !important;
 		}
 
-		&--btn {
-			width: 0px !important;
-			padding-left: 20px !important;
+		&--icon button {
+			width: 28px !important;
+			height: 28px !important;
 		}
 	}
 }

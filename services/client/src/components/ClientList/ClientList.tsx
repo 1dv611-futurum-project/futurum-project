@@ -5,18 +5,7 @@
 
 import * as React from 'react';
 import { ModeEdit, Delete } from 'material-ui-icons';
-import {
-	Table,
-	TableBody,
-	TableHeader,
-	TableHeaderColumn,
-	TableRow,
-	TableRowColumn,
-	IconButton
-	} from 'material-ui';
-
-import { ClientRow } from './ClientRow';
-import { clientListStyle } from '../../variables/Variables';
+import { Table, TableBody, TableCell, TableHead, TableRow, IconButton, Tooltip } from 'material-ui';
 
 /**
  * Ticket Props Interface
@@ -32,29 +21,42 @@ export interface IClientList {
  */
 export class ClientList extends React.Component<IClientList, any> {
 	public render() {
-		const rows = this.props.data.map((client: any, i: any) =>
-			<ClientRow 
-				key={i} 
-				data={client} 
-				onEdit={() => this.props.onEdit(client.name)} 
-				onDelete={() => this.props.onDelete(client.name)}
-			/>);
-
 		return (
-			<Table
-				wrapperStyle={clientListStyle.wrapper}
-				bodyStyle={clientListStyle.body}
-			>
-			<TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+			<Table className='client-list__table'>
+			<TableHead>
 				<TableRow>
-					<TableHeaderColumn className='client-list__table--header'>Företag</TableHeaderColumn>
-					<TableHeaderColumn className='client-list__table--header'>Epost</TableHeaderColumn>
-					<TableHeaderColumn className='client-list__table--header'>Ärenden</TableHeaderColumn>
-					<TableHeaderColumn className='client-list__table--icon' />
+					<TableCell className='client-list__table--header'>Företag</TableCell>
+					<TableCell className='client-list__table--header'>Epost</TableCell>
+					<TableCell className='client-list__table--header'>Ärenden</TableCell>
+					<TableCell className='client-list__table--icon' />
 				</TableRow>
-			</TableHeader>
-			<TableBody displayRowCheckbox={false}>
-				{rows}
+			</TableHead>
+			<TableBody>
+				{this.props.data.map((client: any, i: any) => {
+            	return (
+              	<TableRow key={i}>
+                	<TableCell>{client.name}</TableCell>
+                	<TableCell>{client.email}</TableCell>
+                	<TableCell>{client.errands}</TableCell>
+					<TableCell className='client-list__table--icon'>
+						<Tooltip title='Redigera'>
+						<IconButton 
+							className='client-list__table--btn' 
+							onClick={() => this.props.onEdit(client.name)}>
+							<ModeEdit />
+						</IconButton>
+						</Tooltip>
+						<Tooltip title='Ta bort'>
+						<IconButton 
+							className='client-list__table--btn' 
+							onClick={() => this.props.onDelete(client.name)}>
+							<Delete />
+						</IconButton>
+						</Tooltip>
+					</TableCell>
+              	</TableRow>
+            		);
+				})}
 			</TableBody>
 			</Table>
 		);
