@@ -43,7 +43,7 @@ const ticketStyle = {
 
 const menuStyle = {
 	menu: {
-		width: '40%',
+		width: '110px',
 		fontSize: '12px',
 		float: 'right' as 'right'
 	},

@@ -17,10 +17,12 @@ export class TicketPage extends React.Component<any, any> {
 		super(props);
 
 		this.state = {
-			showNewMessage: false
+			showNewMessage: false,
+			status: 'Påbörjad'
 		};
 
 		this.handleNewMessageClick = this.handleNewMessageClick.bind(this);
+		this.handleStatusChange = this.handleStatusChange.bind(this);
 	}
 
 	public render() {
@@ -32,7 +34,11 @@ export class TicketPage extends React.Component<any, any> {
 
 		return (
 			<div className='ticket__wrapper'>
-				<TicketOverview handleClick={this.handleNewMessageClick} />
+				<TicketOverview
+					status={this.state.status}
+					handleClick={this.handleNewMessageClick}
+					handleStatusChange={this.handleStatusChange}
+				/>
 				<div className='ticket__wrapper__messages'>
 					<MessageInput onClick={this.handleSend} open={this.state.showNewMessage} />
 					<Message data={message}/>
@@ -54,10 +60,20 @@ export class TicketPage extends React.Component<any, any> {
 	/**
 	 * Handles a new message being sent
 	 * @private
+	 * @param {String} message - The written message
 	 */
 	private handleSend(message: string) {
 		console.log(message);
 
 		// TODO! Handle message here.
+	}
+
+	/**
+	 * Handles status change of ticket
+	 * @private
+	 * @param {String} status - The new status
+	 */
+	private handleStatusChange(status: string) {
+		this.setState({ status });
 	}
 }

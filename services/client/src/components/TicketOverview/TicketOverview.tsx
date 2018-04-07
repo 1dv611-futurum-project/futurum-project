@@ -15,6 +15,8 @@ import { AddButton } from '../AddButton/AddButton';
  */
 export interface ITicketOverview {
 	handleClick(): any;
+	handleStatusChange(status: string): any;
+	status: string;
 }
 
 /**
@@ -28,11 +30,13 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 
 	public render() {
 		// const { title, created, status, assigned, id, author } = this.props.data;
-		const { handleClick } = this.props;
+		const { handleClick, handleStatusChange, status } = this.props;
+		const color = this.setStatusColor(status);
+		const colorClasses = `ticket-overview__color ticket-overview__color--${color}`;
 
 		return (
 			<Paper className='ticket-overview'>
-				<span className='ticket-overview__color ticket-overview__color--blue' />
+				<span className={colorClasses} />
 				<div className='ticket-overview__header'>
 					<PlayArrow className='ticket-overview__header__icon'/>
 					<h1 className='ticket-overview__header__title'>
@@ -46,9 +50,33 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 					<AddButton text='Skriv ett svar' onClick={handleClick} />
 				</div>
 				<div className='ticket-overview__actions'>
-					<StatusSelect status='Ej påbörjad' onChange={() => {}} />
+					<div className='ticket-overview__actions--status'>
+						<p className='ticket-overview__actions__label'>Status:</p>
+						<StatusSelect status={status} onChange={handleStatusChange} />
+					</div>
+					<div className='ticket-overview__actions--assigned'>
+						<p className='ticket-overview__actions__label'>Tilldelad:</p>
+						<StatusSelect status={status} onChange={handleStatusChange} />
+					</div>
 				</div>
 			</Paper>
 		);
+	}
+
+	/**
+	 * Sets the correct status color
+	 * @private
+	 * @param {String} status - The new status
+	 */
+	private setStatusColor(status: string) {
+		switch (status) {
+			case 'Ej påbörjad':
+				return 'red';
+			case 'Påbörjad':
+				return 'blue';
+			case 'Genomförd':
+			case 'Stängd':
+				return 'green';
+		}
 	}
 }
