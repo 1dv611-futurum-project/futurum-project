@@ -19,3 +19,4 @@
 * `docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)` - KILL ALL
 * `docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker system prune -a -f --volumes` - NUKE ALL
 * `docker rmi $(docker images -q)` - NUKE ALL
+* `docker inspect <container ID>` - Inspect a container
