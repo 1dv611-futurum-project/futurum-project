@@ -30,6 +30,10 @@ module.exports = function(config) {
     },
 
     reporters: ['mocha'],
+    
+    mochaReporter: {
+      showDiff: true
+    },
 
     port: 9876,
 
