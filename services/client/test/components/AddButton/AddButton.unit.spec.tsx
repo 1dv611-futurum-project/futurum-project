@@ -8,10 +8,11 @@ import { AddButton } from '../../../src/components/AddButton/AddButton';
 
 describe('<AddButton />', () => {
 	let wrapper: any;
-	let count = 0;
+	let count: number;
 	const props = { text: 'test', onClick: () => { count++ }};
 
 	before(() => {
+		count = 0;
 		wrapper = shallow(<AddButton {...props}/>);
 	});
 
@@ -19,7 +20,7 @@ describe('<AddButton />', () => {
 		expect(wrapper.find('.add-btn__text').text()).to.equal(props.text);
 	});
 
-	it('should have an "OnClick"-function', () => {
+	it('should have an add-button with a function from props', () => {
 		let expectedCount = 1;
 
 		wrapper.find(Button).simulate('click');
