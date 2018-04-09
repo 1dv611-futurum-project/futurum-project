@@ -1,6 +1,6 @@
 import './config/setup';
 
-import './components/Header/header.test';
-import './components/AddButton/addButton.test';
-import './components/StatusSelect/statusSelect.test';
-import './components/Ticket/ticket.test';
+import './components/Header/Header.unit.spec';
+import './components/AddButton/AddButton.unit.spec';
+import './components/StatusSelect/StatusSelect.unit.spec';
+import './components/Ticket/Ticket.unit.spec';
