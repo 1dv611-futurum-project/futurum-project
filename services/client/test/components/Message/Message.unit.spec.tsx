@@ -18,7 +18,7 @@ describe('<Message />', () => {
 		wrapper = shallow(<Message {...props}/>);
 	});
 
-	it('should have a message author and date', () => {
+	it('should have an author and a date', () => {
 		let expected = props.data.author + ', ' + props.data.date
 		expect(wrapper.find('.message__content__title').text()).to.equal(expected);
 	});
