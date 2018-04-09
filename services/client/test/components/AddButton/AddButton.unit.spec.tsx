@@ -21,9 +21,9 @@ describe('<AddButton />', () => {
 	});
 
 	it('should have an add-button with a function from props', () => {
-		let expectedCount = 1;
+		let expected = 1;
 
 		wrapper.find(Button).simulate('click');
-		expect(count).to.equal(expectedCount);
+		expect(count).to.equal(expected);
 	});
 });
