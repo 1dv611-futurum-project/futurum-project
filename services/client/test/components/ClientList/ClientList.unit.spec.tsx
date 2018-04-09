@@ -34,14 +34,14 @@ describe('<ClientList />', () => {
 		expect(tableRow.find(TableCell).at(2).props().children).to.equal(props.data[0].errands);
 	});
 
-	it('should have an edit-button with a function from props', () => {
+	it('should get client name from edit-button', () => {
 		let expected = props.data[0].name;
 
 		tableRow.find(IconButton).at(0).simulate('click');
 		expect(clientName).to.equal(expected);
 	});
 
-	it('should have a delete-button with a function from props', () => {
+	it('should get client name from delete-button', () => {
 		let expected = props.data[0].name;
 
 		tableRow.find(IconButton).at(1).simulate('click');

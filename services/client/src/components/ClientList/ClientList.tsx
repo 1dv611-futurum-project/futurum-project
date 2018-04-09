@@ -21,6 +21,8 @@ export interface IClientList {
  */
 export class ClientList extends React.Component<IClientList, any> {
 	public render() {
+		const { onEdit, onDelete} = this.props;
+
 		return (
 			<Table className='client-list__table'>
 			<TableHead>
@@ -42,14 +44,14 @@ export class ClientList extends React.Component<IClientList, any> {
 						<Tooltip title='Redigera'>
 						<IconButton 
 							className='client-list__table--btn' 
-							onClick={() => this.props.onEdit(client.name)}>
+							onClick={() => onEdit(client.name)}>
 							<ModeEdit />
 						</IconButton>
 						</Tooltip>
 						<Tooltip title='Ta bort'>
 						<IconButton 
 							className='client-list__table--btn' 
-							onClick={() => this.props.onDelete(client.name)}>
+							onClick={() => onDelete(client.name)}>
 							<Delete />
 						</IconButton>
 						</Tooltip>
