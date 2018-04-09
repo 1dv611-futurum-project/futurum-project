@@ -5,7 +5,7 @@ import { expect } from 'chai';
 
 import { Link } from 'react-router';
 import { Paper, Menu, MenuItem, Divider } from 'material-ui';
-import { Header } from '../../src/components/Header/Header';
+import { Header } from '../../../src/components/Header/Header';
 
 describe('<Header />', () => {
 	let wrapper: any;

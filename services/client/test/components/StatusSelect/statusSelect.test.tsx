@@ -4,7 +4,7 @@ import { mount, shallow } from 'enzyme';
 import { expect } from 'chai';
 
 import { MenuItem, Select } from 'material-ui';
-import { StatusSelect } from '../../src/components/StatusSelect/StatusSelect';
+import { StatusSelect } from '../../../src/components/StatusSelect/StatusSelect';
 
 describe('<StatusSelect />', () => {
 	let wrapper: any;

@@ -5,8 +5,8 @@ import { expect } from 'chai';
 
 import { Link } from 'react-router';
 import { Card, CardHeader, CardActions } from 'material-ui';
-import { Ticket } from '../../src/components/Ticket/Ticket';
-import { StatusSelect } from '../../src/components/StatusSelect/StatusSelect';
+import { Ticket } from '../../../src/components/Ticket/Ticket';
+import { StatusSelect } from '../../../src/components/StatusSelect/StatusSelect';
 
 describe('<Ticket />', () => {
 	let wrapper: any;
