@@ -26,13 +26,19 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 
 	constructor(props: any) {
 		super(props);
+		this.state = {
+			color: ''
+		}
+	}
+
+	componentDidMount() {
+		this.setStatusColor(this.props.status);
 	}
 
 	public render() {
 		// const { title, created, status, assigned, id, author } = this.props.data;
 		const { handleClick, handleStatusChange, status } = this.props;
-		const color = this.setStatusColor(status);
-		const colorClasses = `ticket-overview__color ticket-overview__color--${color}`;
+		const colorClasses = `ticket-overview__color ticket-overview__color--${this.state.color}`;
 
 		return (
 			<Paper className='ticket-overview'>
@@ -71,12 +77,15 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	private setStatusColor(status: string) {
 		switch (status) {
 			case 'Ej påbörjad':
-				return 'red';
+				this.setState({ color: 'red' });
+				break;
 			case 'Påbörjad':
-				return 'blue';
+				this.setState({ color: 'blue' });
+				break;
 			case 'Genomförd':
 			case 'Stängd':
-				return 'green';
+				this.setState({ color: 'green' });
+				break;
 		}
 	}
 }
