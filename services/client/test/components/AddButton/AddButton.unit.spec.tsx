@@ -20,7 +20,7 @@ describe('<AddButton />', () => {
 		expect(wrapper.find('.add-btn__text').text()).to.equal(props.text);
 	});
 
-	it('should have an add-button with a function from props', () => {
+	it('should execute function on button click', () => {
 		let expected = 1;
 
 		wrapper.find(Button).simulate('click');
