@@ -2,12 +2,14 @@
  * Mongoose Schema Customer Model.
  */
 
-import { Document, Schema, Model, model} from "mongoose";
-import { ICustomer } from "./interfaces/ICustomer";
+import { Document, Schema, Model, model} from 'mongoose';
+import { ICustomer } from './interfaces/ICustomer';
+
+export interface ICustomerModel extends ICustomer, Document {}
 
 const CustomerSchema: Schema = new Schema({
-  email: String,
-  name: String
+  email: {type: String, required: true},
+  name: {type: String, required: true}
 });
 
-export default model("Customer", CustomerSchema);
+export default model<ICustomerModel>('Customer', CustomerSchema);
