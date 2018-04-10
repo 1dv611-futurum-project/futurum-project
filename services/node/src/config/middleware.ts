@@ -12,36 +12,46 @@ class Middleware {
   private static IMAPaccessToken: string;
   private static IMAPrefreshToken: string;
   private static latestIMAPUpdateSecondsSinceEpoch: number;
-  private static authPaths  = ['/node/auth/google', '/node/auth/google/callback', '/node/auth/google/callback/redirect', '/auth/google', '/auth/google/callback', '/auth/google/callback/redirect', '/node/connection', '/connection']
+  private static authPaths  = [
+    '/node/auth/google',
+    '/node/auth/google/callback',
+    '/node/auth/google/callback/redirect',
+    '/auth/google',
+    '/auth/google/callback',
+    '/auth/google/callback/redirect',
+    '/node/connection',
+    '/connection'
+  ];
 
 /**
  * Checks that the server has been authorized to make requests against the email
  */
-public checkConnection(): Function {
-  return function (req: Request, res: Response, next: NextFunction): void {
-    let connectionStatus = process.env.IMAP_ACCESS_TOKEN && process.env.IMAP_REFRESH_TOKEN;
+  public checkConnection(): ((req: Request, res: Response, next: NextFunction) => void) {
+    return (req: Request, res: Response, next: NextFunction): void => {
+      const connectionStatus = process.env.IMAP_ACCESS_TOKEN && process.env.IMAP_REFRESH_TOKEN;
 
-    if (Middleware.authPaths.indexOf(req.path) > -1) {
-      const status = connectionStatus ? 'up' : 'down';
-      res.header('connection-status', status);
-      return next();
-    }
+      if (Middleware.authPaths.indexOf(req.path) > -1) {
+        const status = connectionStatus ? 'up' : 'down';
+        res.header('connection-status', status);
+        return next();
+      }
 
-    if (!connectionStatus) {
-      res.header('connection-status', 'down');
-      res.redirect('/node/auth/google');
-    }
+      if (!connectionStatus) {
+        res.header('connection-status', 'down');
+        res.redirect('/node/auth/google');
+      }
+    };
   }
-}
 
 /**
-   * Checks if there are access and refresh tokens or if they have changed,
-   * and in that case updates the IMAP connection.
-   */
-  public updateIMAPConnection(): Function {
-    return function(req: Request, res: Response, next: NextFunction): void {
+ * Checks if there are access and refresh tokens or if they have changed,
+ * and in that case updates the IMAP connection.
+ */
+  public updateIMAPConnection(): (req: Request, res: Response, next: NextFunction) => void {
+    return (req: Request, res: Response, next: NextFunction): void => {
       const variablesExist = process.env.IMAP_ACCESS_TOKEN && process.env.IMAP_REFRESH_TOKEN;
-      const variablesChanged = process.env.IMAP_ACCESS_TOKEN !== Middleware.IMAPaccessToken || process.env.IMAP_REFRESH_TOKEN !== Middleware.IMAPrefreshToken;
+      const variablesChanged = (process.env.IMAP_ACCESS_TOKEN !== Middleware.IMAPaccessToken)
+                              || process.env.IMAP_REFRESH_TOKEN !== Middleware.IMAPrefreshToken;
       const secondsSinceUpdate = (new Date().getTime() / 1000) - Middleware.latestIMAPUpdateSecondsSinceEpoch;
 
       if ((variablesExist && variablesChanged) || secondsSinceUpdate > 3500) {
@@ -51,7 +61,7 @@ public checkConnection(): Function {
         Middleware.latestIMAPUpdateSecondsSinceEpoch = (new Date().getTime() / 1000);
       }
       return next();
-      }
+    };
   }
 }
 
