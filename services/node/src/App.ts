@@ -13,6 +13,7 @@ import passportStrategies from "./config/passport";
 import mainRouter from './routes/mainRouter';
 import authRouter from './routes/authRouter';
 import IMAPHandler from './handlers/email/IMAPHandler';
+import DBHandler from './handlers/MongoDBHandler';
 
 /**
  * Express app.
@@ -28,6 +29,7 @@ class App {
     this.authRouter = authRouter;
     this.middleware();
     this.mountRoutes();
+    this.handleDB();
     this.handleImap();
   }
 
@@ -50,7 +52,7 @@ class App {
     }));
     this.express.use(middleware.checkConnection());
     this.express.use(middleware.updateIMAPConnection());
-    this.express.use(this.errorHandler); 
+    this.express.use(this.errorHandler);
   }
 
   private mountRoutes(): void {
@@ -59,6 +61,23 @@ class App {
     this.express.use('/node/auth', this.authRouter);
     this.express.use('/auth', this.authRouter);
     this.express.all('*', this.emptyHandler);
+  }
+
+  private handleDB(): void {
+    DBHandler.on('ready', () => {
+      console.log('Connected to db'); 
+      DBHandler.getCustomer({email: 'mopooy@gmail.com'})
+      .then((customer) => {
+        console.log(customer);
+      })
+    });
+
+    DBHandler.on('error', (error) => {
+      console.log('Error in db'); 
+      console.log(error);
+    });
+
+    DBHandler.connect();
   }
 
   private handleImap(): void {
@@ -109,7 +128,7 @@ class App {
     if (err.name === 'UnauthorizedError') {
       return res.redirect('/node/auth/google');
     } 
-
+    
     res.status(500).send({
       success: false,
       message: err.stack

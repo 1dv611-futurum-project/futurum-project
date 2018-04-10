@@ -114,7 +114,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   private handleInitialConnect(): void {
     this.openInbox()
     .then(() => {
-      this._isConnected = true;
+      this.isConnected = true;
       this.emitMessage('ready');
     })
     .catch((err: Error) => {

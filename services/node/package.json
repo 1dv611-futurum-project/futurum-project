@@ -26,12 +26,15 @@
     "imap": "^0.8.19",
     "jsonwebtoken": "^8.2.1",
     "mailparser-mit": "^0.6.2",
+    "mongoose": "^5.0.14",
     "nodemon": "^1.17.2",
     "passport": "^0.4.0",
     "passport-google-oauth20": "^1.0.0",
     "xoauth2": "^1.2.0"
   },
   "devDependencies": {
+    "@types/mongodb": "^3.0.12",
+    "@types/mongoose": "^5.0.9",
     "awesome-typescript-loader": "^4.0.1",
     "source-map-loader": "^0.2.3",
     "ts-node": "^5.0.1",
