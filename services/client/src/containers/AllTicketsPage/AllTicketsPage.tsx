@@ -57,7 +57,8 @@ export class AllTicketsPage extends React.Component<any, any> {
 	}
 
 	public render() {
-		const tickets = this.state.tickets.map((ticket: any, i: any) => <Ticket key={i} data={ticket} />);
+		const tickets = this.state.tickets.map((ticket: any, i: any) => 
+			<Ticket key={i} data={ticket} onChange={this.sendStatusChange} />);
 
 		return (
 			<div className='tickets'>
@@ -67,5 +68,9 @@ export class AllTicketsPage extends React.Component<any, any> {
 				</div>
 			</div>
 		);
+	}
+
+	private sendStatusChange(status: string) {
+		console.log(status);
 	}
 }
