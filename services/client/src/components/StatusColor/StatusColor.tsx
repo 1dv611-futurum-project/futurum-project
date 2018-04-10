@@ -1,6 +1,6 @@
 /**
- * StatusSelect component
- * @module components/StatusSelect/StatusSelect
+ * StatusColor component
+ * @module components/StatusColor/StatusColor
  */
 
 import * as React from 'react';
