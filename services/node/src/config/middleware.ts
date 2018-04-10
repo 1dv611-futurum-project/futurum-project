@@ -62,7 +62,6 @@ class Middleware {
       }
       return next();
     };
-  }
 }
 
 // Exports

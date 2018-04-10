@@ -185,7 +185,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
             stream.pipe(mp);
 
             mp.on('end', (obj: object) => {
-              console.log(obj)
               const message = {};
               message.recieved = obj.date;
               message.title = obj.subject;

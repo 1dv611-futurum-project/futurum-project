@@ -52,7 +52,7 @@ class App {
     }));
     this.express.use(middleware.checkConnection());
     this.express.use(middleware.updateIMAPConnection());
-    this.express.use(this.errorHandler); 
+    this.express.use(this.errorHandler);
   }
 
   private mountRoutes(): void {
@@ -128,7 +128,7 @@ class App {
     if (err.name === 'UnauthorizedError') {
       return res.redirect('/node/auth/google');
     } 
-
+    
     res.status(500).send({
       success: false,
       message: err.stack
