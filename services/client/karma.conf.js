@@ -19,8 +19,8 @@ module.exports = function(config) {
       'test/index.test.tsx': ['webpack']
     },
 
-    mime : {
-        "text/x-typescript":["ts","tsx"]
+    mime: {
+      'text/x-typescript': ['ts', 'tsx']
     },
 
     webpack: webpackConfig,
