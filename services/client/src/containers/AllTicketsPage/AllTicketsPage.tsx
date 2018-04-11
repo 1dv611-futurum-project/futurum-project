@@ -35,7 +35,7 @@ export class AllTicketsPage extends React.Component<any, any> {
 		const colors = ['red', 'blue', 'green'];
 		const titles = ['Vi har ett problem', 'Applikationen fungerar inte', 'Kan ni hjälpa oss?',
 			'Vi har ett problem', 'Applikationen fungerar inte', 'Kan ni hjälpa oss?'];
-		const statuses = ['0', '1', '2'];
+		const statuses = [0, 1, 2];
 		const author = 'Johan Andersson';
 		const assignee = 'Anton Myrberg';
 		const created = '2 april 2018';
