@@ -35,9 +35,9 @@ export class AllTicketsPage extends React.Component<any, any> {
 		const colors = ['red', 'blue', 'green'];
 		const titles = ['Vi har ett problem', 'Applikationen fungerar inte', 'Kan ni hjälpa oss?',
 			'Vi har ett problem', 'Applikationen fungerar inte', 'Kan ni hjälpa oss?'];
-		const statuses = [0, 1, 2];
+		const statuses = ['0', '1', '2'];
 		const author = 'Johan Andersson';
-		const assigned = 'Anton Myrberg';
+		const assignee = 'Anton Myrberg';
 		const created = '2 april 2018';
 
 		titles.forEach((title, i) => {
@@ -45,7 +45,7 @@ export class AllTicketsPage extends React.Component<any, any> {
 				color: colors[this.index],
 				title: titles[this.index],
 				author,
-				assigned,
+				assignee,
 				created,
 				status: statuses[this.index],
 				id: i
@@ -75,6 +75,7 @@ export class AllTicketsPage extends React.Component<any, any> {
 	/**
 	 * Handles status change on tickets
 	 * @private
+	 * @param {String} status - The new status
 	 */
 	private sendStatusChange(status: string) {
 		console.log(status);

@@ -10,10 +10,33 @@ import { StatusSelect } from '../../../src/components/StatusSelect/StatusSelect'
 
 describe('<TicketOverview />', () => {
 	let wrapper: any;
-	const props = { 
+	const props = {
 		handleClick: () => {},
 		handleStatusChange: () => {},
-		status: ''
+		status: '',
+		data: {
+			id: 'id',
+			status: 'status',
+			assignee: 'assignee',
+			title: 'title',
+			created: 'created',
+			from: {
+				name: 'name',
+				email: 'email'
+			},
+			messages: [
+				{
+					received: 'received',
+					from: 'from',
+					body: 'body'
+				},
+				{
+					received: 'received',
+					from: 'from',
+					body: 'body'
+				}
+			]
+		}
 	};
 
 	before(() => {
@@ -23,7 +46,7 @@ describe('<TicketOverview />', () => {
 	it('should get red status color from "Ej påbörjad"', () => {
 		props.status = 'Ej påbörjad';
 		wrapper = shallow(<TicketOverview {...props}/>);
-		let color = wrapper.state('color')
+		const color = wrapper.state('color');
 
 		expect(color).to.equal('red');
 		expect(wrapper.find(`.ticket-overview__color--${color}`)).to.have.length(1);
@@ -32,7 +55,7 @@ describe('<TicketOverview />', () => {
 	it('should get blue status color from "Påbörjad"', () => {
 		props.status = 'Påbörjad';
 		wrapper = shallow(<TicketOverview {...props}/>);
-		let color = wrapper.state('color')
+		const color = wrapper.state('color');
 
 		expect(color).to.equal('blue');
 		expect(wrapper.find(`.ticket-overview__color--${color}`)).to.have.length(1);
@@ -41,7 +64,7 @@ describe('<TicketOverview />', () => {
 	it('should get green status color from "Genomförd"', () => {
 		props.status = 'Genomförd';
 		wrapper = shallow(<TicketOverview {...props}/>);
-		let color = wrapper.state('color')
+		const color = wrapper.state('color');
 
 		expect(color).to.equal('green');
 		expect(wrapper.find(`.ticket-overview__color--${color}`)).to.have.length(1);
@@ -50,7 +73,7 @@ describe('<TicketOverview />', () => {
 	it('should get green status color from "Stängd"', () => {
 		props.status = 'Stängd';
 		wrapper = shallow(<TicketOverview {...props}/>);
-		let color = wrapper.state('color')
+		const color = wrapper.state('color');
 
 		expect(color).to.equal('green');
 		expect(wrapper.find(`.ticket-overview__color--${color}`)).to.have.length(1);

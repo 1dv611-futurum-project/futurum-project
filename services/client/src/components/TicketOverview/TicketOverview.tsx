@@ -17,6 +17,7 @@ export interface ITicketOverview {
 	handleClick(): any;
 	handleStatusChange(status: string): any;
 	status: string;
+	data: any;
 }
 
 /**
@@ -27,17 +28,48 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			color: ''
+			color: '',
+			status: ''
+		};
+	}
+
+	/**
+	 * getDerivedStateFromProps
+	 * Sets the correct ticket color based on status.
+	 * @public
+	 * @param {Object} nextProps
+	 * @param {Object} prevState
+	 * @returns {Object} - The state object
+	 */
+	public static getDerivedStateFromProps(nextProps: any, prevState: any) {
+		if (nextProps.status !== prevState.status || prevState.status === '') {
+			let status;
+
+			switch (nextProps.status) {
+				case 'Ej påbörjad':
+					status = 'red';
+					break;
+				case 'Påbörjad':
+					status = 'blue';
+					break;
+				case 'Genomförd':
+				case 'Stängd':
+					status = 'green';
+					break;
+			}
+
+			return {
+				color: status,
+				status: nextProps.status
+			};
+		} else {
+			return null;
 		}
 	}
 
-	componentDidMount() {
-		this.setStatusColor(this.props.status);
-	}
-
 	public render() {
-		// const { title, created, status, assigned, id, author } = this.props.data;
-		const { handleClick, handleStatusChange, status } = this.props;
+		const { id, assignee, title, created, from } = this.props.data;
+		const { handleClick, handleStatusChange } = this.props;
 		const colorClasses = `ticket-overview__color ticket-overview__color--${this.state.color}`;
 
 		return (
@@ -46,46 +78,26 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 				<div className='ticket-overview__header'>
 					<PlayArrow className='ticket-overview__header__icon'/>
 					<h1 className='ticket-overview__header__title'>
-						<span className='ticket-overview__header__title--grey'>#32 — </span>
-						Applikationen fungerar inte
+						<span className='ticket-overview__header__title--grey'>#{id} — </span>
+						{title}
 					</h1>
 				</div>
 				<div className='ticket-overview__info'>
-					<p className='ticket-overview__info__text'>Ärende skapat av Johan Andersson</p>
-					<p className='ticket-overview__info__text'>Mottaget 6 april 2018</p>
+					<p className='ticket-overview__info__text'>Ärende skapat av {from.name}</p>
+					<p className='ticket-overview__info__text'>Mottaget {created}</p>
 					<AddButton text='Skriv ett svar' onClick={handleClick} />
 				</div>
 				<div className='ticket-overview__actions'>
 					<div className='ticket-overview__actions--status'>
 						<p className='ticket-overview__actions__label'>Status:</p>
-						<StatusSelect status={status} onChange={handleStatusChange} />
+						<StatusSelect status={this.state.status} onChange={handleStatusChange} />
 					</div>
 					<div className='ticket-overview__actions--assigned'>
 						<p className='ticket-overview__actions__label'>Tilldelad:</p>
-						<StatusSelect status={status} onChange={handleStatusChange} />
+						<StatusSelect status={this.state.status} onChange={handleStatusChange} />
 					</div>
 				</div>
 			</Paper>
 		);
-	}
-
-	/**
-	 * Sets the correct status color
-	 * @private
-	 * @param {String} status - The new status
-	 */
-	private setStatusColor(status: string) {
-		switch (status) {
-			case 'Ej påbörjad':
-				this.setState({ color: 'red' });
-				break;
-			case 'Påbörjad':
-				this.setState({ color: 'blue' });
-				break;
-			case 'Genomförd':
-			case 'Stängd':
-				this.setState({ color: 'green' });
-				break;
-		}
 	}
 }

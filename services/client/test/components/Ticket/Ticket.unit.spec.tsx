@@ -15,7 +15,7 @@ describe('<Ticket />', () => {
 		title: 'title',
 		author: 'author',
 		created: 'created',
-		assigned: 'assigned',
+		assignee: 'assignee',
 		status: 'status'
 	}};
 
@@ -44,9 +44,9 @@ describe('<Ticket />', () => {
 			.to.equal('Mottaget: ' + props.data.created);
 	});
 
-	it('should have a ticket assigned', () => {
+	it('should have a ticket assignee', () => {
 		expect(wrapper.find('.ticket__content__information').at(1).text())
-			.to.equal('Tilldelat: ' + props.data.assigned);
+			.to.equal('Tilldelat: ' + props.data.assignee);
 	});
 
 	it('should have a ticket status', () => {

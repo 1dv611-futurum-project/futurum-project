@@ -8,6 +8,31 @@ import { TicketOverview } from '../../components/TicketOverview/TicketOverview';
 import { Message } from '../../components/Message/Message';
 import { MessageInput } from '../../components/MessageInput/MessageInput';
 
+// TODO! Remove mock-up data
+const data = {
+	id: '13',
+	status: 1,
+	assignee: 'Anton Myrberg',
+	title: 'Applikationen fungerar inte',
+	created: '2018-04-04',
+	from: {
+		name: 'Johan Andersson',
+		email: 'kunden@kunden.se'
+	},
+	messages: [
+		{
+			received: '2018-04-10',
+			from: 'Anton Myrberg',
+			body: 'Hej!\nVi har tagit emot ditt meddelande.\nMvh Anton Myrberg, Futurum Digital'
+		},
+		{
+			received: '2018-04-04',
+			from: 'Johan Andersson',
+			body: 'Hej!\nVi har stött på ett problem som vi hade behövt hjälp med. Vänligen återkoppla!\n/Johan'
+		}
+	]
+};
+
 /**
  * TicketPage class
  */
@@ -18,7 +43,7 @@ export class TicketPage extends React.Component<any, any> {
 
 		this.state = {
 			showNewMessage: false,
-			status: 'Påbörjad'
+			status: this.getStatus(data.status)
 		};
 
 		this.handleNewMessageClick = this.handleNewMessageClick.bind(this);
@@ -26,24 +51,19 @@ export class TicketPage extends React.Component<any, any> {
 	}
 
 	public render() {
-		const message = {
-			author: 'Johan Andersson',
-			date: '2018-04-05',
-			message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce turpis est, iaculis sit amet ultrices luctus, hendrerit non metus. Nullam eget vehicula justo, at suscipit nisi. In hac habitasse platea dictumst. Sed aliquet congue justo eu pellentesque. Sed non aliquet ligula. Donec maximus, justo eget egestas varius, sem nunc rutrum libero, quis faucibus arcu lorem eu magna. Fusce ut augue justo. Phasellus consectetur dui at ligula placerat tincidunt.'
-		};
+		const messages = data.messages.map((message, i) => <Message key={i} data={message}/>);
 
 		return (
 			<div className='ticket__wrapper'>
 				<TicketOverview
+					data={data}
 					status={this.state.status}
 					handleClick={this.handleNewMessageClick}
 					handleStatusChange={this.handleStatusChange}
 				/>
 				<div className='ticket__wrapper__messages'>
 					<MessageInput onClick={this.handleSend} open={this.state.showNewMessage} />
-					<Message data={message}/>
-					<Message data={message}/>
-					<Message data={message}/>
+					{messages}
 				</div>
 			</div>
 		);
@@ -75,5 +95,24 @@ export class TicketPage extends React.Component<any, any> {
 	 */
 	private handleStatusChange(status: string) {
 		this.setState({ status });
+	}
+
+	/**
+	 * Gets the correct status message from number
+	 * @private
+	 * @param {Number} status - The status number (0-3)
+	 * @returns {String} - The status as a string
+	 */
+	private getStatus(status: number): string {
+		switch (status) {
+			case 0:
+				return 'Ej påbörjad';
+			case 1:
+				return 'Påbörjad';
+			case 2:
+				return 'Genomförd';
+			case 3:
+				return 'Stängd';
+		}
 	}
 }
