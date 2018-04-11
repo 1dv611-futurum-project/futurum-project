@@ -67,11 +67,11 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 		}
 	}
 
-		/**
-	 * Gets the correct status message from number
+	/**
+	 * Gets the correct status number from message
 	 * @private
-	 * @param {Number} status - The status number (0-3)
-	 * @returns {String} - The status as a string
+	 * @param {string} statusText - The status number (0-3)
+	 * @returns {Number} - The status as a number
 	 */
 	private getStatus(status: string): number {
 		switch (status) {
