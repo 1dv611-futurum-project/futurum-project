@@ -43,7 +43,7 @@ export class TicketPage extends React.Component<any, any> {
 
 		this.state = {
 			showNewMessage: false,
-			status: this.getStatus(data.status)
+			status: data.status
 		};
 
 		this.handleNewMessageClick = this.handleNewMessageClick.bind(this);
@@ -91,28 +91,9 @@ export class TicketPage extends React.Component<any, any> {
 	/**
 	 * Handles status change of ticket
 	 * @private
-	 * @param {String} status - The new status
+	 * @param {Number} status - The new status
 	 */
-	private handleStatusChange(status: string) {
+	private handleStatusChange(status: number) {
 		this.setState({ status });
-	}
-
-	/**
-	 * Gets the correct status message from number
-	 * @private
-	 * @param {Number} status - The status number (0-3)
-	 * @returns {String} - The status as a string
-	 */
-	private getStatus(status: number): string {
-		switch (status) {
-			case 0:
-				return 'Ej påbörjad';
-			case 1:
-				return 'Påbörjad';
-			case 2:
-				return 'Genomförd';
-			case 3:
-				return 'Stängd';
-		}
 	}
 }

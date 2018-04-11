@@ -6,15 +6,14 @@
 import * as React from 'react';
 import { Link } from 'react-router';
 import { Card, CardHeader, CardContent, CardActions } from 'material-ui';
-import { StatusSelect } from '../StatusSelect/StatusSelect';
-import { Modal } from '../Modal/Modal';
+import { TicketAction } from './TicketAction';
 
 /**
  * Ticket Props Interface
  */
 export interface ITicket {
 	data: any;
-	onChange(message: any): void;
+	onSend(message: any): void;
 }
 
 /**
@@ -25,19 +24,15 @@ export class Ticket extends React.Component<ITicket, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			displayModal: false,
-			status: this.props.data.status,
 			color: this.props.data.color || 'red'
 		};
 
-		this.handleStatusChange = this.handleStatusChange.bind(this);
-		this.handleModal = this.handleModal.bind(this);
+		this.handleStatusColor = this.handleStatusColor.bind(this);
 	}
 
 	public render() {
 		const ticket = this.props.data;
 		const colorClasses = `ticket__color ticket__color--${this.state.color}`;
-		const status = this.getStatus(ticket.status);
 
 		return (
 			<Card className='ticket'>
@@ -57,78 +52,32 @@ export class Ticket extends React.Component<ITicket, any> {
 					</p>
 				</CardContent>
 				<CardActions className='ticket__actions'>
-					<StatusSelect status={status} onChange={this.handleStatusChange} />
-					{this.state.displayModal ?
-					<Modal
-						title={`Uppdaterat status av "${ticket.title}"`}
-						message={`Skicka statusuppdateringen "${this.state.status}" till kund?`}
-						disagree={'Avbryt'}
-						agree={'Skicka'}
-						onChange={this.handleModal}  />
-					: null}
+					<TicketAction 
+						data={ticket}
+						onStatusChange={this.handleStatusColor}
+						onSend={this.props.onSend} 
+					/>
 				</CardActions>
 			</Card>
 		);
 	}
 
 	/**
-	 * Gets the correct status message from number
-	 * @private
-	 * @param {Number} status - The status number (0-3)
-	 * @returns {String} - The status as a string
-	 */
-	private getStatus(status: number): string {
-		switch (status) {
-			case 0:
-				return 'Ej påbörjad';
-			case 1:
-				return 'Påbörjad';
-			case 2:
-				return 'Genomförd';
-			case 3:
-				return 'Stängd';
-		}
-	}
-
-	/**
 	 * Handles status change for ticket by changing colors
 	 * @private
 	 */
-	private handleStatusChange(status: string): void {
-		// Proof of concept
-		// Might remove switch when connected to websocket
+	private handleStatusColor(status: number): void {
 		switch (status) {
-			case 'Ej påbörjad':
-				this.setState({ displayModal: true, status: status, color: 'red' });
+			case 0:
+				this.setState({ color: 'red' });
 				break;
-			case 'Påbörjad':
-				this.setState({ displayModal: true, status: status, color: 'blue' });
+			case 1:
+				this.setState({ color: 'blue' });
 				break;
-			case 'Genomförd':
-			case 'Stängd':
-				this.setState({ displayModal: true, status: status, color: 'green' });
+			case 2:
+			case 3:
+				this.setState({ color: 'green' });
 				break;
 		}
-	}
-
-	/**
-	 * Handles status update message change
-	 * @private
-	 */
-	private handleModal(doSend: boolean): void {
-		if (doSend) {
-			this.props.onChange(this.state.status);
-		}
-		this.closeModal();
-	}
-
-	/**
-	 * Closes modal on status change
-	 * @private
-	 */
-	private closeModal(): void {
-		const state = { ...this.state };
-		state.displayModal = false;
-		this.setState(state);
 	}
 }

@@ -15,8 +15,8 @@ import { AddButton } from '../AddButton/AddButton';
  */
 export interface ITicketOverview {
 	handleClick(): any;
-	handleStatusChange(status: string): any;
-	status: string;
+	handleStatusChange(status: number): any;
+	status: number;
 	data: any;
 }
 
@@ -29,41 +29,24 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 		super(props);
 		this.state = {
 			color: '',
-			status: ''
+			status: 0
 		};
 	}
 
-	/**
-	 * getDerivedStateFromProps
-	 * Sets the correct ticket color based on status.
-	 * @public
-	 * @param {Object} nextProps
-	 * @param {Object} prevState
-	 * @returns {Object} - The state object
-	 */
-	public static getDerivedStateFromProps(nextProps: any, prevState: any) {
-		if (nextProps.status !== prevState.status || prevState.status === '') {
-			let status;
+	public componentDidMount() {
+		let status = this.props.status;
 
-			switch (nextProps.status) {
-				case 'Ej påbörjad':
-					status = 'red';
-					break;
-				case 'Påbörjad':
-					status = 'blue';
-					break;
-				case 'Genomförd':
-				case 'Stängd':
-					status = 'green';
-					break;
-			}
-
-			return {
-				color: status,
-				status: nextProps.status
-			};
-		} else {
-			return null;
+		switch (this.props.status) {
+			case 0:
+				this.setState({ color: 'red', status: status });
+				break;
+			case 1:
+				this.setState({ color: 'blue', status: status });
+				break;
+			case 2:
+			case 3:
+				this.setState({ color: 'green', status: status });
+				break;
 		}
 	}
 
