@@ -19,15 +19,15 @@ export class Header extends React.Component<any, any> {
 					<MenuItem>Alla ärenden</MenuItem>
 				</Link>
 				<span className='header__color header__color--red' />
-				<Link to='/' className='header__link'>
+				<Link to='/open' className='header__link'>
 					<MenuItem>Ej påbörjad ärenden</MenuItem>
 				</Link>
 				<span className='header__color header__color--blue' />
-				<Link to='/' className='header__link'>
+				<Link to='/in-progress' className='header__link'>
 					<MenuItem>Påbörjade ärenden</MenuItem>
 				</Link>
 				<span className='header__color header__color--green' />
-				<Link to='/' className='header__link'>
+				<Link to='/closed' className='header__link'>
 					<MenuItem>Avslutade ärenden</MenuItem>
 				</Link>
 

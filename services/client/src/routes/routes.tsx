@@ -21,6 +21,9 @@ import { LoginPage } from '../containers/LoginPage/LoginPage';
 export default (
 	<Route path='/' component={App}>
 		<IndexRoute component={AllTicketsPage} />
+		<Route path='open' component={AllTicketsPage} />
+		<Route path='in-progress' component={AllTicketsPage} />
+		<Route path='closed' component={AllTicketsPage} />
 		<Route path='clients' component={ClientListPage} />
 		<Route path='settings' component={SettingsPage} />
 		<Route path='ticket-:id' component={TicketPage} />

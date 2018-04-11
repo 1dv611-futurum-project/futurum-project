@@ -37,6 +37,7 @@ export class Ticket extends React.Component<ITicket, any> {
 	public render() {
 		const ticket = this.props.data;
 		const colorClasses = `ticket__color ticket__color--${this.state.color}`;
+		const status = this.getStatus(ticket.status);
 
 		return (
 			<Card className='ticket'>
@@ -56,18 +57,37 @@ export class Ticket extends React.Component<ITicket, any> {
 					</p>
 				</CardContent>
 				<CardActions className='ticket__actions'>
-					<StatusSelect status={ticket.status} onChange={this.handleStatusChange} />
-					{this.state.displayModal ? 
+					<StatusSelect status={status} onChange={this.handleStatusChange} />
+					{this.state.displayModal ?
 					<Modal
 						title={`Uppdaterat status av "${ticket.title}"`}
-						message={`Skicka statusuppdateringen "${ticket.status}" till kund?`}
+						message={`Skicka statusuppdateringen "${this.state.status}" till kund?`}
 						disagree={'Avbryt'}
-						agree={'Skicka'} 
-						onChange={this.handleModal}  /> 
+						agree={'Skicka'}
+						onChange={this.handleModal}  />
 					: null}
 				</CardActions>
 			</Card>
 		);
+	}
+
+	/**
+	 * Gets the correct status message from number
+	 * @private
+	 * @param {Number} status - The status number (0-3)
+	 * @returns {String} - The status as a string
+	 */
+	private getStatus(status: number): string {
+		switch (status) {
+			case 0:
+				return 'Ej påbörjad';
+			case 1:
+				return 'Påbörjad';
+			case 2:
+				return 'Genomförd';
+			case 3:
+				return 'Stängd';
+		}
 	}
 
 	/**
@@ -92,9 +112,9 @@ export class Ticket extends React.Component<ITicket, any> {
 	}
 
 	/**
-	* Handles status update message change
-	* @private
-	*/
+	 * Handles status update message change
+	 * @private
+	 */
 	private handleModal(doSend: boolean): void {
 		if (doSend) {
 			this.props.onChange(this.state.status);
@@ -103,12 +123,12 @@ export class Ticket extends React.Component<ITicket, any> {
 	}
 
 	/**
-	* Closes modal on status change
-	* @private
-	*/
-   private closeModal(): void {
-	   let state = { ...this.state};
-	   state.displayModal = false;
-	   this.setState(state)
-   }
+	 * Closes modal on status change
+	 * @private
+	 */
+	private closeModal(): void {
+		const state = { ...this.state };
+		state.displayModal = false;
+		this.setState(state);
+	}
 }
