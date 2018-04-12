@@ -14,42 +14,70 @@ import ICustomer from './../models/interfaces/ICustomer';
 class MongoDBHandler extends events.EventEmitter {
 
   private db;
+  private connectionString;
 
   constructor() {
     super();
     this.setUpDBListeners();
   }
 
-  public connect(): void {
+  /**
+   * Connects to the database with the connectionstring given.
+   */
+  public connect(connectionString: string): void {
+    this.connectionString = connectionString;
     this.connectToDB();
   }
 
-  public getCustomer(customerInfo: object): ICustomer {
+  /**
+   * Disconnects from the database if there is an active connection.
+   */
+  public disconnect(): void {
+    if (this.db) {
+      this.db.close(() => {
+        this.emit('close');
+      });
+    } else {
+      this.emit('close');
+    } 
+  }
+
+  /**
+   * Gets a customer from the database
+   * with info matching the customer object.
+   */
+  public getCustomer(customerInfo: object): Promise<ICustomer> {
     return new Promise((resolve, reject) => {
       Customer.find(customerInfo)
       .then((customer: ICustomer) => {
         if (customer === null) {
-          reject('no customer with that email');
+          reject({message: 'no customer with that information'});
         }
 
           resolve(customer);
       });
     });
   }
-  
-  public addCustomer(customerInfo: ICustomer): ICustomer {
-    let newCustomer = new Customer(customerInfo);
-    newCustomer.save()
-    .then((customer) => {
-      console.log(customer);
-      return customer;
-    })
-    .catch((error) => {
-      console.log('error');
-      console.log(error)
-    })
+
+  /**
+   * Adds a customer with the given info to the database.
+   */
+  public addCustomer(customerInfo: ICustomer): Promise<ICustomer> {
+    return new Promise((resolve, reject) => {
+      let newCustomer = new Customer(customerInfo);
+      newCustomer.save()
+      .then((customer) => {
+        resolve(customer);
+      })
+      .catch((error) => {
+        reject(error);
+      })
+    });
   } 
 
+  /**
+   * Sets up listeners on the database.
+   */
   private setUpDBListeners(): void {
     this.db = mongoose.connection;
     mongoose.Promise = global.Promise
@@ -60,6 +88,14 @@ class MongoDBHandler extends events.EventEmitter {
   
     this.db.once('open', () => {
       this.emit('ready');
+    })
+
+    this.db.on('connected', () => {
+      this.emit('ready');
+    })
+
+    this.db.on('disconnected', () => {
+      this.emit('disconnect');
     })
   
     // Close database connection if node process closes.
@@ -74,7 +110,7 @@ class MongoDBHandler extends events.EventEmitter {
    * Connects to the database.
    */
   private connectToDB(): void {
-    mongoose.connect('mongodb://futurum-db:27017')
+    mongoose.connect(this.connectionString)
     .catch((error) => {
       this.emit('error', error);
     });

@@ -65,11 +65,7 @@ class App {
 
   private handleDB(): void {
     DBHandler.on('ready', () => {
-      console.log('Connected to db'); 
-      DBHandler.getCustomer({email: 'mopooy@gmail.com'})
-      .then((customer) => {
-        console.log(customer);
-      })
+      console.log('Connected to db');
     });
 
     DBHandler.on('error', (error) => {
@@ -77,7 +73,7 @@ class App {
       console.log(error);
     });
 
-    DBHandler.connect();
+    DBHandler.connect('mongodb://futurum-db:27017/development-db');
   }
 
   private handleImap(): void {
