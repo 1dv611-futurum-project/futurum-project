@@ -34,7 +34,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	}
 
 	public componentDidMount() {
-		let status = this.props.status;
+		const status = this.props.status;
 
 		switch (this.props.status) {
 			case 0:

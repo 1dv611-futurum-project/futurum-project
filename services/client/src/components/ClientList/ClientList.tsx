@@ -35,29 +35,31 @@ export class ClientList extends React.Component<IClientList, any> {
 			</TableHead>
 			<TableBody>
 				{this.props.data.map((client: any, i: any) => {
-            	return (
-              	<TableRow key={i}>
-                	<TableCell>{client.name}</TableCell>
-                	<TableCell>{client.email}</TableCell>
-                	<TableCell>{client.errands}</TableCell>
-					<TableCell className='client-list__table--icon'>
-						<Tooltip title='Redigera'>
-						<IconButton 
-							className='client-list__table--btn' 
-							onClick={() => onEdit(client.name)}>
-							<ModeEdit />
-						</IconButton>
-						</Tooltip>
-						<Tooltip title='Ta bort'>
-						<IconButton 
-							className='client-list__table--btn' 
-							onClick={() => onDelete(client.name)}>
-							<Delete />
-						</IconButton>
-						</Tooltip>
+					return (
+					<TableRow key={i}>
+						<TableCell>{client.name}</TableCell>
+						<TableCell>{client.email}</TableCell>
+						<TableCell>{client.errands}</TableCell>
+						<TableCell className='client-list__table--icon'>
+							<Tooltip title='Redigera'>
+								<IconButton
+									className='client-list__table--btn'
+									onClick={() => onEdit(client.name)}
+								>
+									<ModeEdit />
+								</IconButton>
+							</Tooltip>
+							<Tooltip title='Ta bort'>
+								<IconButton
+									className='client-list__table--btn'
+									onClick={() => onDelete(client.name)}
+								>
+									<Delete />
+								</IconButton>
+							</Tooltip>
 					</TableCell>
-              	</TableRow>
-            		);
+				</TableRow>
+					);
 				})}
 			</TableBody>
 			</Table>

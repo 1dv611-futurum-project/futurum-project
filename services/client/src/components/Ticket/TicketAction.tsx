@@ -39,14 +39,15 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 		return (
 			<CardActions className='ticket__actions'>
 				<StatusSelect status={this.state.status} onChange={this.handleStatusChange} />
-				{this.state.displayModal ?
-					<Modal
-						title={`Uppdaterat status av "${ticket.title}"`}
-						message={`Skicka statusuppdateringen ${this.state.statusText} till kund?`}
-						disagree={'Avbryt'}
-						agree={'Skicka'}
-						onChange={this.handleModal} />
-					: null}
+					{this.state.displayModal ?
+						<Modal
+							title={`Uppdaterat status av "${ticket.title}"`}
+							message={`Skicka statusuppdateringen ${this.state.statusText} till kund?`}
+							disagree={'Avbryt'}
+							agree={'Skicka'}
+							onChange={this.handleModal}
+						/> : null
+					}
 			</CardActions>
 		);
 	}
@@ -57,11 +58,11 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 	 */
 	private handleStatusChange(status: number, statusText: string): void {
 		this.props.onStatusChange(status);
-		this.setState({ 
-			displayModal: true, 
+		this.setState({
+			displayModal: true,
 			status: status,
 			statusText: statusText,
-		 });
+		});
 	}
 
 	/**

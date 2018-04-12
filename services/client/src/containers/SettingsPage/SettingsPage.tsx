@@ -25,7 +25,7 @@ export class SettingsPage extends React.Component<any, any> {
 				<br />
 				<Divider />
 				<h1 className='client-list-page__header__title'>Redigera ansvariga</h1>
-				<AddButton text='Lägg till ansvariga' onClick={() => {}}/>
+				<AddButton text='Lägg till ansvariga' onClick={() => {return; }}/>
 			</div>
 		);
 	}

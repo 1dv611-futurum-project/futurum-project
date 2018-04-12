@@ -52,10 +52,10 @@ export class Ticket extends React.Component<ITicket, any> {
 					</p>
 				</CardContent>
 				<CardActions className='ticket__actions'>
-					<TicketAction 
+					<TicketAction
 						data={ticket}
 						onStatusChange={this.handleStatusColor}
-						onSend={this.props.onSend} 
+						onSend={this.props.onSend}
 					/>
 				</CardActions>
 			</Card>

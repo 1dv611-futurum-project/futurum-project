@@ -10,14 +10,17 @@ import { StatusSelect } from '../../../src/components/StatusSelect/StatusSelect'
 
 describe('<Ticket />', () => {
 	let wrapper: any;
-	const props = { data: {
-		id: '0',
-		title: 'title',
-		author: 'author',
-		created: 'created',
-		assignee: 'assignee',
-		status: 'status'
-	}};
+	const props = { 
+		data: {
+			id: '0',
+			title: 'title',
+			author: 'author',
+			created: 'created',
+			assignee: 'assignee',
+			status: 0
+		},
+		onChange: () => {}
+	};
 
 	before(() => {
 		wrapper = shallow(<Ticket {...props}/>);

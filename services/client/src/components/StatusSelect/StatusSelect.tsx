@@ -29,7 +29,7 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 	}
 
 	public componentDidMount() {
-		let status = this.getStatusText(this.props.status);
+		const status = this.getStatusText(this.props.status);
 		this.setState({ selected: status });
 	}
 
@@ -91,7 +91,7 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 	 * @private
 	 */
 	private handleChange(event: any): void {
-		let status = this.getStatus(event.target.value);
+		const status = this.getStatus(event.target.value);
 		this.setState({ selected: event.target.value });
 		this.props.onChange(status, event.target.value);
 	}
