@@ -13,7 +13,8 @@ import passportStrategies from "./config/passport";
 import mainRouter from './routes/mainRouter';
 import authRouter from './routes/authRouter';
 import IMAPHandler from './handlers/email/IMAPHandler';
-import DBHandler from './handlers/MongoDBHandler';
+import DBConnection from './handlers/db/DBConnection';
+import DBHandler from './handlers/db/DBHandler';
 
 /**
  * Express app.
@@ -22,11 +23,13 @@ class App {
   public express: Application;
   private mainRouter: Router;
   private authRouter: Router;
+  private DBHandler: DBHandler;
 
   constructor() {
     this.express = express();
     this.mainRouter = mainRouter;
     this.authRouter = authRouter;
+    this.DBHandler = new DBHandler(new DBConnection());
     this.middleware();
     this.mountRoutes();
     this.handleDB();
@@ -64,16 +67,20 @@ class App {
   }
 
   private handleDB(): void {
-    DBHandler.on('ready', () => {
+    this.DBHandler.on('ready', () => {
       console.log('Connected to db');
     });
 
-    DBHandler.on('error', (error) => {
+    this.DBHandler.on('error', (error) => {
       console.log('Error in db'); 
       console.log(error);
     });
 
-    DBHandler.connect('mongodb://futurum-db:27017/development-db');
+    this.DBHandler.on('disconnected', () => {
+      console.log('db disconnected'); 
+    });
+
+    this.DBHandler.connect('mongodb://futurum-db:27017');
   }
 
   private handleImap(): void {
