@@ -22,7 +22,7 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			selected: this.props.status || 'Ej påbörjad'
+			selected: this.props.status || 0
 		};
 
 		this.handleChange = this.handleChange.bind(this);

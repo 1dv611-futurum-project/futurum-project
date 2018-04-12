@@ -11,9 +11,9 @@ import { StatusSelect } from '../../../src/components/StatusSelect/StatusSelect'
 describe('<TicketOverview />', () => {
 	let wrapper: any;
 	const props = {
-		handleClick: () => {},
-		handleStatusChange: () => {},
-		status: '',
+		handleClick: () => {return; },
+		handleStatusChange: (fn: number) => fn,
+		status: 0,
 		data: {
 			id: 'id',
 			status: 'status',
@@ -38,45 +38,30 @@ describe('<TicketOverview />', () => {
 			]
 		}
 	};
+	const statusCodes = {
+		0: 'Ej påbörjad',
+		1: 'Påbörjad',
+		2: 'Genomförd',
+		3: 'Stängd'
+	}  as any;
 
 	before(() => {
 		wrapper = shallow(<TicketOverview {...props}/>);
 	});
 
-	it('should get red status color from "Ej påbörjad"', () => {
-		props.status = 'Ej påbörjad';
-		wrapper = shallow(<TicketOverview {...props}/>);
-		const color = wrapper.state('color');
+	it('should have correct status color', () => {
+		const colors = ['red', 'blue', 'green', 'green'];
 
-		expect(color).to.equal('red');
-		expect(wrapper.find(`.ticket-overview__color--${color}`)).to.have.length(1);
-	});
+		// tslint:disable-next-line:forin
+		for (const status in statusCodes) {
+			props.status = JSON.parse(status);
+			wrapper = shallow(<TicketOverview {...props}/>);
 
-	it('should get blue status color from "Påbörjad"', () => {
-		props.status = 'Påbörjad';
-		wrapper = shallow(<TicketOverview {...props}/>);
-		const color = wrapper.state('color');
+			const color = wrapper.state('color');
 
-		expect(color).to.equal('blue');
-		expect(wrapper.find(`.ticket-overview__color--${color}`)).to.have.length(1);
-	});
-
-	it('should get green status color from "Genomförd"', () => {
-		props.status = 'Genomförd';
-		wrapper = shallow(<TicketOverview {...props}/>);
-		const color = wrapper.state('color');
-
-		expect(color).to.equal('green');
-		expect(wrapper.find(`.ticket-overview__color--${color}`)).to.have.length(1);
-	});
-
-	it('should get green status color from "Stängd"', () => {
-		props.status = 'Stängd';
-		wrapper = shallow(<TicketOverview {...props}/>);
-		const color = wrapper.state('color');
-
-		expect(color).to.equal('green');
-		expect(wrapper.find(`.ticket-overview__color--${color}`)).to.have.length(1);
+			expect(color).to.equal(colors[JSON.parse(status)]);
+			expect(wrapper.find(`.ticket-overview__color--${color}`)).to.have.length(1);
+		}
 	});
 
 	it('should have a list of statuses to choose from', () => {

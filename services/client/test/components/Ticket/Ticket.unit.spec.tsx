@@ -10,7 +10,7 @@ import { StatusSelect } from '../../../src/components/StatusSelect/StatusSelect'
 
 describe('<Ticket />', () => {
 	let wrapper: any;
-	const props = { 
+	const props = {
 		data: {
 			id: '0',
 			title: 'title',
@@ -19,7 +19,7 @@ describe('<Ticket />', () => {
 			assignee: 'assignee',
 			status: 0
 		},
-		onChange: () => {}
+		onSend: (fn: any) => fn
 	};
 
 	before(() => {
@@ -50,13 +50,5 @@ describe('<Ticket />', () => {
 	it('should have a ticket assignee', () => {
 		expect(wrapper.find('.ticket__content__information').at(1).text())
 			.to.equal('Tilldelat: ' + props.data.assignee);
-	});
-
-	it('should have a ticket status', () => {
-		expect(wrapper.find(StatusSelect).props().status).to.equal(props.data.status);
-	});
-
-	it('should have a list of statuses to choose from', () => {
-		expect(wrapper.find(StatusSelect)).to.have.length(1);
 	});
 });
