@@ -27,6 +27,7 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 		this.state = {
 			displayModal: false,
 			status: this.props.data.status,
+			statusText: ''
 		};
 
 		this.handleStatusChange = this.handleStatusChange.bind(this);

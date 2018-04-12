@@ -51,13 +51,11 @@ export class Ticket extends React.Component<ITicket, any> {
 						<span className='ticket__content__information--bold'> {ticket.assignee ? ticket.assignee : '-'}</span>
 					</p>
 				</CardContent>
-				<CardActions className='ticket__actions'>
-					<TicketAction
-						data={ticket}
-						onStatusChange={this.handleStatusColor}
-						onSend={this.props.onSend}
-					/>
-				</CardActions>
+				<TicketAction
+					data={ticket}
+					onStatusChange={this.handleStatusColor}
+					onSend={this.props.onSend}
+				/>
 			</Card>
 		);
 	}
