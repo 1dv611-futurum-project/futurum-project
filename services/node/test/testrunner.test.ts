@@ -15,3 +15,4 @@ describe('testrunner', () => {
 // Suites
 require('./db-tests/mongoose-models-test-suite')
 require('./db-tests/db-connection-test-suite')
+require('./db-tests/db-handler-test-suite')

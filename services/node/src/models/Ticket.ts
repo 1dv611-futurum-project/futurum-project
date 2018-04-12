@@ -1,3 +1,0 @@
-/**
- * Mongoose Schema Ticket Model.
- */

@@ -14,6 +14,13 @@ let sut = new Connection()
 
 // Tests
 describe('DBConnection', () => {
+
+  after(() => {
+    return new Promise((resolve) => {
+      mongoose.connection.close(resolve)
+    })
+  })
+
   describe('connect()', () => {
     describe('called with correct db-string', () => {
       let spy = sinon.spy()
@@ -131,11 +138,7 @@ describe('DBConnection', () => {
           sut.removeListener('close', resolve)
           sut.removeListener('close', spy)
 
-          if (mongoose.connection.readyState === 0) {
-            resolve()
-          } else {
-            mongoose.connection.close(resolve)
-          }
+          mongoose.connection.close(resolve)
         })
       })
 

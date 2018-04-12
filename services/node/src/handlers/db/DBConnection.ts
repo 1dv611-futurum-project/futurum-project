@@ -12,7 +12,6 @@ import * as events from 'events';
 class DBConnection extends events.EventEmitter {
 
   private db;
-  private connectionString;
 
   constructor() {
     super();
@@ -23,8 +22,7 @@ class DBConnection extends events.EventEmitter {
    * Connects to the database with the connectionstring given.
    */
   public connect(connectionString: string): void {
-    this.connectionString = connectionString;
-    this.connectToDB();
+    this.connectToDB(connectionString);
   }
 
   /**
@@ -74,8 +72,8 @@ class DBConnection extends events.EventEmitter {
   /**
    * Connects to the database.
    */
-  private connectToDB(): void {
-    mongoose.connect(this.connectionString)
+  private connectToDB(connectionString: string): void {
+    mongoose.connect(connectionString)
     .catch((err) => {
       this.emit('connection-error', err);
     });

@@ -6,7 +6,6 @@
 import * as events from 'events';
 
 import Customer from './../../models/Customer';
-import ICustomer from './../../models/interfaces/ICustomer';
 
 /**
  * Sets up and handles the database.
@@ -29,14 +28,13 @@ class DBHandler extends events.EventEmitter {
   }
 
   /**
-   * Gets a customer from the database
-   * with info matching the customer object.
+   * Returns the first document of the specific type that matches the info given.
    */
-  public getCustomers(customerInfo: object): Promise<ICustomer[]> {
+  public getOne(type: string, info: object): Promise<object> {
     return new Promise((resolve, reject) => {
-      Customer.find(customerInfo)
-      .then((customer) => {
-        resolve(customer);
+      this.getOneFromType(type, info)
+      .then((result) => {
+        resolve(result);
       })
       .catch((err) => {
         reject(err);
@@ -45,21 +43,50 @@ class DBHandler extends events.EventEmitter {
   }
 
   /**
-   * Adds a customer with the given info to the database.
+   * Returns all documents of the specific type that matches the info given.
    */
-  public addCustomer(customerInfo: ICustomer): Promise<ICustomer> {
+  public getAll(type: string, info: object): Promise<object[]> {
     return new Promise((resolve, reject) => {
-      this.getCustomers(customerInfo)
-      .then((customer) => {
-        if (customer.length > 0) {
-          resolve(customer[0])
+      this.getAllFromType(type, info)
+      .then((result) => {
+        resolve(result);
+      })
+      .catch((err) => {
+        reject(err);
+      })
+    });
+  }
+
+  /**
+   * Adds the given object of the given type to the databse.
+   * @param info - The info of the object to add.
+   * @param replaceOn - The property to look for in case of updating
+   * a document rather than adding one. If a document with the property is found
+   * that one will be updated with the new information, and no new document will be created.
+   * If more than one matching result is found, all will be updated.
+   */
+  public addOrUpdate(type: string, info: object, replaceOn?: object): Promise<object[]> {
+    return new Promise((resolve, reject) => {
+      this.getAllFromType(type, replaceOn)
+      .then((allFound) => {
+        if (allFound.length > 0) {
+          let updated = allFound.map((found) => { 
+            found.set(info);
+            return found.save();
+          });
+            
+          return Promise.all(updated);
         } else {
-          let newCustomer = new Customer(customerInfo);
-          return newCustomer.save();
+          return this.createNewFromType(type, info);
         }
       })
-      .then((customer) => {
-        resolve(customer);
+      .then((saved) => {
+        if (!Array.isArray(saved)) {
+          resolve([saved]);
+        } else {
+          resolve(saved);
+        }
+        
       })
       .catch((error) => {
         reject(error);
@@ -68,15 +95,17 @@ class DBHandler extends events.EventEmitter {
   } 
 
   /**
-   * Removes customers with the given info from the database.
+   * Removes all documents of the given type that matches the given attributes.
    */
-  public removeCustomer(customerInfo: ICustomer): Promise<ICustomer> {
+  public removeAll(type: string, removeOn: object): Promise<void> {
     return new Promise((resolve, reject) => {
-      Customer.find(customerInfo)
-      .then((customers) => {
-        console.log(customers)
-        customers.forEach(customer => customer.remove());
+      this.getAllFromType(type, removeOn)
+      .then((result) => {
+        result.forEach(found => found.remove());
         resolve();
+      })
+      .catch((err) => {
+        reject(err);
       })
     });
   } 
@@ -100,6 +129,73 @@ class DBHandler extends events.EventEmitter {
     this.dbconnection.on('close', () => {
       this.emit('disconnected');
     })
+  }
+
+  private getOneFromType(type: string, info: object): Promise<object> {
+    return new Promise((resolve, reject) => {
+      type = type.toLowerCase();
+      switch (type) {
+        case 'customer':
+          Customer.findOne(info)
+          .then((customer) => {
+            resolve(customer);
+          })
+          .catch((error) => {
+            reject(error);
+          })
+          break;
+        default:
+          resolve();
+          break;
+      }
+    });
+  }
+
+  private getAllFromType(type: string, info: object): Promise<object[]> {
+    return new Promise((resolve, reject) => {
+      type = type.toLowerCase();
+      if (!info) {
+        resolve([]);
+      }
+
+      switch (type) {
+        case 'customer':
+          Customer.find(info)
+          .then((customer) => {
+            resolve(customer);
+          })
+          .catch((error) => {
+            reject(error);
+          })
+          break;
+        default:
+          resolve();
+          break;
+      }
+    });
+  }
+
+  private createNewFromType(type: string, info: object): Promise<object> {
+    return new Promise((resolve, reject) => {
+      type = type.toLowerCase();
+      let toSave;
+
+      switch (type) {
+        case 'customer':
+          toSave = new Customer(info)
+          toSave.save()
+          .then((saved) => {
+            resolve(saved);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+          break;
+        default:
+          reject();
+          break;
+      }
+    });
   }
 }
 
