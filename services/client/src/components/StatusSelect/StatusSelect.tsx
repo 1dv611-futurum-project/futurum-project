@@ -30,12 +30,6 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 		this.handleChange = this.handleChange.bind(this);
 	}
 
-	public componentDidMount() {
-		this.setState({
-			selected: this.getStatusText(this.state.selected)
-		});
-	}
-
 	public render() {
 		const status = this.getStatusText(this.props.selected);
 
