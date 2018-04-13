@@ -31,7 +31,7 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 	}
 
 	public render() {
-		const status = this.getStatusText(this.props.selected);
+		const status = this.getStatusText(this.state.selected);
 
 		return (
 			<span className='select'>
