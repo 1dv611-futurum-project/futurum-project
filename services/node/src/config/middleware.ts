@@ -5,8 +5,7 @@
 // Import
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'express-jwt';
-import IMAPConnection from './../handlers/email/IMAPConnection';
-import IMAPHandler from './../handlers/email/IMAPHandler';
+import EmailHandler from './../handlers/email/EmailHandler';
 
 class Middleware {
   private static IMAPaccessToken: string;
@@ -57,7 +56,7 @@ class Middleware {
       if ((variablesExist && variablesChanged) || secondsSinceUpdate > 3500) {
         Middleware.IMAPaccessToken = process.env.IMAP_ACCESS_TOKEN;
         Middleware.IMAPrefreshToken = process.env.IMAP_REFRESH_TOKEN;
-        IMAPHandler.connect(IMAPConnection);
+        EmailHandler.updateIMAPConnection();
         Middleware.latestIMAPUpdateSecondsSinceEpoch = (new Date().getTime() / 1000);
       }
       return next();

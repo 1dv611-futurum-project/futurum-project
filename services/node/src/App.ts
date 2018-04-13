@@ -12,9 +12,8 @@ import middleware from './config/middleware';
 import passportStrategies from "./config/passport";
 import mainRouter from './routes/mainRouter';
 import authRouter from './routes/authRouter';
-import IMAPHandler from './handlers/email/IMAPHandler';
-import DBConnection from './handlers/db/DBConnection';
 import DBHandler from './handlers/db/DBHandler';
+import EmailHandler from './handlers/email/EmailHandler';
 
 /**
  * Express app.
@@ -32,8 +31,8 @@ class App {
     this.DBHandler = new DBHandler(new DBConnection());
     this.middleware();
     this.mountRoutes();
+    this.handleIncomingEmails();
     this.handleDB();
-    this.handleImap();
   }
 
   private middleware(): void {
@@ -83,37 +82,38 @@ class App {
     this.DBHandler.connect('mongodb://futurum-db:27017');
   }
 
-  private handleImap(): void {
-    IMAPHandler.on('mail', (mail) => {
+  private handleIncomingEmails(): void {
+    EmailHandler.Incoming.on('mail', (mail) => {
       console.log('Got mail:'); 
       console.log(mail); 
       console.log('Make call to database to save the mail.');
       console.log('Make call to ws to send notification of mail.');
     })
 
-    IMAPHandler.on('unauth', (payload) => {
+    EmailHandler.Incoming.on('unauth', (payload) => {
       console.log('Got unauth:'); 
       console.log(payload)
       console.log('We are missing authorization details for the email, should direct user to auth-route?.');
     })
 
-    IMAPHandler.on('message', (message) => {
+    EmailHandler.Incoming.on('message', (message) => {
       console.log('Got imap message, means imap connection is probably going to go down in a calculated way. Action?:'); 
       console.log(message)
       console.log('Make call to ws to send notification of message.')
     })
 
-    IMAPHandler.on('tamper', (message) => {
+    EmailHandler.Incoming.on('tamper', (message) => {
       console.log('Got tamper message, means emails are being accesses externally and possible reload should happen:'); 
       console.log(message)
       console.log('Make call to ws to send notification of tamper.')
     })
 
-    IMAPHandler.on('error', (error) => {
+    EmailHandler.Incoming.on('error', (error) => {
       console.log('Got error:'); 
       console.log(error)
       console.log('Make call to ws to send notification of error.')
-      console.log('Possibly make call to email module to email the error to different email address.')
+      console.log('Possibly make call to email module to email the error to different email address:')
+      EmailHandler.sendMail({to: 'dev@futurumdigital.se', subject: 'error', body: 'Error'})
     })
   }
 
