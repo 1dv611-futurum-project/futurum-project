@@ -6,6 +6,20 @@
 import * as React from 'react';
 import { AddButton } from '../../components/AddButton/AddButton';
 import { ClientList } from '../../components/ClientList/ClientList';
+import { ClientInput } from '../../components/ClientInput/ClientInput';
+
+const clients = [
+	{
+		name: 'Företaget AB',
+		email: 'foretaget@foretaget.com',
+		errands: 2
+	},
+	{
+		name: 'Microsoft Inc',
+		email: 'microsoft@support.com',
+		errands: 5
+	}
+];
 
 /**
  * ClientListPage class
@@ -15,25 +29,11 @@ export class ClientListPage extends React.Component<any, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			clients: [],
-		};
-	}
-
-	public componentDidMount() {
-		const clients: any[] = [];
-		const client1 = {
-			name: 'Företaget AB',
-			email: 'foretaget@foretaget.com',
-			errands: 2
-		};
-		const client2 = {
-			name: 'Microsoft Inc',
-			email: 'microsoft@support.com',
-			errands: 5
+			showNewClient: false,
 		};
 
-		clients.push(client1, client2);
-		this.setState({ clients: clients});
+		this.handleAddClientClick = this.handleAddClientClick.bind(this);
+		this.addClient = this.addClient.bind(this);
 	}
 
 	public render() {
@@ -42,15 +42,30 @@ export class ClientListPage extends React.Component<any, any> {
 				<div className='client-list-page__header'>
 					<h1 className='client-list-page__header__title'>Kundlista</h1>
 					<div className='client-list-page__header__btn'>
-						<AddButton text={'Lägg till kund'} onClick={this.addClient}/>
+						<AddButton text={'Lägg till kund'} onClick={this.handleAddClientClick}/>
 					</div>
 				</div>
-				<ClientList data={this.state.clients} onEdit={this.editClient} onDelete={this.deleteClient}/>
+				<div className='ticket__wrapper__messages'>
+					<ClientInput onClick={this.addClient} open={this.state.showNewClient} />
+				</div>
+				<ClientList
+					data={clients}
+					onEdit={this.editClient}
+					onDelete={this.deleteClient}
+				/>
 			</div>
 		);
 	}
 
-	private addClient() {
+	/**
+	 * Handles click on add client button
+	 * @private
+	 */
+	private handleAddClientClick() {
+		this.setState({ showNewClient: true });
+	}
+
+	private addClient(client: any) {
 		console.log('La till användare');
 	}
 
