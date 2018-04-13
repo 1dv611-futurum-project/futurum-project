@@ -5,6 +5,7 @@
 
 import * as React from 'react';
 import { lightBaseTheme, MuiThemeProvider, getMuiTheme } from 'material-ui/styles';
+import WebSocketClientHandler from '../../handlers/WebsocketHandler';
 
 import { Header } from '../../components/Header/Header';
 
