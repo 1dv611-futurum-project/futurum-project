@@ -21,7 +21,7 @@ class PassportStrategies {
     passport.use('gmail', new Google.Strategy({
       clientID: process.env.IMAP_CLIENT_ID,
       clientSecret: process.env.IMAP_CLIENT_SECRET,
-      callbackURL: 'http://127.0.0.1:8080/node/auth/google/callback'
+      callbackURL: process.env.IMAP_REDIRECT_URL
     },
       (accessToken, refreshToken, profile, done) => {
         let authorized;
