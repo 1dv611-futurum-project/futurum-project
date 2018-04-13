@@ -24,11 +24,14 @@ export class ClientInput extends React.Component<IClientInput, any> {
 		super(props);
 
 		this.state = {
-			message: ''
+			client: {
+				name: '',
+				email: ''
+			}
 		};
 
-		this.handleChange = this.handleChange.bind(this);
-		this.handleClick = this.handleClick.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
+		this.handleInput = this.handleInput.bind(this);
 	}
 
 	public render() {
@@ -37,39 +40,44 @@ export class ClientInput extends React.Component<IClientInput, any> {
 
 		return (
 			<Paper className={cssClasses}>
-				<div className='client-input__field'>
+				<form onSubmit={this.handleSubmit} className='client-input__field'>
 					<Input
 						placeholder='Företag'
+						name='name'
 						className={'client-input__input'}
+						onChange={this.handleInput}
 					/>
 					<Input
 						placeholder='Epost'
+						name='email'
 						className={'client-input__input'}
 						inputProps={{
 							type: 'email',
 						}}
+						onChange={this.handleInput}
 					/>
-					<Button variant='raised' size='small' className='client-input__field__btn' onClick={this.handleClick}>
+					<Button variant='raised' type='submit' size='small' className='client-input__field__btn'>
 						Lägg till
 					</Button>
-				</div>
+				</form>
 			</Paper>
 		);
 	}
 
 	/**
-	 * Handles change in textarea
+	 * Handles button click to add the new client
 	 * @private
 	 */
-	private handleChange(e: any) {
-		this.setState({ message: e.target.value});
+	private handleSubmit(event: any) {
+		event.preventDefault();
+		this.props.onClick(this.state.client);
 	}
 
 	/**
-	 * Handles button click to send the new message
+	 * Handles input value
 	 * @private
 	 */
-	private handleClick() {
-		this.props.onClick(this.state.message);
+	private handleInput(event: any) {
+		this.state.client[event.target.name] = event.target.value;
 	}
 }

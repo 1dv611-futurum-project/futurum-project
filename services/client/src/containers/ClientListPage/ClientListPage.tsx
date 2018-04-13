@@ -66,7 +66,7 @@ export class ClientListPage extends React.Component<any, any> {
 	}
 
 	private addClient(client: any) {
-		console.log('La till användare');
+		console.log(client);
 	}
 
 	private editClient(client: any) {
