@@ -1,7 +1,7 @@
 /**
  * Mixins
  */
-@mixin arrow($color, $size, $pos: "left") {
+@mixin arrow($color, $size, $pos: "left", $side: "") {
    position: relative;
 
    &:after, &:before {
@@ -11,7 +11,12 @@
 	   width: 0;
 	   position: absolute;
 	   @if $pos == "top" {
-		   left: 50%;
+		   @if $side == "right" {
+			   left: 84%;
+		   }
+		   @else {
+			   left: 50%;
+		   }
 		   bottom: 100%;
 		   border-bottom-color: $color !important;
 	   }

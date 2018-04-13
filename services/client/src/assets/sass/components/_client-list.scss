@@ -3,11 +3,10 @@
  */
 .client-list {
 	margin: 15px 10px;
-	
-	&__table {
 
-		&--body {
-			overflow: visible;
+	&__table {
+		&__body {
+			background-color: $white;
 		}
 
 		&--header {

@@ -4,7 +4,7 @@
 .client-input {
 	margin-top: 25px;
 	padding: 15px 20px;
-	@include arrow(lighten($grey-light, 30%), 15px, 'top');
+	@include arrow(lighten($grey-light, 30%), 15px, 'top', 'right');
 
 	&--hidden {
 		display: none;
@@ -25,6 +25,7 @@
 		margin-left: 10px;
 
 		input {
+			font-size: 12px !important;
 			width: 250px;
 		}
 	}

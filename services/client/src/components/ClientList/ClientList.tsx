@@ -33,7 +33,7 @@ export class ClientList extends React.Component<IClientList, any> {
 					<TableCell className='client-list__table--icon' />
 				</TableRow>
 			</TableHead>
-			<TableBody>
+			<TableBody className='client-list__table__body'>
 				{this.props.data.map((client: any, i: any) => {
 					return (
 					<TableRow key={i}>
