@@ -39,7 +39,7 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 
 		return (
 			<CardActions className='ticket__actions'>
-				<StatusSelect status={this.state.status} onChange={this.handleStatusChange} />
+				<StatusSelect selected={this.state.status} onChange={this.handleStatusChange} />
 					{this.state.displayModal ?
 						<Modal
 							title={`Uppdaterat status av "${ticket.title}"`}
@@ -56,19 +56,22 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 	/**
 	 * Handles status change for ticket
 	 * @private
+	 * @param {Number} status - The status number (0-3)
+	 * @param {String} statusText - The status in text
 	 */
 	private handleStatusChange(status: number, statusText: string): void {
 		this.props.onStatusChange(status);
 		this.setState({
 			displayModal: true,
 			status: status,
-			statusText: statusText,
+			statusText: statusText
 		});
 	}
 
 	/**
 	 * Handles status update message change
 	 * @private
+	 * @param {Boolean} doSend - If status change should be sent or not
 	 */
 	private handleModal(doSend: boolean): void {
 		if (doSend) {

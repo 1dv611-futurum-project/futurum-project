@@ -7,6 +7,7 @@ import { Card, CardHeader, CardActions } from 'material-ui';
 import { TicketOverview } from '../../../src/components/TicketOverview/TicketOverview';
 import { AddButton } from '../../../src/components/AddButton/AddButton';
 import { StatusSelect } from '../../../src/components/StatusSelect/StatusSelect';
+import { DropDownSelect } from '../../../src/components/DropDownSelect/DropDownSelect';
 
 describe('<TicketOverview />', () => {
 	let wrapper: any;
@@ -69,7 +70,7 @@ describe('<TicketOverview />', () => {
 	});
 
 	it('should have a list of assignees to choose from', () => {
-		expect(wrapper.find('.ticket-overview__actions--assigned').find(StatusSelect)).to.have.length(1);
+		expect(wrapper.find('.ticket-overview__actions--assigned').find(DropDownSelect)).to.have.length(1);
 	});
 
 	it('should have an answer button', () => {

@@ -8,6 +8,7 @@ import { Paper } from 'material-ui';
 import { PlayArrow } from 'material-ui-icons';
 
 import { StatusSelect } from '../StatusSelect/StatusSelect';
+import { DropDownSelect } from '../DropDownSelect/DropDownSelect';
 import { AddButton } from '../AddButton/AddButton';
 
 /**
@@ -16,6 +17,7 @@ import { AddButton } from '../AddButton/AddButton';
 export interface ITicketOverview {
 	handleClick(): any;
 	handleStatusChange(status: number): any;
+	handleAssigneeChange(assignee: string): any;
 	status: number;
 	data: any;
 }
@@ -33,26 +35,43 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 		};
 	}
 
-	public componentDidMount() {
-		const status = this.props.status;
+	/**
+	 * getDerivedStateFromProps
+	 * Sets the correct ticket color based on status.
+	 * @public
+	 * @param {Object} nextProps
+	 * @param {Object} prevState
+	 * @returns {Object} - The state object
+	 */
+	public static getDerivedStateFromProps(nextProps: any, prevState: any) {
+		if (nextProps.status !== prevState.status || prevState.status === '') {
+			let status;
+			switch (nextProps.status) {
+				case 0:
+					status = 'red';
+					break;
+				case 1:
+					status = 'blue';
+					break;
+				case 2:
+				case 3:
+					status = 'green';
+					break;
+			}
 
-		switch (this.props.status) {
-			case 0:
-				this.setState({ color: 'red', status: status });
-				break;
-			case 1:
-				this.setState({ color: 'blue', status: status });
-				break;
-			case 2:
-			case 3:
-				this.setState({ color: 'green', status: status });
-				break;
+			return {
+				color: status,
+				status: nextProps.status
+			};
+		} else {
+			return null;
 		}
 	}
 
 	public render() {
 		const { id, assignee, title, created, from } = this.props.data;
-		const { handleClick, handleStatusChange } = this.props;
+		const { handleClick, handleStatusChange, handleAssigneeChange } = this.props;
+		const assignees = ['Anton Myrberg', 'Sebastian Borgstedt'];
 		const colorClasses = `ticket-overview__color ticket-overview__color--${this.state.color}`;
 
 		return (
@@ -73,11 +92,11 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 				<div className='ticket-overview__actions'>
 					<div className='ticket-overview__actions--status'>
 						<p className='ticket-overview__actions__label'>Status:</p>
-						<StatusSelect status={this.state.status} onChange={handleStatusChange} />
+						<StatusSelect selected={this.state.status} onChange={handleStatusChange} />
 					</div>
 					<div className='ticket-overview__actions--assigned'>
 						<p className='ticket-overview__actions__label'>Tilldelad:</p>
-						<StatusSelect status={this.state.status} onChange={handleStatusChange} />
+						<DropDownSelect selected={assignee} onChange={handleAssigneeChange} items={assignees} />
 					</div>
 				</div>
 			</Paper>

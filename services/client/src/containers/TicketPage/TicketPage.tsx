@@ -43,11 +43,13 @@ export class TicketPage extends React.Component<any, any> {
 
 		this.state = {
 			showNewMessage: false,
-			status: data.status
+			status: data.status,
+			assignee: data.assignee
 		};
 
 		this.handleNewMessageClick = this.handleNewMessageClick.bind(this);
 		this.handleStatusChange = this.handleStatusChange.bind(this);
+		this.handleAssigneeChange = this.handleAssigneeChange.bind(this);
 	}
 
 	public render() {
@@ -60,6 +62,7 @@ export class TicketPage extends React.Component<any, any> {
 					status={this.state.status}
 					handleClick={this.handleNewMessageClick}
 					handleStatusChange={this.handleStatusChange}
+					handleAssigneeChange={this.handleAssigneeChange}
 				/>
 				<div className='ticket__wrapper__messages'>
 					<MessageInput onClick={this.handleSend} open={this.state.showNewMessage} />
@@ -95,5 +98,16 @@ export class TicketPage extends React.Component<any, any> {
 	 */
 	private handleStatusChange(status: number) {
 		this.setState({ status });
+		console.log('changed status to ' + status);
+	}
+
+	/**
+	 * Handles assignee change of ticket
+	 * @private
+	 * @param {Number} assignee - The new assignee
+	 */
+	private handleAssigneeChange(assignee: string) {
+		this.setState({ assignee });
+		console.log('changed assignee to ' + assignee);
 	}
 }

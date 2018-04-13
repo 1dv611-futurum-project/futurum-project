@@ -5,13 +5,14 @@
 
 import * as React from 'react';
 import { Select, MenuItem } from 'material-ui';
+import { DropDownSelect } from '../DropDownSelect/DropDownSelect';
 
 /**
  * StatusSelect Props Interface
  */
 export interface IStatusSelect {
-	status: number;
-	onChange(status: number, statusText?: string): void;
+	selected: number;
+	onChange(selected: any, statusText: string): void;
 }
 
 /**
@@ -22,77 +23,60 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			selected: this.props.status || 0
+			statuses: ['Ej påbörjad', 'Påbörjad', 'Genomförd', 'Stängd'],
+			selected: this.props.selected
 		};
 
 		this.handleChange = this.handleChange.bind(this);
 	}
 
 	public componentDidMount() {
-		const status = this.getStatusText(this.props.status);
-		this.setState({ selected: status });
+		this.setState({
+			selected: this.getStatusText(this.state.selected)
+		});
 	}
 
 	public render() {
+		const status = this.getStatusText(this.props.selected);
+
 		return (
-			<Select
-				value={this.state.selected}
-				onChange={this.handleChange}
-				classes={{root: 'status-select', icon: 'status-select__icon'}}
-			>
-				<MenuItem value='Ej påbörjad' className='status-select__item'>Ej påbörjad</MenuItem>
-				<MenuItem value='Påbörjad' className='status-select__item'>Påbörjad</MenuItem>
-				<MenuItem value='Genomförd' className='status-select__item'>Genomförd</MenuItem>
-				<MenuItem value='Stängd' className='status-select__item'>Stängd</MenuItem>
-			</Select>
+			<span className='select'>
+				<DropDownSelect
+					selected={status}
+					items={this.state.statuses}
+					onChange={this.handleChange}
+				/>
+			</span>
 		);
 	}
 
 	/**
 	 * Gets the correct status message from number
 	 * @private
-	 * @param {Number} status - The status number (0-3)
+	 * @param {Number} statusNumber - The status number (0-3)
 	 * @returns {String} - The status as a string
 	 */
-	private getStatusText(status: number): string {
-		switch (status) {
-			case 0:
-				return 'Ej påbörjad';
-			case 1:
-				return 'Påbörjad';
-			case 2:
-				return 'Genomförd';
-			case 3:
-				return 'Stängd';
-		}
+	private getStatusText(statusNumber: number): string {
+		return this.state.statuses[statusNumber];
 	}
 
 	/**
 	 * Gets the correct status number from message
 	 * @private
-	 * @param {string} statusText - The status number (0-3)
+	 * @param {string} statusText - The status in text
 	 * @returns {Number} - The status as a number
 	 */
-	private getStatus(status: string): number {
-		switch (status) {
-			case 'Ej påbörjad':
-				return 0;
-			case 'Påbörjad':
-				return 1;
-			case 'Genomförd':
-				return 2;
-			case 'Stängd':
-				return 3;
-		}
+	private getStatusNumber(statusText: string): number {
+		return this.state.statuses.indexOf(statusText);
 	}
 
 	/**
 	 * Handles change when a new status is selected
 	 * @private
 	 */
-	private handleChange(event: any): void {
-		const status = this.getStatus(event.target.value);
-		this.setState({ selected: event.target.value });
-		this.props.onChange(status, event.target.value);
+	private handleChange(selected: string): void {
+		const statusNumber = this.getStatusNumber(selected);
+		this.setState({ selected });
+		this.props.onChange(statusNumber, selected);
 	}
 }
