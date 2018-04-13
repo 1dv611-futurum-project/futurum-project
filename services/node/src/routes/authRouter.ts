@@ -5,8 +5,6 @@
  // Imports.
  import * as express from 'express';
  import * as passport from 'passport';
- import IMAPConnection from './../handlers/email/IMAPConnection';
- import IMAPHandler from './../handlers/email/IMAPHandler';
  import * as jwt from 'jsonwebtoken';
 
  const authRouter = express.Router();

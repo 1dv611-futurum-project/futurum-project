@@ -28,11 +28,17 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   private xoauthGenerator: XOauth;
   private isConnected: boolean;
 
+  constructor() {
+    super();
+    this.xoauthGenerator = XOauth;
+  }
+
   /**
-   * Updates or creates the imap connection with the credentials
-   * in environment variables.
+   * Updates or creates the imap connection and the xoauth-generator.
    */
   public updateCredentials(): void {
+    XOauth.updateGenerator();
+
     if (this.imap) {
       this.closeConnection();
     }
@@ -77,11 +83,9 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Connects to the imap server.
    */
   private connect(): void {
-    const credentials = this.getCredentials();
-    if (!credentials) {
+    if (!this.xoauthGenerator) {
       this.emitMessage('unauth');
     } else {
-      this.xoauthGenerator = new XOauth(credentials);
       this.xoauthGenerator.getToken()
       .then((token) => {
         this.imap = new Imap({
@@ -114,7 +118,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   private handleInitialConnect(): void {
     this.openInbox()
     .then(() => {
-      this._isConnected = true;
+      this.isConnected = true;
       this.emitMessage('ready');
     })
     .catch((err: Error) => {
@@ -215,31 +219,10 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   }
 
   /**
-   * Checks that the correct credentials are set as environment variables and
-   * returns them in an object, otherwise
-   * emits unauth-error.
-   */
-  private getCredentials(): object {
-    if (process.env.IMAP_USER
-        && process.env.IMAP_CLIENT_ID
-        && process.env.IMAP_CLIENT_SECRET
-        && process.env.IMAP_ACCESS_TOKEN
-        && process.env.IMAP_REFRESH_TOKEN) {
-      const credentials = {};
-      credentials.user = process.env.IMAP_USER;
-      credentials.clientID = process.env.IMAP_CLIENT_ID;
-      credentials.clientSecret = process.env.IMAP_CLIENT_SECRET;
-      credentials.accessToken = process.env.IMAP_ACCESS_TOKEN;
-      credentials.refreshToken = process.env.IMAP_REFRESH_TOKEN;
-      return credentials;
-    }
-  }
-
-  /**
    * Emits connection errors.
    */
   private handleConnectionError(err: object): void {
-    this._isConnected = false;
+    this.isConnected = false;
     const error = {};
     error.message = err.message || 'An error with the IMAP-connection occured.';
     error.type = err.type || 'Connection';

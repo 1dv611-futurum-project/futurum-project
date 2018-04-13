@@ -4,29 +4,34 @@
 
 // Imports
 import * as events from 'events';
-import * as gmailApiSync from 'gmail-api-sync';
-import * as google from 'googleapis';
-import XOauth from './Xoauth2Generator';
+import { google } from 'googleapis';
+const OAuth2 = google.auth.OAuth2;
 
 class MailSender extends events.EventEmitter {
 
-  private xoauthgenerator: XOauth;
+  private oauth2Client;
+  private credentials;
 
-  constructor(generator: XOauth) {
+  constructor() {
     super();
-    this.xoauthgenerator = generator;
+
+    this.oauth2Client = new OAuth2(
+      process.env.IMAP_CLIENT_ID,
+      process.env.IMAP_CLIENT_SECRET,
+      process.env.IMAP__REDIRECT_URL
+    );
   }
 
   public send(params: object): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.xoauthgenerator.getToken()
-      .then((token) => {
+      this.updateCredentials()
+      .then(() => {
         let gmail = google.gmail('v1');
         let headers = this.getHeaders(params);
         let base64Email = this.getBase64EncodedEmailFromHeaders(headers);
 
         let request = {
-          auth: token,
+          auth: this.oauth2Client,
           userId: 'me',
           resource: {
               raw: base64Email
@@ -43,7 +48,6 @@ class MailSender extends events.EventEmitter {
         });
       })
       .catch((error) => {
-        console.log(error);
         reject(error);
       })
     })
@@ -70,7 +74,28 @@ class MailSender extends events.EventEmitter {
 
     return base64EncodedEmail;
   }
+
+  private updateCredentials(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      let newCredentials = {
+        access_token: process.env.IMAP_ACCESS_TOKEN,
+        refresh_token: process.env.IMAP_REFRESH_TOKEN
+      };
+  
+      if (newCredentials
+         && (!this.credentials
+         || (this.credentials 
+            && (this.credentials.access_token !== newCredentials.access_token 
+                || this.credentials.refresh_token !== newCredentials.refresh_token)))) {
+        this.credentials = newCredentials;
+
+        this.oauth2Client.setCredentials(this.credentials);
+      }
+
+      resolve();
+    })
+  }
 }
 
 // Exports
-export default MailSender;
+export default new MailSender();
