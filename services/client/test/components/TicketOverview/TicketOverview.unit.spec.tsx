@@ -14,6 +14,7 @@ describe('<TicketOverview />', () => {
 	const props = {
 		handleClick: () => {return; },
 		handleStatusChange: (fn: number) => fn,
+		handleAssigneeChange: (fn: string) => fn,
 		status: 0,
 		data: {
 			id: 'id',
@@ -39,6 +40,7 @@ describe('<TicketOverview />', () => {
 			]
 		}
 	};
+	const colors = ['red', 'blue', 'green', 'green'];
 	const statusCodes = {
 		0: 'Ej påbörjad',
 		1: 'Påbörjad',
@@ -50,17 +52,29 @@ describe('<TicketOverview />', () => {
 		wrapper = shallow(<TicketOverview {...props}/>);
 	});
 
-	it('should have correct status color', () => {
-		const colors = ['red', 'blue', 'green', 'green'];
+	function getColorState(status: number) {
+		props.status = status;
+		wrapper = shallow(<TicketOverview {...props}/>);
 
+		return wrapper.state('color');
+	}
+
+	it('should have correct status color', () => {
 		// tslint:disable-next-line:forin
 		for (const status in statusCodes) {
-			props.status = JSON.parse(status);
-			wrapper = shallow(<TicketOverview {...props}/>);
+			const statusInt = JSON.parse(status);
+			const color = getColorState(statusInt);
 
-			const color = wrapper.state('color');
+			expect(color).to.equal(colors[statusInt]);
+		}
+	});
 
-			expect(color).to.equal(colors[JSON.parse(status)]);
+	it('should have correct status color class', () => {
+		// tslint:disable-next-line:forin
+		for (const status in statusCodes) {
+			const statusInt = JSON.parse(status);
+			const color = getColorState(statusInt);
+
 			expect(wrapper.find(`.ticket-overview__color--${color}`)).to.have.length(1);
 		}
 	});

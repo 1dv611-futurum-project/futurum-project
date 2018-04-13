@@ -24,7 +24,7 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 		super(props);
 		this.state = {
 			statuses: ['Ej påbörjad', 'Påbörjad', 'Genomförd', 'Stängd'],
-			selected: this.props.selected
+			selected: props.selected
 		};
 
 		this.handleChange = this.handleChange.bind(this);

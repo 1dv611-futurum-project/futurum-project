@@ -31,7 +31,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 		super(props);
 		this.state = {
 			color: '',
-			status: 0
+			status: -1
 		};
 	}
 
