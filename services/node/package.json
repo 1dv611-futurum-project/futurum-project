@@ -20,6 +20,7 @@
     "body-parser": "^1.18.2",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
+    "googleapis": "^28.1.0",
     "http": "0.0.0",
     "imap": "^0.8.19",
     "mailparser-mit": "^0.6.2",
