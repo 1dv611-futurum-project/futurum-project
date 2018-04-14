@@ -5,27 +5,34 @@
 
 import * as React from 'react';
 import { lightBaseTheme, MuiThemeProvider, getMuiTheme } from 'material-ui/styles';
-import WebSocketClientHandler from '../../handlers/WebsocketHandler';
+import * as io from 'socket.io-client';
 
 import { Header } from '../../components/Header/Header';
+
+const socket = io.connect('http://localhost:3000/');
 
 /**
  * App class
  */
 export class App extends React.Component<any, any> {
 
-	
-	
-	
+	public componentDidMount() {
+		socket.on('connect', () => {
+			console.log('connected!');
+			socket.emit('started!');
 
-	private recieveSocketMessage(): void {
+			socket.on('message', (m: any) => {
+				console.log(m);
+			});
+		});
+	}
 
-
+	private receiveSocketMessage(): void {
+		// TODO!
 	}
 
 	private sendSocketMessage(): void {
-		
-
+		// TODO!
 	}
 
 	public render() {

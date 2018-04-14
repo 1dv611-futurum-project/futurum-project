@@ -7,10 +7,8 @@
 // Imports.
 import * as http from 'http';
 import App from './App';
-//import * as websocket from 'websocket';
-//import { server} from 'websocket';
-import * as socket from 'socket.io';
-import { server} from 'socket';
+import * as socketIo from 'socket.io';
+import { server } from 'socket';
 
 const port = process.env.PORT || 3000;
 const serv = http.createServer(App);
@@ -25,24 +23,38 @@ App.listen(port, (err) => {
 });
 
 
+let io = socketIo(serv);
 
+io.on('connect', (socket) => {
+	console.log('socket connected!');
+	socket.emit('started server!');
+
+	socket.on('message', (m) => {
+		console.log(m);
+		socket.emit('message: ' + m);
+	});
+
+	socket.on('disconnect', () => {
+		console.log('disconnected');
+	});
+});
 //var io = require('socket.io')();
-socket.on('connection', function(client){});
-socket.listen(3000);
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function demo() {
-  console.log('Taking a break...');
-  await sleep(2000);
-  console.log('Two second later');
-}
-
-demo();
-
-socket.sendUTF("TESTAR SOCKETIO");
+// socket.on('connection', function(client){});
+// socket.listen(3000);
+//
+// function sleep(ms) {
+//   return new Promise(resolve => setTimeout(resolve, ms));
+// }
+//
+// async function demo() {
+//   console.log('Taking a break...');
+//   await sleep(2000);
+//   console.log('Two second later');
+// }
+//
+// demo();
+//
+// socket.sendUTF("TESTAR SOCKETIO");
 
 
 
@@ -66,7 +78,7 @@ socket.sendUTF("TESTAR SOCKETIO");
   // put logic here to detect whether the specified origin is allowed.
   return true;
   }
-  
+
   wsServer.on('request', function(request) {
     console.log("wsServer.on");
     if (!originIsAllowed(request.origin)) {
@@ -75,7 +87,7 @@ socket.sendUTF("TESTAR SOCKETIO");
       console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
       return;
     }
-    
+
     var connection = request.accept('echo-protocol', request.origin);
     console.log((new Date()) + ' Connection accepted.');
     connection.on('message', function(message) {

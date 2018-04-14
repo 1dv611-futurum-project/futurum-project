@@ -58,6 +58,12 @@ module.exports = {
 		watchOptions: {
 			poll: false
 		},
-		historyApiFallback: true
+		historyApiFallback: true,
+		proxy: {
+			'/ws/*': {
+				target: 'ws://localhost:3000',
+				ws: true
+			}
+		}
 	}
 };
