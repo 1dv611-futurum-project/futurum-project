@@ -2,6 +2,49 @@
  * Handles the websocket connection against the client.
  */
 
+
+import * as socketIo from 'socket.io';
+import { Client } from 'socket.io';
+
+const SERVER_URL = 'http://localhost:3000';
+
+//@Injectable()
+class WebSocketClientHandler {
+    private socket: socketIo.socket; //todo define as socket.io type
+    private client: Client;
+    private Message: any;
+
+    public initSocket(): void {
+        this.socket = socketIo(SERVER_URL);
+    }
+
+    public send(message: any): void {
+        this.socket.emit('message', message);
+    }
+
+    public onMessage(): any {
+        return this.socket.on('message', (data: any) => console.log(data));
+    }
+
+/*
+    public onEvent(event: Event): Observable<any> {
+        return new Observable<Event>(observer => {
+            this.socket.on(event, () => observer.next());
+        });
+    }
+    */
+}
+
+export default new WebSocketClientHandler();
+
+
+
+
+
+
+
+
+ /*
 // Imports.
 import * as websocket from 'websocket';
 import { client } from 'websocket';
@@ -62,3 +105,4 @@ class WebSocketClientHandler {
 export default new WebSocketClientHandler();
 
 
+*/

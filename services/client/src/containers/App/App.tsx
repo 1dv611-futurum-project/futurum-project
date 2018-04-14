@@ -14,6 +14,20 @@ import { Header } from '../../components/Header/Header';
  */
 export class App extends React.Component<any, any> {
 
+	
+	
+	
+
+	private recieveSocketMessage(): void {
+
+
+	}
+
+	private sendSocketMessage(): void {
+		
+
+	}
+
 	public render() {
 		return (
 			<MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>

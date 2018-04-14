@@ -7,8 +7,10 @@
 // Imports.
 import * as http from 'http';
 import App from './App';
-import * as websocket from 'websocket';
-import { server} from 'websocket';
+//import * as websocket from 'websocket';
+//import { server} from 'websocket';
+import * as socket from 'socket.io';
+import { server} from 'socket';
 
 const port = process.env.PORT || 3000;
 const serv = http.createServer(App);
@@ -23,6 +25,29 @@ App.listen(port, (err) => {
 });
 
 
+
+//var io = require('socket.io')();
+socket.on('connection', function(client){});
+socket.listen(3000);
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function demo() {
+  console.log('Taking a break...');
+  await sleep(2000);
+  console.log('Two second later');
+}
+
+demo();
+
+socket.sendUTF("TESTAR SOCKETIO");
+
+
+
+
+/*
 //var wsServer = new WebSocketServer({
   var wsServer = new server({
     httpServer: serv,
@@ -69,3 +94,5 @@ App.listen(port, (err) => {
   });
 
   console.log("jsonwsserver   "+jsonwsserver);
+
+  */
