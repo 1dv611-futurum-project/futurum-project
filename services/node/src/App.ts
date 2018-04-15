@@ -14,6 +14,7 @@ import mainRouter from './routes/mainRouter';
 import authRouter from './routes/authRouter';
 import IMAPHandler from './handlers/email/IMAPHandler';
 import DBHandler from './handlers/MongoDBHandler';
+import WebsocketHandler from './handlers/WebsocketHandler';
 
 /**
  * Express app.
@@ -22,6 +23,7 @@ class App {
   public express: Application;
   private mainRouter: Router;
   private authRouter: Router;
+  private websocketHandler: WebsocketHandler;
 
   constructor() {
     this.express = express();
@@ -31,6 +33,7 @@ class App {
     this.mountRoutes();
     this.handleDB();
     this.handleImap();
+    this.websocketHandler = new WebsocketHandler({server: "todo: httpServer???"});
   }
 
   private middleware(): void {
@@ -84,8 +87,10 @@ class App {
     IMAPHandler.on('mail', (mail) => {
       console.log('Got mail:'); 
       console.log(mail); 
+      
       console.log('Make call to database to save the mail.');
-      console.log('Make call to ws to send notification of mail.');
+      //Make call to ws to send mail as JSON to client.
+      this.websocketHandler.emit(mail);
     })
 
     IMAPHandler.on('unauth', (payload) => {

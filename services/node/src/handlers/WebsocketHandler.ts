@@ -2,14 +2,72 @@
  * Handles the websocket connection against the client.
  */
 
-/*
-
 // Imports.
-import * as websocket from 'websocket';
-import { Server, Client, Frame, Router, W3cwebsocket} from 'websocket';
-import * as http from 'http';
-//import App from '../App';
+import * as socketIo from 'socket.io';
+import { SocketIO, Server, Socket } from 'socket.io';
+import Ticket from './../models/Ticket';
 
+
+class WebsocketHandler {
+
+    private server: Server;
+    private io: Socket;
+    private port = 3000;
+    
+    constructor(server: any) {
+        this.createServer(server);
+        this.sockets();
+        this.listen();
+    }
+
+    private createServer(server: any): void {
+        this.server = server;
+    }
+
+    private sockets(): void {
+        this.io = socketIo(this.server);
+    }
+
+    private listen(): void {
+        console.log("listen");
+        this.io.on('connect', (socket: any) => {
+            console.log('Connected client on port %s.', this.port);
+            socket.on('message', (m: any) => {
+                console.log('[server](message): %s', JSON.stringify(m));
+                this.io.emit('message', m);
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Client disconnected');
+            });
+        });
+    }
+
+    private originIsAllowed(origin): boolean {
+        // put logic here to detect whether the specified origin is allowed.
+        return true;
+    }
+
+    public emit(data: Array<Object>): void{
+        try {
+            if (this.socket.status) {
+                this.io.emit(JSON.stringify(data));
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+}
+
+// Exports.
+export default WebsocketHandler;
+
+
+
+
+
+/*
 
 class WebsocketServerHandler {
     public WebSocketServer: Server;

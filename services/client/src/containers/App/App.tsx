@@ -16,6 +16,9 @@ const socket = io.connect('http://localhost:3000/');
  */
 export class App extends React.Component<any, any> {
 
+	
+
+
 	public componentDidMount() {
 		socket.on('connect', () => {
 			console.log('connected!');

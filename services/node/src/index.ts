@@ -7,104 +7,81 @@
 // Imports.
 import * as http from 'http';
 import App from './App';
-import * as socketIo from 'socket.io';
-import { server } from 'socket';
+//import * as socketIo from 'socket.io';
+//import { SocketIO, Server } from 'socket.io';
+//import { server } from 'socket';
+//import { Message } from './model';
 
+//const socket = io.connect('http://localhost:3000/');
 const port = process.env.PORT || 3000;
-const serv = http.createServer(App);
+const server = http.createServer(App);
+
+//let ioServer = socketIo(server);
 
 // Start the server.
 App.listen(port, (err) => {
   if (err) {
     return console.error(err);
   }
+  //new socket(server);
 
   return console.log(`Server is listening on ${port}`);
 });
 
-
-let io = socketIo(serv);
-
-io.on('connect', (socket) => {
-	console.log('socket connected!');
-	socket.emit('started server!');
-
-	socket.on('message', (m) => {
-		console.log(m);
-		socket.emit('message: ' + m);
-	});
-
-	socket.on('disconnect', () => {
-		console.log('disconnected');
-	});
-});
-//var io = require('socket.io')();
-// socket.on('connection', function(client){});
-// socket.listen(3000);
-//
-// function sleep(ms) {
-//   return new Promise(resolve => setTimeout(resolve, ms));
-// }
-//
-// async function demo() {
-//   console.log('Taking a break...');
-//   await sleep(2000);
-//   console.log('Two second later');
-// }
-//
-// demo();
-//
-// socket.sendUTF("TESTAR SOCKETIO");
-
-
-
-
 /*
-//var wsServer = new WebSocketServer({
-  var wsServer = new server({
-    httpServer: serv,
-    // You should not use autoAcceptConnections for production
-    // applications, as it defeats all standard cross-origin protection
-    // facilities built into the protocol and the browser.  You should
-    // *always* verify the connection's origin and decide whether or not
-    // to accept it.
-    autoAcceptConnections: false
-  });
-  var jsonwsserver = JSON.stringify(wsServer);
-  console.log("jsonwsserver   "+jsonwsserver);
-  console.log("wsServer:   "+wsServer.httpServer);
+class socket {
+    
+    private server: Server;
+    private io: SocketIO.Server;
+    private port = 3000;
 
-  function originIsAllowed(origin) {
-  // put logic here to detect whether the specified origin is allowed.
-  return true;
-  }
-
-  wsServer.on('request', function(request) {
-    console.log("wsServer.on");
-    if (!originIsAllowed(request.origin)) {
-      // Make sure we only accept requests from an allowed origin
-      request.reject();
-      console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
-      return;
+    constructor(server) {
+        console.log("asdasdasdasdassadasda");
+        this.createServer(server);
+        this.sockets();
+        this.listen();
     }
 
-    var connection = request.accept('echo-protocol', request.origin);
-    console.log((new Date()) + ' Connection accepted.');
-    connection.on('message', function(message) {
-        if (message.type === 'utf8') {
-            console.log('Received Message: ' + message.utf8Data);
-            connection.sendUTF(message.utf8Data);
-        }
-        else if (message.type === 'binary') {
-            console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
-            connection.sendBytes(message.binaryData);
-        }
-    });
-    connection.on('close', function(reasonCode, description) {
-        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-    });
-  });
+    private createServer(server: any): void {
+        this.server = server;
+    }
 
-  console.log("jsonwsserver   "+jsonwsserver);
+    private sockets(): void {
+        this.io = socketIo(this.server);
+    }
 
-  */
+    private listen(): void {
+        console.log("listen");
+        this.io.on('connect', (socket: any) => {
+            console.log('Connected client on port %s.', this.port);
+            socket.on('message', (m: any) => {
+                console.log('[server](message): %s', JSON.stringify(m));
+                this.io.emit('message', m);
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Client disconnected');
+            });
+        });
+    }
+
+    
+    public getApp(): express.Application {
+        return this.app;
+    }
+    
+}
+*/
+
+
+
+
+/* Message
+
+import {User} from './user';
+
+export class Message {
+    constructor(private from: User, private content: string) {}
+}
+
+*/
