@@ -9,24 +9,22 @@ import * as io from 'socket.io-client';
 
 import { Header } from '../../components/Header/Header';
 
-const socket = io.connect('http://localhost:3000/');
-
 /**
  * App class
  */
 export class App extends React.Component<any, any> {
 
-	
-
-
 	public componentDidMount() {
-		socket.on('connect', () => {
-			console.log('connected!');
-			socket.emit('started!');
+		this.startSocket();
+	}
 
-			socket.on('message', (m: any) => {
-				console.log(m);
-			});
+	private startSocket() {
+		const socket = io('http://localhost:8080', {
+			path: '/socket'
+		});
+
+		socket.on('connect', () => {
+			console.log('client connected');
 		});
 	}
 

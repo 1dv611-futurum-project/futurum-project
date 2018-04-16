@@ -3,7 +3,7 @@ services:
 
     # Reverse proxy (Nginx)
     reverse-proxy:
-        build: 
+        build:
             context: ./services/reverse-proxy/
             args:
                 CONFIG_FILE: 'nginx.conf'
