@@ -5,16 +5,15 @@
 
 import * as React from 'react';
 import { Link } from 'react-router';
-import { Card, CardHeader, CardText, CardActions } from 'material-ui';
-import { StatusSelect } from '../StatusSelect/StatusSelect';
-
-import { ticketStyle } from '../../variables/Variables';
+import { Card, CardHeader, CardContent, CardActions } from 'material-ui';
+import { TicketAction } from './TicketAction';
 
 /**
  * Ticket Props Interface
  */
 export interface ITicket {
 	data: any;
+	onSend(message: any): void;
 }
 
 /**
@@ -28,7 +27,7 @@ export class Ticket extends React.Component<ITicket, any> {
 			color: this.props.data.color || 'red'
 		};
 
-		this.handleStatusChange = this.handleStatusChange.bind(this);
+		this.handleStatusColor = this.handleStatusColor.bind(this);
 	}
 
 	public render() {
@@ -36,27 +35,27 @@ export class Ticket extends React.Component<ITicket, any> {
 		const colorClasses = `ticket__color ticket__color--${this.state.color}`;
 
 		return (
-			<Card style={ticketStyle.card}>
+			<Card className='ticket'>
 				<span className={colorClasses} />
 				<p className='ticket__id'>#{ticket.id}</p>
 				<Link to={`ticket-${ticket.id}`} className='ticket__header'>
 					<CardHeader
 						title={ticket.title}
-						subtitle={ticket.author}
-						textStyle={ticketStyle.header}
-						titleStyle={ticketStyle.title}
-						subtitleStyle={ticketStyle.subtitle}
+						subheader={ticket.author}
+						classes={{title: 'ticket__header__title', subheader: 'ticket__header__subheader'}}
 					/>
 				</Link>
-				<CardText style={ticketStyle.text}>
-					<p className='ticket__information'>Mottaget: {ticket.received}</p>
-					<p className='ticket__information'>Tilldelat:
-						<span className='ticket__information--bold'> {ticket.assigned ? ticket.assigned : '-'}</span>
+				<CardContent className='ticket__content'>
+					<p className='ticket__content__information'>Mottaget: {ticket.created}</p>
+					<p className='ticket__content__information'>Tilldelat:
+						<span className='ticket__content__information--bold'> {ticket.assignee ? ticket.assignee : '-'}</span>
 					</p>
-				</CardText>
-				<CardActions style={ticketStyle.actions}>
-					<StatusSelect status={ticket.status} onChange={this.handleStatusChange} />
-				</CardActions>
+				</CardContent>
+				<TicketAction
+					data={ticket}
+					onStatusChange={this.handleStatusColor}
+					onSend={this.props.onSend}
+				/>
 			</Card>
 		);
 	}
@@ -65,16 +64,16 @@ export class Ticket extends React.Component<ITicket, any> {
 	 * Handles status change for ticket by changing colors
 	 * @private
 	 */
-	private handleStatusChange(status: string): void {
+	private handleStatusColor(status: number): void {
 		switch (status) {
-			case 'Ej påbörjad':
+			case 0:
 				this.setState({ color: 'red' });
 				break;
-			case 'Påbörjad':
+			case 1:
 				this.setState({ color: 'blue' });
 				break;
-			case 'Genomförd':
-			case 'Stängd':
+			case 2:
+			case 3:
 				this.setState({ color: 'green' });
 				break;
 		}

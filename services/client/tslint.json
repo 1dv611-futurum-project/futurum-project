@@ -22,8 +22,10 @@
         "jsx-wrap-multiline": true,
         "jsx-alignment": true,
         "jsx-equals-spacing": [true, "never"],
-        "jsx-self-close": true
-
+        "jsx-self-close": true,
+        "jsx-no-lambda": false,
+        "jsx-wrap-multilines": ["error", {"declaration": false, "assignment": false}],
+        "jsx-no-multiline-js": false
     },
     "rulesDirectory": []
 }

@@ -1,0 +1,29 @@
+/**
+ * Client-list component
+ */
+.client-list {
+	margin: 15px 10px;
+
+	&__table {
+		&__body {
+			background-color: $white;
+		}
+
+		&--header {
+			width: 30%;
+		}
+
+		&--row {
+			width: 30%;
+		}
+
+		&--icon {
+			padding: 0px !important;
+		}
+
+		&--icon button {
+			width: 28px !important;
+			height: 28px !important;
+		}
+	}
+}

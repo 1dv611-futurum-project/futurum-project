@@ -2,8 +2,5 @@
 services/client/package-lock.json
 services/node/package-lock.json
 node_modules
-services/client/src/client/public/dist
-**/.env
-**/results.txt
-services/client/src/public/dist/bundle.js
-services/client/src/public/dist/bundle.js.map
+services/client/src/public/dist
+/*/*/.env

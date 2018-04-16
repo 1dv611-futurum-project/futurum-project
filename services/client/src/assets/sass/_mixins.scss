@@ -1,0 +1,55 @@
+/**
+ * Mixins
+ */
+@mixin arrow($color, $size, $pos: "left", $side: "") {
+   position: relative;
+
+   &:after, &:before {
+	   border: solid transparent;
+	   content: " ";
+	   height: 0;
+	   width: 0;
+	   position: absolute;
+	   @if $pos == "top" {
+		   @if $side == "right" {
+			   left: 84%;
+		   }
+		   @else {
+			   left: 50%;
+		   }
+		   bottom: 100%;
+		   border-bottom-color: $color !important;
+	   }
+	   @else if $pos == "right" {
+		   top: 50%;
+		   left: 100%;
+		   border-left-color: $color !important;
+	   }
+	   @else if $pos == "bottom" {
+		   left: 50%;
+		   top: 100%;
+		   border-top-color: $color !important;
+	   }
+	   @else if $pos == "left" {
+		   top: 50%;
+		   right: 100%;
+		   border-right-color: $color !important;
+	   }
+   }
+   &:after {
+	   border-color: transparent;
+	   border-width: $size;
+	   @if $pos == "top" { margin-left: $size - ($size * 2); }
+	   @else if $pos == "right" { margin-top: $size - ($size * 2); }
+	   @else if $pos == "bottom" { margin-left: $size - ($size * 2); }
+	   @else if $pos == "left" { margin-top: $size - ($size * 2); }
+   }
+   &:before {
+	   border-color: transparent;
+	   border-width: ($size + 1);
+	   @if $pos == "top" { margin-left: ($size + 1) - (($size + 1) * 2); }
+	   @else if $pos == "right" { margin-top: ($size + 1) - (($size + 1) * 2); }
+	   @else if $pos == "bottom" { margin-left: ($size + 1) - (($size + 1) * 2); }
+	   @else if $pos == "left" { margin-top: ($size + 1) - (($size + 1) * 2); }
+   }
+}

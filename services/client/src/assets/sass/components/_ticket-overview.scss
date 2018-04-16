@@ -1,0 +1,89 @@
+/**
+ * Ticket overview component
+ */
+.ticket-overview {
+	background-color: $white;
+	padding: 10px;
+	margin: 0 10px 10px 10px;
+	position: relative;
+
+	&__color {
+		height: 10px;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+
+		&--red {
+			background-color: $red;
+		}
+
+		&--blue {
+			background-color: $blue;
+		}
+
+		&--green {
+			background-color: $green;
+		}
+	}
+
+	&__header {
+		padding-top: 5px;
+
+		&__title {
+			font-size: 18px;
+			margin-left: 30px;
+
+			&--grey {
+				color: $grey-light;
+				font-weight: 500;
+			}
+		}
+
+		&__icon {
+			position: absolute;
+			top: 25px;
+		}
+	}
+
+	&__info {
+		margin: 20px 10px 10px 30px;
+		width: 50%;
+
+		&__text {
+			font-size: 12px;
+			margin-top: 0;
+			margin-bottom: 30px;
+
+			&:first-child {
+				margin-bottom: 5px;
+			}
+		}
+	}
+
+	&__actions {
+		width: 32%;
+		position: absolute;
+		right: 0;
+		top: 60px;
+		right: 30px;
+
+		&--status {
+			margin-left: 22px;
+		}
+
+		&--assigned {
+			clear: both;
+		}
+
+		&__label {
+			display: inline-block;
+			padding-right: 10px;
+			font-size: 14px;
+			margin-top: 17px;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-transform: uppercase;
+		}
+	}
+}
