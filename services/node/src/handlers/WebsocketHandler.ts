@@ -1,7 +1,7 @@
 /**
  * Handles the websocket connection against the client.
  */
-
+/*
 // Imports.
 import * as socketIo from 'socket.io';
 import { SocketIO, Server, Socket } from 'socket.io';
@@ -64,7 +64,7 @@ class WebsocketHandler {
 export default WebsocketHandler;
 
 
-
+*/
 
 
 /*

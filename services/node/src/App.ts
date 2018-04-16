@@ -33,7 +33,7 @@ class App {
     this.mountRoutes();
     this.handleDB();
     this.handleImap();
-    this.websocketHandler = new WebsocketHandler({server: "todo: httpServer???"});
+    //this.websocketHandler = new WebsocketHandler({server: "todo: httpServer???"});
   }
 
   private middleware(): void {
@@ -90,7 +90,7 @@ class App {
       
       console.log('Make call to database to save the mail.');
       //Make call to ws to send mail as JSON to client.
-      this.websocketHandler.emit(mail);
+      //this.websocketHandler.emit(mail);
     })
 
     IMAPHandler.on('unauth', (payload) => {
