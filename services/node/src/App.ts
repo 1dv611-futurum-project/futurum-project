@@ -12,14 +12,10 @@ import middleware from './config/middleware';
 import passportStrategies from "./config/passport";
 import mainRouter from './routes/mainRouter';
 import authRouter from './routes/authRouter';
-<<<<<<< HEAD
 import DBHandler from './handlers/db/DBHandler';
+import DBConnection from './handlers/db/DBConnection';
 import EmailHandler from './handlers/email/EmailHandler';
-=======
-import IMAPHandler from './handlers/email/IMAPHandler';
-import DBHandler from './handlers/MongoDBHandler';
 import WebsocketHandler from './handlers/WebsocketHandler';
->>>>>>> websocket
 
 /**
  * Express app.
@@ -28,11 +24,8 @@ class App {
   public express: Application;
   private mainRouter: Router;
   private authRouter: Router;
-<<<<<<< HEAD
   private DBHandler: DBHandler;
-=======
   private websocketHandler: WebsocketHandler;
->>>>>>> websocket
 
   constructor() {
     this.express = express();
@@ -43,11 +36,6 @@ class App {
     this.mountRoutes();
     this.handleIncomingEmails();
     this.handleDB();
-<<<<<<< HEAD
-=======
-    this.handleImap();
-    //this.websocketHandler = new WebsocketHandler({server: "todo: httpServer???"});
->>>>>>> websocket
   }
 
   private middleware(): void {
