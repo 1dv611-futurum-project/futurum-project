@@ -16,3 +16,7 @@
 * `docker-compose stop containerName` - Stops a specific container.
 * `docker-compose logs --tail 50 -f containerName` - Shows the 50 latest rows from the logs for the specified container.
 * `docker-compose exec containerName sh` - Enter a specific container.
+* `docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)` - KILL ALL
+* `docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker system prune -a -f --volumes` - NUKE ALL
+* `docker rmi $(docker images -q)` - NUKE ALL
+* `docker inspect <container ID>` - Inspect a container
