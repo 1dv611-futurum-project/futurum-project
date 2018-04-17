@@ -6,6 +6,8 @@
 import * as React from 'react';
 import { Paper } from 'material-ui';
 import { PlayArrow } from 'material-ui-icons';
+import * as moment from 'moment';
+import 'moment/locale/sv';
 
 import { StatusSelect } from '../StatusSelect/StatusSelect';
 import { DropDownSelect } from '../DropDownSelect/DropDownSelect';
@@ -31,7 +33,8 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 		super(props);
 		this.state = {
 			color: '',
-			status: -1
+			status: -1,
+			assignee: 0
 		};
 	}
 
@@ -85,8 +88,8 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 					</h1>
 				</div>
 				<div className='ticket-overview__info'>
-					<p className='ticket-overview__info__text'>Ärende skapat av {from.name}</p>
-					<p className='ticket-overview__info__text'>Mottaget {created}</p>
+					<p className='ticket-overview__info__text'>Ärende skapat av {from ? from.name : ''}</p>
+					<p className='ticket-overview__info__text'>Mottaget {moment(created).format('LL')}</p>
 					<AddButton text='Skriv ett svar' onClick={handleClick} />
 				</div>
 				<div className='ticket-overview__actions'>
@@ -96,7 +99,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 					</div>
 					<div className='ticket-overview__actions--assigned'>
 						<p className='ticket-overview__actions__label'>Tilldelad:</p>
-						<DropDownSelect selected={assignee} onChange={handleAssigneeChange} items={assignees} />
+						<DropDownSelect selected={assignee ? assignee : 0} onChange={handleAssigneeChange} items={assignees} />
 					</div>
 				</div>
 			</Paper>

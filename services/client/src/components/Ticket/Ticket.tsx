@@ -6,6 +6,8 @@
 import * as React from 'react';
 import { Link } from 'react-router';
 import { Card, CardHeader, CardContent, CardActions } from 'material-ui';
+import * as moment from 'moment';
+import 'moment/locale/sv';
 import { TicketAction } from './TicketAction';
 
 /**
@@ -24,10 +26,18 @@ export class Ticket extends React.Component<ITicket, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			color: this.props.data.color || 'red'
+			color: 'red'
 		};
 
 		this.handleStatusColor = this.handleStatusColor.bind(this);
+	}
+
+	/**
+	 * componentDidMount
+	 * Initiates status color from ticket data
+	 */
+	public componentDidMount() {
+		this.handleStatusColor(this.props.data.status);
 	}
 
 	public render() {
@@ -46,9 +56,9 @@ export class Ticket extends React.Component<ITicket, any> {
 					/>
 				</Link>
 				<CardContent className='ticket__content'>
-					<p className='ticket__content__information'>Mottaget: {ticket.created}</p>
+					<p className='ticket__content__information'>Mottaget: {moment(ticket.created).format('LL')}</p>
 					<p className='ticket__content__information'>Tilldelat:
-						<span className='ticket__content__information--bold'> {ticket.assignee ? ticket.assignee : '-'}</span>
+						<span className='ticket__content__information--bold'> {ticket.assignee ? ticket.assignee : '—'}</span>
 					</p>
 				</CardContent>
 				<TicketAction
