@@ -79,7 +79,15 @@ class App {
     EmailHandler.Incoming.on('mail', (mail) => {
       console.log('Got mail:'); 
       console.log(mail); 
-      
+      console.log('send answer to mail')
+      EmailHandler.Outgoing.answer({to: mail.from.email, from: 'dev@futurumdigital.se', subject: mail.title, body: 'Answering'}, mail.mailID)
+      .then((resoúlt) => {
+        console.log('answer sent')
+      })
+      .catch((error) => {
+        console.log('could not send answer');
+        console.log(error)
+      })
       console.log('Make call to database to save the mail.');
       this.websocketHandler.emit(mail);
     })

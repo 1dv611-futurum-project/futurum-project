@@ -60,8 +60,36 @@ class MailSender extends events.EventEmitter {
     })
   }
 
-  public answer() {
-    //TODO
+  public answer(messageID, params) {
+    return new Promise((resolve, reject) => {
+      this.updateCredentials()
+      .then(() => {
+        let gmail = google.gmail('v1');
+        let headers = this.getHeaders(params);
+        headers = this.getReplyHeaders(headers, messageID);
+        let base64Email = this.getBase64EncodedEmailFromHeaders(headers);
+
+        let request = {
+          auth: this.oauth2Client,
+          userId: 'me',
+          resource: {
+              raw: base64Email
+          }
+        };
+
+        gmail.users.messages.send(request, null, (err, response) => {
+          if (!err) {
+              return resolve(response);
+          }
+          else {
+              return reject({message: 'Unable to send email: ' + err});
+          }
+        });
+      })
+      .catch((error) => {
+        reject(error);
+      })
+    })
   }
 
   public forward() {
@@ -73,7 +101,6 @@ class MailSender extends events.EventEmitter {
    */
   private getHeaders(params: object): string[] {
     let headers =[];
-
     headers.push('From: <' + params.from + '>');
     headers.push('To: ' + params.to);
     headers.push('Content-type: text/html;charset=iso-8859-1');
@@ -81,6 +108,16 @@ class MailSender extends events.EventEmitter {
     headers.push('Subject: ' + params.subject);
     headers.push('');
     headers.push(params.body);
+
+    return headers;
+  }
+
+  /**
+   * Sets the reply-parameters.
+   */
+  private getReplyHeaders(headers: string[], messageID): string[] {
+    headers.push('in-reply-to: <' + messageID + '>');
+    headers.push('References: <' + messageID + '>');
 
     return headers;
   }
