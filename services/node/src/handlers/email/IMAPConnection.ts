@@ -250,7 +250,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
       id: this.id++,
       status: 0,
       assignee: null,
-      mailID: mail.messageID,
+      mailID: mail.messageId,
       created: mail.receivedDate,
       title: mail.subject,
       from: {
