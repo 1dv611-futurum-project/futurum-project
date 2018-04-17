@@ -12,6 +12,9 @@ class MailSender extends events.EventEmitter {
   private oauth2Client;
   private credentials;
 
+  /**
+   * Creates OAuth client to authenticate against gmail.
+   */
   constructor() {
     super();
 
@@ -22,6 +25,10 @@ class MailSender extends events.EventEmitter {
     );
   }
 
+  /**
+   * Sends an email with the given body and
+   * subject to the given address.
+   */
   public send(params: object): Promise<void> {
     return new Promise((resolve, reject) => {
       this.updateCredentials()
@@ -53,6 +60,17 @@ class MailSender extends events.EventEmitter {
     })
   }
 
+  public answer() {
+    //TODO
+  }
+
+  public forward() {
+    //TODO
+  }
+
+  /**
+   * Sets the email-parameters.
+   */
   private getHeaders(params: object): string[] {
     let headers =[];
 
@@ -67,6 +85,9 @@ class MailSender extends events.EventEmitter {
     return headers;
   }
 
+  /**
+   * Encodes the email.
+   */
   private getBase64EncodedEmailFromHeaders(headers: string[]): Buffer {
     let email = headers.join('\r\n').trim();
     let base64EncodedEmail = new Buffer(email).toString('base64');
@@ -75,6 +96,10 @@ class MailSender extends events.EventEmitter {
     return base64EncodedEmail;
   }
 
+  /**
+   * Updates the oauth2 cretentials if a new authentication has 
+   * been made against google.
+   */
   private updateCredentials(): Promise<void> {
     return new Promise((resolve, reject) => {
       let newCredentials = {

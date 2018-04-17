@@ -8,14 +8,14 @@ import { Application, Router, Request, Response, NextFunction, Error } from 'exp
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as jwt from 'express-jwt'; 
-import middleware from './config/middleware';
-import passportStrategies from "./config/passport";
-import mainRouter from './routes/mainRouter';
-import authRouter from './routes/authRouter';
-import DBHandler from './handlers/db/DBHandler';
-import DBConnection from './handlers/db/DBConnection';
-import EmailHandler from './handlers/email/EmailHandler';
-import WebsocketHandler from './handlers/WebsocketHandler';
+import middleware from './../config/middleware';
+import passportStrategies from "./../config/passport";
+import mainRouter from './../routes/mainRouter';
+import authRouter from './../routes/authRouter';
+import DBHandler from './../handlers/db/DBHandler';
+import DBConnection from './../handlers/db/DBConnection';
+import EmailHandler from './../handlers/email/EmailHandler';
+import WebsocketHandler from './../handlers/WebsocketHandler';
 
 /**
  * Express app.
@@ -43,18 +43,7 @@ class App {
     this.express.use(bodyParser.urlencoded({ extended: false }));
     this.express.use(cookieParser());
     passportStrategies.make();
-    this.express.use(jwt({ 
-      secret: 'secret',
-      getToken: function fromCookie (req) {
-        if (req.cookies.jwt) {
-            return req.cookies.jwt;
-        }
-        return null;
-      }
-    })
-    .unless({
-      path: ['/node/auth/google', '/node/auth/google/callback', '/node/auth/google/callback/redirect', '/auth/google', '/auth/google/callback', '/auth/google/callback/redirect']
-    }));
+    this.express.use(middleware.security());
     this.express.use(middleware.checkConnection());
     this.express.use(middleware.updateIMAPConnection());
     this.express.use(this.errorHandler);
@@ -91,8 +80,7 @@ class App {
       console.log(mail); 
       
       console.log('Make call to database to save the mail.');
-      //Make call to ws to send mail as JSON to client.
-      //this.websocketHandler.emit(mail);
+      this.websocketHandler.emit(mail);
     })
 
     EmailHandler.Incoming.on('unauth', (payload) => {

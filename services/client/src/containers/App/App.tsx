@@ -6,7 +6,6 @@
 import * as React from 'react';
 import { lightBaseTheme, MuiThemeProvider, getMuiTheme } from 'material-ui/styles';
 import * as io from 'socket.io-client';
-
 import { Header } from '../../components/Header/Header';
 
 /**
@@ -19,6 +18,7 @@ export class App extends React.Component<any, any> {
 	}
 
 	private startSocket() {
+		console.log('starting socket');
 		const socket = io('http://localhost:8080', {
 			path: '/socket'
 		});
