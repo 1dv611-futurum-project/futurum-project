@@ -152,8 +152,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
     return new Promise((resolve, reject) => {
       this.collectUnread()
       .then((emails: object[]) => {
-        console.log('found emails')
-        console.log(emails)
         if (emails) {
           emails.forEach((message: object) => {
             this.emitMessage('mail', message);
@@ -173,39 +171,27 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    */
   private collectUnread(): Promise {
     return new Promise((resolve, reject) => {
-      console.log('seraching');
       const messages = [];
       this.imap.search([ 'UNSEEN' ], (err: Error, indicesToFetch: number[]) => {
         if (err) {
-          console.log(err)
           return reject({message: 'An error occured while searching the inbox for unread messages.'});
         }
 
         if (indicesToFetch.length === 0) {
-          console.log('no unread')
           return resolve();
         }
 
-        console.log(indicesToFetch)
-
-        const fetchMessages = this.imap.seq.fetch(indicesToFetch, {
+        const fetchMessages = this.imap.fetch(indicesToFetch, {
           bodies: ['']
         });
 
-        console.log('fetching')
-
         fetchMessages.on('message', (msg: ImapMessage, seqno: number) => {
-          console.log('found message')
           msg.on('body', (stream: ReadableStream, info: object) => {
-            console.log('found message body')
             const mp = new MailParser.MailParser();
-            console.log(mp)
             stream.pipe(mp);
 
             mp.on('end', (mail: object) => {
-              console.log('retrieved mail')
               const message = this.formatMail(mail);
-              console.log(message)
               messages.push(message);
 
               if (messages.length === indicesToFetch.length) {
@@ -215,7 +201,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
           });
 
           fetchMessages.on('end', () => {
-            console.log('enough')
             this.imap.setFlags(indicesToFetch, ['\\Seen'], (error: Error) => {
               if (error) {
                 this.emitMessage('error', {message: 'Error marking messages as read in the inbox.'});
@@ -273,8 +258,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
         }
       ]
     };
-
-    console.log(message)
 
     return message;
   }

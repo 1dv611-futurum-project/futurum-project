@@ -65,8 +65,9 @@ class MailSender extends events.EventEmitter {
       this.updateCredentials()
       .then(() => {
         let gmail = google.gmail('v1');
-        let headers = this.getHeaders(params);
-        headers = this.getReplyHeaders(headers, messageID);
+        let replyHeaders = this.getReplyHeaders([], messageID);
+        let headers = replyHeaders.concat(this.getHeaders(params));
+        console.log(headers)
         let base64Email = this.getBase64EncodedEmailFromHeaders(headers);
 
         let request = {

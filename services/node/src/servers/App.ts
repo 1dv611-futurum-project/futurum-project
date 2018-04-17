@@ -80,7 +80,9 @@ class App {
       console.log('Got mail:'); 
       console.log(mail); 
       console.log('send answer to mail')
-      EmailHandler.Outgoing.answer({to: mail.from.email, from: 'dev@futurumdigital.se', subject: mail.title, body: 'Answering'}, mail.mailID)
+      let answer = {to: mail.from.email, from: 'dev@futurumdigital.se', subject: mail.title, body: 'Answering'}
+      console.log(answer)
+      EmailHandler.Outgoing.answer(mail.mailID, answer)
       .then((resoúlt) => {
         console.log('answer sent')
       })
