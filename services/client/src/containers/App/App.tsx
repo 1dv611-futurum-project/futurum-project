@@ -25,7 +25,7 @@ export class App extends React.Component<any, any> {
 			console.log('client connected');
 		});
 
-		socket.on('socket', (msg: object) => {
+		socket.on('socket', (msg: string) => {
 			console.log(msg);
 		});
 	}
