@@ -27,6 +27,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   private imap: Imap;
   private xoauthGenerator: XOauth;
   private isConnected: boolean;
+  private id = 0;
 
   constructor() {
     super();
@@ -188,12 +189,12 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
             const mp = new MailParser.MailParser();
             stream.pipe(mp);
 
-            mp.on('end', (obj: object) => {
-              const message = {};
-              message.recieved = obj.date;
-              message.title = obj.subject;
-              message.from = obj.from[0].address;
-              message.body = obj.text;
+            mp.on('end', (mail: object) => {
+              console.log('mail')
+              console.log(mail)
+              console.log(this)
+              const message = this.formatMail(mail);
+              console.log(message)
               messages.push(message);
 
               if (messages.length === indicesToFetch.length) {
@@ -216,6 +217,62 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
         });
       });
     });
+  }
+
+  /**
+   * Formats the mail.
+   */
+  private formatMail(mail) {
+    console.log('formatting')
+    if (this.isNewTicket(mail)) {
+      return this.formatAsNewTicket(mail);
+    }
+
+    return this.formatAsAnswer(mail);
+  }
+
+  /**
+   * Checks if the mail is new or an answer.
+   */
+  private isNewTicket(mail) {
+    console.log('checks of new')
+    console.log(mail.references)
+    console.log(mail.references === undefined)
+    return mail.references === undefined;
+  }
+
+  /**
+   * Formats the mail as a new ticket.
+   */
+  private formatAsNewTicket(mail) {
+    let message = {
+      type: 'ticket',
+      id: this.id++,
+      status: 0,
+      assignee: null,
+      mailID: mail.messageID,
+      created: mail.receivedDate,
+      title: mail.subject,
+      from: {
+        name: mail.from[0].name,
+        email: mail.from[0].address
+      },
+      messages: [
+        {
+          received: mail.receivedDate,
+          body: mail.text,
+          fromCustomer: true
+        }
+      ]
+    };
+
+    console.log(message)
+
+    return message;
+  }
+
+  private formatAsAnswer(mail) {
+    //TODO
   }
 
   /**

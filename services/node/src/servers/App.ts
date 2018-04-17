@@ -32,6 +32,7 @@ class App {
     this.mainRouter = mainRouter;
     this.authRouter = authRouter;
     this.DBHandler = new DBHandler(new DBConnection());
+    this.websocketHandler = WebsocketHandler;
     this.middleware();
     this.mountRoutes();
     this.handleIncomingEmails();
@@ -83,6 +84,14 @@ class App {
       this.websocketHandler.emit(mail);
     })
 
+    EmailHandler.Incoming.on('answer', (mail) => {
+      console.log('Got answer:'); 
+      console.log(mail); 
+      
+      console.log('Make call to database to save the answer.');
+      //Emit answer to client
+    })
+
     EmailHandler.Incoming.on('unauth', (payload) => {
       console.log('Got unauth:'); 
       console.log(payload)
@@ -106,7 +115,7 @@ class App {
       console.log(error)
       console.log('Make call to ws to send notification of error.')
       console.log('Possibly make call to email module to email the error to different email address:')
-      EmailHandler.sendMail({to: 'dev@futurumdigital.se', subject: 'error', body: 'Error'})
+      //EmailHandler.sendMail({to: 'dev@futurumdigital.se', subject: 'error', body: 'Error'})
     })
   }
 
