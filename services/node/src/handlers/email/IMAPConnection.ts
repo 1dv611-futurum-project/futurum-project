@@ -180,7 +180,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
           return resolve();
         }
 
-        const fetchMessages = this.imap.seq.fetch(indicesToFetch, {
+        const fetchMessages = this.imap.fetch(indicesToFetch, {
           bodies: ['']
         });
 
@@ -190,11 +190,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
             stream.pipe(mp);
 
             mp.on('end', (mail: object) => {
-              console.log('mail')
-              console.log(mail)
-              console.log(this)
               const message = this.formatMail(mail);
-              console.log(message)
               messages.push(message);
 
               if (messages.length === indicesToFetch.length) {
@@ -223,7 +219,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Formats the mail.
    */
   private formatMail(mail) {
-    console.log('formatting')
     if (this.isNewTicket(mail)) {
       return this.formatAsNewTicket(mail);
     }
@@ -235,9 +230,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Checks if the mail is new or an answer.
    */
   private isNewTicket(mail) {
-    console.log('checks of new')
-    console.log(mail.references)
-    console.log(mail.references === undefined)
     return mail.references === undefined;
   }
 
@@ -265,8 +257,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
         }
       ]
     };
-
-    console.log(message)
 
     return message;
   }
