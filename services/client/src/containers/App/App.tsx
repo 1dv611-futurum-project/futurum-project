@@ -88,6 +88,7 @@ export class App extends React.Component<any, any> {
 
 	/**
 	 * componentDidMount
+	 * @public
 	 */
 	public componentDidMount() {
 		this.startSocket();
@@ -95,6 +96,7 @@ export class App extends React.Component<any, any> {
 
 	/**
 	 * Initiate socket handling
+	 * @private
 	 */
 	private startSocket() {
 		const socket = io('http://localhost:8080', {

@@ -51,11 +51,13 @@ export class TicketPage extends React.Component<any, any> {
 		this.handleNewMessageClick = this.handleNewMessageClick.bind(this);
 		this.handleStatusChange = this.handleStatusChange.bind(this);
 		this.handleAssigneeChange = this.handleAssigneeChange.bind(this);
+		this.getMessage = this.getMessage.bind(this);
 	}
 
 	/**
 	 * componentDidMount
 	 * Set state with data for currently viewed ticket
+	 * @public
 	 */
 	public componentDidMount() {
 		const { pathname } = this.props.location;
@@ -70,16 +72,7 @@ export class TicketPage extends React.Component<any, any> {
 
 	public render() {
 		const ticket = this.state.ticket;
-		const messages = ticket ? ticket.messages.map((message: any, i: number) => {
-			return (
-				<Message
-					key={i}
-					data={message}
-					customer={ticket.from.name}
-					assignee={ticket.assignee}
-				/>
-			);
-		}) : [];
+		const messages = ticket ? ticket.messages.map(this.getMessage) : [];
 
 		return (
 			<div className='ticket__wrapper'>
@@ -95,6 +88,24 @@ export class TicketPage extends React.Component<any, any> {
 					{messages}
 				</div>
 			</div>
+		);
+	}
+
+	/**
+	 * Returns a Message component
+	 * @private
+	 * @param {Object} message - The message data
+	 * @param {Number} i - Index in messages array
+	 * @returns {Message} - A Message component
+	 */
+	private getMessage(message: any, i: number) {
+		return (
+			<Message
+				key={i}
+				data={message}
+				customer={this.state.ticket.from.name}
+				assignee={this.state.ticket.assignee}
+			/>
 		);
 	}
 

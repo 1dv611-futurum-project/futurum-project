@@ -23,18 +23,19 @@ export class DropDownSelect extends React.Component<IDropDownSelect, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			selected: this.props.selected
+			selected: ''
 		};
 
 		this.handleChange = this.handleChange.bind(this);
 	}
 
 	public render() {
+		const selected = this.state.selected !== '' ? this.state.selected : this.props.selected;
 		const items = this.getMenuItems();
 
 		return (
 			<Select
-				value={this.state.selected}
+				value={selected}
 				onChange={this.handleChange}
 				classes={{root: 'dropdown-select', icon: 'dropdown-select__icon'}}
 			>
