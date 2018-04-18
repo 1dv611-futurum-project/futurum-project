@@ -22,5 +22,7 @@ RUN npm install
 
 COPY . $PATH_APP/
 
+RUN npm build
+
 ENTRYPOINT ["npm", "run"]
-CMD ["start"]
+CMD ["server"]
