@@ -108,7 +108,6 @@ export class App extends React.Component<any, any> {
 		socket.on('socket', (msg: any) => {
 			console.log(msg);
 			if (!msg.id) {
-				console.log('inside if-statement');
 				const newMessage = JSON.parse(msg);
 				this.setState({ tickets: [...this.state.tickets, newMessage] });
 			}

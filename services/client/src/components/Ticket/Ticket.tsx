@@ -51,7 +51,7 @@ export class Ticket extends React.Component<ITicket, any> {
 				<Link to={`ticket-${ticket.id}`} className='ticket__header'>
 					<CardHeader
 						title={ticket.title}
-						subheader={ticket.author}
+						subheader={ticket.from.name}
 						classes={{title: 'ticket__header__title', subheader: 'ticket__header__subheader'}}
 					/>
 				</Link>
