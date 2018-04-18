@@ -31,7 +31,7 @@ class EmailHandler {
       to: params.to,
       subject: params.subject,
       body: params.body
-    })
+    });
   }
 }
 

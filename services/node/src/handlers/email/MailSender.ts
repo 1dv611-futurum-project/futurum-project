@@ -33,46 +33,45 @@ class MailSender extends events.EventEmitter {
     return new Promise((resolve, reject) => {
       this.updateCredentials()
       .then(() => {
-        let gmail = google.gmail('v1');
-        let headers = this.getHeaders(params);
-        let base64Email = this.getBase64EncodedEmailFromHeaders(headers);
+        const gmail = google.gmail('v1');
+        const headers = this.getHeaders(params);
+        const base64Email = this.getBase64EncodedEmailFromHeaders(headers);
 
-        let request = {
+        const request = {
           auth: this.oauth2Client,
           userId: 'me',
           resource: {
-              raw: base64Email
+            raw: base64Email
           }
         };
 
         gmail.users.messages.send(request, null, (err, response) => {
           if (!err) {
-              return resolve(response);
-          }
-          else {
-              return reject({message: 'Unable to send email: ' + err});
+            return resolve(response);
+          } else {
+            return reject({message: 'Unable to send email: ' + err});
           }
         });
       })
       .catch((error) => {
         reject(error);
-      })
-    })
+      });
+    });
   }
 
   public answer() {
-    //TODO
+    // TODO
   }
 
   public forward() {
-    //TODO
+    // TODO
   }
 
   /**
    * Sets the email-parameters.
    */
   private getHeaders(params: object): string[] {
-    let headers =[];
+    const headers = [];
 
     headers.push('From: <' + params.from + '>');
     headers.push('To: ' + params.to);
@@ -89,28 +88,28 @@ class MailSender extends events.EventEmitter {
    * Encodes the email.
    */
   private getBase64EncodedEmailFromHeaders(headers: string[]): Buffer {
-    let email = headers.join('\r\n').trim();
+    const email = headers.join('\r\n').trim();
     let base64EncodedEmail = new Buffer(email).toString('base64');
-        base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
+    base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
 
     return base64EncodedEmail;
   }
 
   /**
-   * Updates the oauth2 cretentials if a new authentication has 
+   * Updates the oauth2 cretentials if a new authentication has
    * been made against google.
    */
   private updateCredentials(): Promise<void> {
     return new Promise((resolve, reject) => {
-      let newCredentials = {
+      const newCredentials = {
         access_token: process.env.IMAP_ACCESS_TOKEN,
         refresh_token: process.env.IMAP_REFRESH_TOKEN
       };
-  
+
       if (newCredentials
          && (!this.credentials
-         || (this.credentials 
-            && (this.credentials.access_token !== newCredentials.access_token 
+         || (this.credentials
+            && (this.credentials.access_token !== newCredentials.access_token
                 || this.credentials.refresh_token !== newCredentials.refresh_token)))) {
         this.credentials = newCredentials;
 
@@ -118,7 +117,7 @@ class MailSender extends events.EventEmitter {
       }
 
       resolve();
-    })
+    });
   }
 }
 

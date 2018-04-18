@@ -23,12 +23,12 @@ class XOauth {
   }
 
   public updateGenerator() {
-    let newOptions = this.getCredentials();
+    const newOptions = this.getCredentials();
 
     if (newOptions
-       && (!this.options 
-       || (this.options 
-          && (this.options.accessToken !== newOptions.accessToken 
+       && (!this.options
+       || (this.options
+          && (this.options.accessToken !== newOptions.accessToken
               || this.options.refreshToken !== newOptions.refreshToken)))) {
       this.options = newOptions;
       this.xoauth2gen = this.getGenerator();
@@ -50,7 +50,7 @@ class XOauth {
     });
   }
 
-      /**
+  /**
    * Checks that the correct credentials are set as environment variables and
    * returns them in an object, otherwise
    * emits unauth-error.

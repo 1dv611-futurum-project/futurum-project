@@ -237,7 +237,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Formats the mail as a new ticket.
    */
   private formatAsNewTicket(mail) {
-    let message = {
+    const message = {
       type: 'ticket',
       id: this.id++,
       status: 0,
@@ -262,7 +262,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   }
 
   private formatAsAnswer(mail) {
-    //TODO
+    // TODO
   }
 
   /**
