@@ -10,10 +10,20 @@ import * as SocketIo from 'socket.io';
  */
 class WebsocketHandler {
 
+  private static readonly PORT: number = 3001;
   private io: SocketIo.Server;
-  private port = 3001;
+  private port: string | number;
 
   constructor() {
+    this.config();
+    this.sockets();
+  }
+
+  private config(): void {
+    this.port = process.env.PORT || WebsocketHandler.PORT;
+  }
+
+  private sockets(): void {
     this.io = SocketIo({ path: '/socket' });
   }
 
@@ -45,7 +55,7 @@ class WebsocketHandler {
    */
   public emit(data: object[]): void {
     try {
-    // Logic to see if socket is connected?
+      // Logic to see if socket is connected?
       this.io.emit('socket', JSON.stringify(data));
     } catch (error) {
       console.error(error);
