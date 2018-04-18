@@ -46,7 +46,7 @@ class WebsocketHandler {
     public emit(data: Array<Object>): void{
         try {
             // Logic to see if socket is connected?
-            this.io.emit(JSON.stringify(data));
+            this.io.emit('socket', JSON.stringify(data));
         } catch (error) {
             console.error(error);
         }
