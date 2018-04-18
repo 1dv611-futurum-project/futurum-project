@@ -3,18 +3,18 @@
  */
 
 // Imports.
-import * as socketIo from 'socket.io';
+import * as SocketIo from 'socket.io';
 
 /**
  * Handles the connection.
  */
 class WebsocketHandler {
 
-  private io: socketIo.Server;
+  private io: SocketIo.Server;
   private port = 3001;
 
   constructor() {
-    this.io = socketIo({ path: '/socket' });
+    this.io = SocketIo({ path: '/socket' });
   }
 
   /**
