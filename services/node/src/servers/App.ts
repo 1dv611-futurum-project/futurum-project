@@ -9,7 +9,7 @@ import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as jwt from 'express-jwt';
 import middleware from './../config/middleware';
-import passportStrategies from "./../config/passport";
+import passportStrategies from './../config/passport';
 import mainRouter from './../routes/mainRouter';
 import authRouter from './../routes/authRouter';
 import DBHandler from './../handlers/db/DBHandler';
@@ -79,44 +79,42 @@ class App {
     EmailHandler.Incoming.on('mail', (mail) => {
       console.log('Got mail:');
       console.log(mail);
-
       console.log('Make call to database to save the mail.');
       this.websocketHandler.emit(mail);
-    })
+    });
 
     EmailHandler.Incoming.on('answer', (mail) => {
       console.log('Got answer:');
       console.log(mail);
-
       console.log('Make call to database to save the answer.');
-      //Emit answer to client
-    })
+      // Emit answer to client
+    });
 
     EmailHandler.Incoming.on('unauth', (payload) => {
       console.log('Got unauth:');
-      console.log(payload)
+      console.log(payload);
       console.log('We are missing authorization details for the email, should direct user to auth-route?.');
-    })
+    });
 
     EmailHandler.Incoming.on('message', (message) => {
-      console.log('Got imap message, means imap connection is probably going to go down in a calculated way. Action?:');
-      console.log(message)
-      console.log('Make call to ws to send notification of message.')
-    })
+      console.log('imap connection is probably going to go down in a calculated way. Action?:');
+      console.log(message);
+      console.log('Make call to ws to send notification of message.');
+    });
 
     EmailHandler.Incoming.on('tamper', (message) => {
       console.log('Got tamper message, means emails are being accesses externally and possible reload should happen:');
-      console.log(message)
-      console.log('Make call to ws to send notification of tamper.')
-    })
+      console.log(message);
+      console.log('Make call to ws to send notification of tamper.');
+    });
 
     EmailHandler.Incoming.on('error', (error) => {
       console.log('Got error:');
-      console.log(error)
-      console.log('Make call to ws to send notification of error.')
-      console.log('Possibly make call to email module to email the error to different email address:')
-      //EmailHandler.sendMail({to: 'dev@futurumdigital.se', subject: 'error', body: 'Error'})
-    })
+      console.log(error);
+      console.log('Make call to ws to send notification of error.');
+      console.log('Possibly make call to email module to email the error to different email address:');
+      // EmailHandler.sendMail({to: 'dev@futurumdigital.se', subject: 'error', body: 'Error'})
+    });
   }
 
   // 404

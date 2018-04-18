@@ -94,7 +94,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
           host: 'imap.gmail.com',
           port: 993,
           tls: true,
-		  tlsOptions: { rejectUnauthorized: false }
+		      tlsOptions: { rejectUnauthorized: false }
         });
 
         this.imap.once('ready', this.handleInitialConnect.bind(this));
@@ -238,7 +238,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Formats the mail as a new ticket.
    */
   private formatAsNewTicket(mail) {
-    let message = {
+    const message = {
       type: 'ticket',
       id: this.id++,
       status: 0,
@@ -263,7 +263,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   }
 
   private formatAsAnswer(mail) {
-    //TODO
+    // TODO
   }
 
   /**
@@ -281,7 +281,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Emits connection-end events.
    */
   private handleConnectionEnd(): void {
-    this._isConnected = false;
+    this.isConnected = false;
     this.emitMessage('server', {message: 'Connection to the IMAP-server has ended.'});
   }
 
