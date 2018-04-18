@@ -3,18 +3,18 @@
  */
 
 // Imports.
-const io = require('socket.io')({ path: '/socket' });
+import * as socketIo from 'socket.io';
 
 /**
  * Handles the connection.
  */
 class WebsocketHandler {
 
-  private io: Socket;
+  private io: socketIo.Server;
   private port = 3001;
 
   constructor() {
-    this.io = io;
+    this.io = socketIo({ path: '/socket' });
   }
 
   /**
@@ -26,7 +26,7 @@ class WebsocketHandler {
     this.io.listen(port);
     this.io.on('connection', (socket: any) => {
       console.log('Connected client on port %s.', this.port);
-      io.to(socket.id).emit('socket', { id: socket.id });
+      this.io.to(socket.id).emit('socket', { id: socket.id });
 
       socket.on('message', (m: any) => {
         console.log('[server](message): %s', JSON.stringify(m));
