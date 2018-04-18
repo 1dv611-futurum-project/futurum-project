@@ -93,7 +93,8 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
           xoauth2: token,
           host: 'imap.gmail.com',
           port: 993,
-          tls: true
+          tls: true,
+		      tlsOptions: { rejectUnauthorized: false }
         });
 
         this.imap.once('ready', this.handleInitialConnect.bind(this));
@@ -280,7 +281,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Emits connection-end events.
    */
   private handleConnectionEnd(): void {
-    this._isConnected = false;
+    this.isConnected = false;
     this.emitMessage('server', {message: 'Connection to the IMAP-server has ended.'});
   }
 

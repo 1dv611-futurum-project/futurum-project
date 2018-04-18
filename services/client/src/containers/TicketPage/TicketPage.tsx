@@ -42,8 +42,9 @@ export class TicketPage extends React.Component<any, any> {
 		super(props);
 
 		this.state = {
+			ticket: false,
 			showNewMessage: false,
-			status: data.status,
+			status: 0,
 			assignee: data.assignee
 		};
 
@@ -52,13 +53,38 @@ export class TicketPage extends React.Component<any, any> {
 		this.handleAssigneeChange = this.handleAssigneeChange.bind(this);
 	}
 
+	/**
+	 * componentDidMount
+	 * Set state with data for currently viewed ticket
+	 */
+	public componentDidMount() {
+		const { pathname } = this.props.location;
+		const ticketId = pathname[0] === '/' ? pathname.slice(8) : pathname.slice(7);
+
+		this.props.tickets.forEach((ticket: any) => {
+			if (ticket.id === Number(ticketId)) {
+				this.setState({ ticket, status: ticket.status });
+			}
+		});
+	}
+
 	public render() {
-		const messages = data.messages.map((message, i) => <Message key={i} data={message}/>);
+		const ticket = this.state.ticket;
+		const messages = ticket ? ticket.messages.map((message: any, i: number) => {
+			return (
+				<Message
+					key={i}
+					data={message}
+					customer={ticket.from.name}
+					assignee={ticket.assignee}
+				/>
+			);
+		}) : [];
 
 		return (
 			<div className='ticket__wrapper'>
 				<TicketOverview
-					data={data}
+					data={ticket}
 					status={this.state.status}
 					handleClick={this.handleNewMessageClick}
 					handleStatusChange={this.handleStatusChange}
