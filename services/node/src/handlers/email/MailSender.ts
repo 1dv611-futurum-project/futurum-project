@@ -46,8 +46,9 @@ class MailSender extends events.EventEmitter {
     return this.sendMail(headers);
   }
 
-  public forward() {
-    // TODO
+  public forward(params: IEmail, messageID: string, forwardingAddress: string): Promise<void> {
+    const headers = this.getForwardingHeaders(params, messageID, forwardingAddress);
+    return this.sendMail(headers);
   }
 
   /**
@@ -102,9 +103,19 @@ class MailSender extends events.EventEmitter {
     let headers = this.getBaseHeaders(params.to, params.from);
     headers.push('Subject: Re: ' + params.subject);
     headers.push('In-Reply-To: <' + messageID + '>');
-    console.log(params.body);
     headers = headers.concat(this.getBody(params.body));
-    console.log(headers);
+    return headers;
+  }
+
+  /**
+   * Gets the forwarding headers.
+   */
+  private getForwardingHeaders(params: IEmail, messageID: string, forwardingAddress: string): string[] {
+    let headers = this.getBaseHeaders(forwardingAddress, params.from);
+    headers.push('Message-ID: <' + messageID + '>');
+    headers.push('Subject: Vbf: ' + params.subject);
+    headers.push('Reply-To: <' + params.from + '>');
+    headers = headers.concat(this.getBody(params.body));
     return headers;
   }
 

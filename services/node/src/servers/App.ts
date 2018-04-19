@@ -77,29 +77,33 @@ class App {
 
   private handleIncomingEmails(): void {
     EmailHandler.Incoming.on('mail', (mail) => {
-      console.log('Got mail:');
+      console.log('Got new ticket:');
       console.log(mail);
-      console.log('send answer to mail');
-      if (mail.from.email !== process.env.IMAP_USER) {
-        const answer = {to: mail.from.email, from: 'dev@futurumdigital.se', subject: mail.title, body: 'Answering'};
-        EmailHandler.Outgoing.answer(answer, mail.mailID)
-        .then(() => {
-          console.log('answer sent');
-        })
-        .catch((error) => {
-          console.log('could not send answer');
-          console.log(error);
-        });
-      }
       console.log('Make call to database to save the mail.');
       this.websocketHandler.emit(mail);
     });
 
     EmailHandler.Incoming.on('answer', (mail) => {
-      console.log('Got answer:');
+      console.log('Got answer on existing ticket:');
       console.log(mail);
       console.log('Make call to database to save the answer.');
       // Emit answer to client
+    });
+
+    EmailHandler.Incoming.on('forward', (mail) => {
+      console.log('Got mail not in whitelist:');
+      console.log(mail);
+      console.log('forwarding the mail');
+      const forward = {from: mail.from.email, body: mail.messages[0].body, subject: mail.title};
+      EmailHandler.Outgoing.forward(forward, mail.mailID, process.env.IMAP_FORWARDING_ADDRESS)
+      .then(() => {
+        console.log('mail is forwarded');
+      })
+      .catch((error) => {
+        console.log('could not forward');
+        console.log(error);
+      });
+      console.log('emit forward to client?');
     });
 
     EmailHandler.Incoming.on('unauth', (payload) => {

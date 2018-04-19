@@ -192,8 +192,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
             stream.pipe(mp);
 
             mp.on('end', (mail: object) => {
-              const message = this.formatMail(mail);
-              messages.push(message);
+              messages.push(mail);
 
               if (messages.length === indicesToFetch.length) {
                 resolve(messages);
@@ -215,56 +214,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
         });
       });
     });
-  }
-
-  /**
-   * Formats the mail.
-   */
-  private formatMail(mail) {
-    if (this.isNewTicket(mail)) {
-      return this.formatAsNewTicket(mail);
-    }
-
-    return this.formatAsAnswer(mail);
-  }
-
-  /**
-   * Checks if the mail is new or an answer.
-   */
-  private isNewTicket(mail) {
-    return mail.references === undefined;
-  }
-
-  /**
-   * Formats the mail as a new ticket.
-   */
-  private formatAsNewTicket(mail) {
-    const message = {
-      type: 'ticket',
-      id: this.id++,
-      status: 0,
-      assignee: null,
-      mailID: mail.messageId,
-      created: mail.receivedDate,
-      title: mail.subject,
-      from: {
-        name: mail.from[0].name,
-        email: mail.from[0].address
-      },
-      messages: [
-        {
-          received: mail.receivedDate,
-          body: mail.text,
-          fromCustomer: true
-        }
-      ]
-    };
-
-    return message;
-  }
-
-  private formatAsAnswer(mail) {
-    // TODO
   }
 
   /**
