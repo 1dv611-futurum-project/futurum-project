@@ -5,6 +5,7 @@
 // Imports
 import * as events from 'events';
 import { google } from 'googleapis';
+import IEmail from './IEmail';
 const OAuth2 = google.auth.OAuth2;
 
 class MailSender extends events.EventEmitter {
@@ -28,13 +29,36 @@ class MailSender extends events.EventEmitter {
   /**
    * Sends an email with the given body and
    * subject to the given address.
+   * @param params {IEmail} an IEmail object with the params to populate the email with.
    */
-  public send(params: object): Promise<void> {
+  public send(params: IEmail): Promise<void> {
+    const headers = this.getNewEmailHeaders(params);
+    return this.sendMail(headers);
+  }
+
+  /**
+   * Answers a message with the given messageID.
+   * @param params {IEmail} an IEmail object with the params to populate the answer with.
+   * @param messageID {string} the messageID of the email to answer.
+   */
+  public answer(params: IEmail, messageID: string): Promise<void> {
+    const headers = this.getReplyHeaders(params, messageID);
+    return this.sendMail(headers);
+  }
+
+  public forward() {
+    // TODO
+  }
+
+  /**
+   * Sends an email through the gmail api.
+   * @param headers {string[]} The headers to send.
+   */
+  private sendMail(headers: string[]): Promise<void> {
     return new Promise((resolve, reject) => {
       this.updateCredentials()
       .then(() => {
         const gmail = google.gmail('v1');
-        const headers = this.getHeaders(params);
         const base64Email = this.getBase64EncodedEmailFromHeaders(headers);
 
         const request = {
@@ -47,7 +71,7 @@ class MailSender extends events.EventEmitter {
 
         gmail.users.messages.send(request, null, (err, response) => {
           if (!err) {
-            return resolve(response);
+            return resolve();
           } else {
             return reject({message: 'Unable to send email: ' + err});
           }
@@ -59,71 +83,61 @@ class MailSender extends events.EventEmitter {
     });
   }
 
-  public answer(messageID, params) {
-    return new Promise((resolve, reject) => {
-      this.updateCredentials()
-      .then(() => {
-        let gmail = google.gmail('v1');
-        let replyHeaders = this.getReplyHeaders([], messageID);
-        let headers = replyHeaders.concat(this.getHeaders(params));
-        console.log(headers);
-        let base64Email = this.getBase64EncodedEmailFromHeaders(headers);
-
-        let request = {
-          auth: this.oauth2Client,
-          userId: 'me',
-          resource: {
-              raw: base64Email
-          }
-        };
-
-        gmail.users.messages.send(request, null, (err, response) => {
-          if (!err) {
-              return resolve(response);
-          }
-          else {
-              return reject({message: 'Unable to send email: ' + err});
-          }
-        });
-      })
-      .catch((error) => {
-        reject(error);
-      })
-    })
-  }
-
-  public forward() {
-    // TODO
+  /**
+   * Gets the headers for a new email.
+   * @param params {IEmail} an IEmail object with the params to populate the headers with.
+   */
+  private getNewEmailHeaders(params: IEmail): string[] {
+    let headers = this.getBaseHeaders(params.to, params.from);
+    headers.push('Subject: ' + params.subject);
+    headers = headers.concat(this.getBody(params.body));
+    return headers;
   }
 
   /**
-   * Sets the email-parameters.
+   * Gets the headers for an email reply.
+   * @param params {IEmail} an IEmail object with the params to populate the headers with.
    */
-  private getHeaders(params: object): string[] {
-    let headers =[];
-    headers.push('From: <' + params.from + '>');
-    headers.push('To: ' + params.to);
+  private getReplyHeaders(params: IEmail, messageID): string[] {
+    let headers = this.getBaseHeaders(params.to, params.from);
+    headers.push('Subject: Re: ' + params.subject);
+    headers.push('In-Reply-To: <' + messageID + '>');
+    console.log(params.body);
+    headers = headers.concat(this.getBody(params.body));
+    console.log(headers);
+    return headers;
+  }
+
+  /**
+   * Gets the basic headers.
+   * @param to {string} The email address to send the email to.
+   * @param from {string} Optional "from"-header.
+   */
+  private getBaseHeaders(to: string, from?: string): string[] {
+    const headers = [];
+    headers.push('From: <' + (from || process.env.IMAP_USER) + '>');
+    headers.push('To: ' + to);
     headers.push('Content-type: text/html;charset=iso-8859-1');
     headers.push('MIME-Version: 1.0');
-    headers.push('Subject: ' + params.subject);
-    headers.push('');
-    headers.push(params.body);
 
     return headers;
   }
 
   /**
-   * Sets the reply-parameters.
+   * Gets the email body.
+   * @param body {string} The desired body of the email.
    */
-  private getReplyHeaders(headers: string[], messageID): string[] {
-    headers.push('in-reply-to: <' + messageID + '>');
-    headers.push('References: <' + messageID + '>');
+  private getBody(body: string): string[] {
+    const headers = [];
+    headers.push('');
+    headers.push(body);
 
     return headers;
   }
 
   /**
-   * Encodes the email.
+   * Base64-Encodes the email.
+   * @param headers {string[]} The headers to encode.
    */
   private getBase64EncodedEmailFromHeaders(headers: string[]): Buffer {
     const email = headers.join('\r\n').trim();

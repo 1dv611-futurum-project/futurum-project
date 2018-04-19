@@ -80,16 +80,17 @@ class App {
       console.log('Got mail:');
       console.log(mail);
       console.log('send answer to mail');
-      const answer = {to: mail.from.email, from: 'dev@futurumdigital.se', subject: mail.title, body: 'Answering'};
-      console.log(answer);
-      EmailHandler.Outgoing.answer(mail.mailID, answer)
-      .then((resoúlt) => {
-        console.log('answer sent');
-      })
-      .catch((error) => {
-        console.log('could not send answer');
-        console.log(error);
-      });
+      if (mail.from.email !== process.env.IMAP_USER) {
+        const answer = {to: mail.from.email, from: 'dev@futurumdigital.se', subject: mail.title, body: 'Answering'};
+        EmailHandler.Outgoing.answer(answer, mail.mailID)
+        .then(() => {
+          console.log('answer sent');
+        })
+        .catch((error) => {
+          console.log('could not send answer');
+          console.log(error);
+        });
+      }
       console.log('Make call to database to save the mail.');
       this.websocketHandler.emit(mail);
     });

@@ -15,14 +15,16 @@ const whitelist = ['mopooy@gmail.com'];
  */
 class IMAPHandler extends events.EventEmitter {
 
+  private interval: number;
   private imapConnection: IMAPConnectionInterface;
   private ongoingTimeout: number;
 
   /**
    * Connects to the imap server.
    */
-  public connect(imapConnection: IMAPConnectionInterface): void {
+  public connect(imapConnection: IMAPConnectionInterface, interval?: number): void {
     this.imapConnection = imapConnection;
+    this.interval = interval || 60000;
 
     this.imapConnection.on('ready', this.handleInitialConnect.bind(this));
     this.imapConnection.on('error', this.handleConnectionError.bind(this));
@@ -51,7 +53,7 @@ class IMAPHandler extends events.EventEmitter {
       if (this.ongoingTimeout) {
         clearTimeout(this.ongoingTimeout);
       }
-      this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, 300000);
+      this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, this.interval);
     })
     .catch((err) => {
       this.handleConnectionError(err);
@@ -67,7 +69,7 @@ class IMAPHandler extends events.EventEmitter {
       clearTimeout(this.ongoingTimeout);
     }
     this.emitMessage(mail);
-    this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, 300000);
+    this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, this.interval);
   }
 
   /**
@@ -78,7 +80,7 @@ class IMAPHandler extends events.EventEmitter {
     if (this.ongoingTimeout) {
       clearTimeout(this.ongoingTimeout);
     }
-    this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, 300000);
+    this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, this.interval);
   }
 
   /**
