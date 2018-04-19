@@ -2,7 +2,7 @@
  * Handles the connection against the database.
  */
 
-//Imports
+// Imports
 import * as events from 'events';
 
 import Customer from './../../models/Customer';
@@ -38,7 +38,7 @@ class DBHandler extends events.EventEmitter {
       })
       .catch((err) => {
         reject(err);
-      })
+      });
     });
   }
 
@@ -53,7 +53,7 @@ class DBHandler extends events.EventEmitter {
       })
       .catch((err) => {
         reject(err);
-      })
+      });
     });
   }
 
@@ -70,11 +70,11 @@ class DBHandler extends events.EventEmitter {
       this.getAllFromType(type, replaceOn)
       .then((allFound) => {
         if (allFound.length > 0) {
-          let updated = allFound.map((found) => { 
+          const updated = allFound.map((found) => {
             found.set(info);
             return found.save();
           });
-            
+
           return Promise.all(updated);
         } else {
           return this.createNewFromType(type, info);
@@ -86,13 +86,13 @@ class DBHandler extends events.EventEmitter {
         } else {
           resolve(saved);
         }
-        
+
       })
       .catch((error) => {
         reject(error);
-      })
+      });
     });
-  } 
+  }
 
   /**
    * Removes all documents of the given type that matches the given attributes.
@@ -101,14 +101,14 @@ class DBHandler extends events.EventEmitter {
     return new Promise((resolve, reject) => {
       this.getAllFromType(type, removeOn)
       .then((result) => {
-        result.forEach(found => found.remove());
+        result.forEach((found) => found.remove());
         resolve();
       })
       .catch((err) => {
         reject(err);
-      })
+      });
     });
-  } 
+  }
 
   /**
    * Sets up listeners on the database connection.
@@ -116,37 +116,37 @@ class DBHandler extends events.EventEmitter {
   private setUpDBListeners(): void {
     this.dbconnection.on('connection-error', (err) => {
       this.emit('error', err);
-    })
+    });
 
     this.dbconnection.on('ready', () => {
       this.emit('ready');
-    })
+    });
 
     this.dbconnection.on('disconnected', () => {
       this.emit('disconnected');
-    })
+    });
 
     this.dbconnection.on('close', () => {
       this.emit('disconnected');
-    })
+    });
   }
 
   private getOneFromType(type: string, info: object): Promise<object> {
     return new Promise((resolve, reject) => {
       type = type.toLowerCase();
       switch (type) {
-        case 'customer':
-          Customer.findOne(info)
+      case 'customer':
+        Customer.findOne(info)
           .then((customer) => {
             resolve(customer);
           })
           .catch((error) => {
             reject(error);
-          })
-          break;
-        default:
-          resolve();
-          break;
+          });
+        break;
+      default:
+        resolve();
+        break;
       }
     });
   }
@@ -159,18 +159,18 @@ class DBHandler extends events.EventEmitter {
       }
 
       switch (type) {
-        case 'customer':
-          Customer.find(info)
+      case 'customer':
+        Customer.find(info)
           .then((customer) => {
             resolve(customer);
           })
           .catch((error) => {
             reject(error);
-          })
-          break;
-        default:
-          resolve();
-          break;
+          });
+        break;
+      default:
+        resolve();
+        break;
       }
     });
   }
@@ -181,19 +181,19 @@ class DBHandler extends events.EventEmitter {
       let toSave;
 
       switch (type) {
-        case 'customer':
-          toSave = new Customer(info)
-          toSave.save()
+      case 'customer':
+        toSave = new Customer(info);
+        toSave.save()
           .then((saved) => {
             resolve(saved);
           })
           .catch((error) => {
             reject(error);
           });
-          break;
-        default:
-          reject();
-          break;
+        break;
+      default:
+        reject();
+        break;
       }
     });
   }

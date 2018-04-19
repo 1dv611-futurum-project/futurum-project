@@ -64,18 +64,18 @@ class Middleware {
   }
 
   public security(): () => void {
-    return jwt({ 
+    return jwt({
       secret: 'secret',
-      getToken: function fromCookie (req) {
+      getToken: function fromCookie(req) {
         if (req.cookies.jwt) {
-            return req.cookies.jwt;
+          return req.cookies.jwt;
         }
         return null;
       }
     })
     .unless({
       path: ['/node/auth/google', '/node/auth/google/callback', '/node/auth/google/callback/redirect']
-    })
+    });
   }
 }
 

@@ -88,7 +88,7 @@ class IMAPHandler extends events.EventEmitter {
     if (message.type === 'ticket') {
       this.emit('mail', message);
     } else if (message.type === 'answer') {
-      this.emit('answer', message)
+      this.emit('answer', message);
     }
   }
 

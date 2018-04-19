@@ -93,7 +93,8 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
           xoauth2: token,
           host: 'imap.gmail.com',
           port: 993,
-          tls: true
+          tls: true,
+		      tlsOptions: { rejectUnauthorized: false }
         });
 
         this.imap.once('ready', this.handleInitialConnect.bind(this));
@@ -180,7 +181,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
           return resolve();
         }
 
-        const fetchMessages = this.imap.seq.fetch(indicesToFetch, {
+        const fetchMessages = this.imap.fetch(indicesToFetch, {
           bodies: ['']
         });
 
@@ -190,11 +191,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
             stream.pipe(mp);
 
             mp.on('end', (mail: object) => {
-              console.log('mail')
-              console.log(mail)
-              console.log(this)
               const message = this.formatMail(mail);
-              console.log(message)
               messages.push(message);
 
               if (messages.length === indicesToFetch.length) {
@@ -223,7 +220,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Formats the mail.
    */
   private formatMail(mail) {
-    console.log('formatting')
     if (this.isNewTicket(mail)) {
       return this.formatAsNewTicket(mail);
     }
@@ -235,9 +231,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Checks if the mail is new or an answer.
    */
   private isNewTicket(mail) {
-    console.log('checks of new')
-    console.log(mail.references)
-    console.log(mail.references === undefined)
     return mail.references === undefined;
   }
 
@@ -245,7 +238,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Formats the mail as a new ticket.
    */
   private formatAsNewTicket(mail) {
-    let message = {
+    const message = {
       type: 'ticket',
       id: this.id++,
       status: 0,
@@ -266,13 +259,11 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
       ]
     };
 
-    console.log(message)
-
     return message;
   }
 
   private formatAsAnswer(mail) {
-    //TODO
+    // TODO
   }
 
   /**
@@ -290,7 +281,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Emits connection-end events.
    */
   private handleConnectionEnd(): void {
-    this._isConnected = false;
+    this.isConnected = false;
     this.emitMessage('server', {message: 'Connection to the IMAP-server has ended.'});
   }
 
