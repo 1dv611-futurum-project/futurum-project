@@ -2,7 +2,7 @@
  * Handles the connection against the database.
  */
 
-//Imports
+// Imports
 import * as mongoose from 'mongoose';
 import * as events from 'events';
 
@@ -35,7 +35,7 @@ class DBConnection extends events.EventEmitter {
       });
     } else {
       this.emit('close');
-    } 
+    }
   }
 
   /**
@@ -43,30 +43,30 @@ class DBConnection extends events.EventEmitter {
    */
   private setUpDBListeners(): void {
     this.db = mongoose.connection;
-    mongoose.Promise = global.Promise
+    mongoose.Promise = global.Promise;
 
     this.db.on('error', (err) => {
       this.emit('connection-error', err);
-    })
+    });
 
     this.db.on('connected', () => {
       this.emit('ready');
-    })
+    });
 
     this.db.on('open', () => {
       this.emit('ready');
-    })
+    });
 
     this.db.on('disconnected', () => {
       this.emit('disconnected');
-    })
-  
+    });
+
     // Close database connection if node process closes.
     process.on('SIGINT', () => {
       this.db.close(() => {
         process.exit(0);
-      })
-    })
+      });
+    });
   }
 
   /**

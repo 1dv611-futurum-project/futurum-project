@@ -42,23 +42,42 @@ export class TicketPage extends React.Component<any, any> {
 		super(props);
 
 		this.state = {
+			ticket: false,
 			showNewMessage: false,
-			status: data.status,
+			status: 0,
 			assignee: data.assignee
 		};
 
 		this.handleNewMessageClick = this.handleNewMessageClick.bind(this);
 		this.handleStatusChange = this.handleStatusChange.bind(this);
 		this.handleAssigneeChange = this.handleAssigneeChange.bind(this);
+		this.getMessage = this.getMessage.bind(this);
+	}
+
+	/**
+	 * componentDidMount
+	 * Set state with data for currently viewed ticket
+	 * @public
+	 */
+	public componentDidMount() {
+		const { pathname } = this.props.location;
+		const ticketId = pathname[0] === '/' ? pathname.slice(8) : pathname.slice(7);
+
+		this.props.tickets.forEach((ticket: any) => {
+			if (ticket.id === Number(ticketId)) {
+				this.setState({ ticket, status: ticket.status });
+			}
+		});
 	}
 
 	public render() {
-		const messages = data.messages.map((message, i) => <Message key={i} data={message}/>);
+		const ticket = this.state.ticket;
+		const messages = ticket ? ticket.messages.map(this.getMessage) : [];
 
 		return (
 			<div className='ticket__wrapper'>
 				<TicketOverview
-					data={data}
+					data={ticket}
 					status={this.state.status}
 					handleClick={this.handleNewMessageClick}
 					handleStatusChange={this.handleStatusChange}
@@ -69,6 +88,24 @@ export class TicketPage extends React.Component<any, any> {
 					{messages}
 				</div>
 			</div>
+		);
+	}
+
+	/**
+	 * Returns a Message component
+	 * @private
+	 * @param {Object} message - The message data
+	 * @param {Number} i - Index in messages array
+	 * @returns {Message} - A Message component
+	 */
+	private getMessage(message: any, i: number) {
+		return (
+			<Message
+				key={i}
+				data={message}
+				customer={this.state.ticket.from.name}
+				assignee={this.state.ticket.assignee}
+			/>
 		);
 	}
 
