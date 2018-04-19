@@ -66,7 +66,7 @@ class MailSender extends events.EventEmitter {
         let gmail = google.gmail('v1');
         let replyHeaders = this.getReplyHeaders([], messageID);
         let headers = replyHeaders.concat(this.getHeaders(params));
-        console.log(headers)
+        console.log(headers);
         let base64Email = this.getBase64EncodedEmailFromHeaders(headers);
 
         let request = {
@@ -100,12 +100,7 @@ class MailSender extends events.EventEmitter {
    * Sets the email-parameters.
    */
   private getHeaders(params: object): string[] {
-<<<<<<< HEAD
     let headers =[];
-=======
-    const headers = [];
-
->>>>>>> server
     headers.push('From: <' + params.from + '>');
     headers.push('To: ' + params.to);
     headers.push('Content-type: text/html;charset=iso-8859-1');
