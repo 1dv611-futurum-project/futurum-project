@@ -7,7 +7,7 @@ import { ITicket } from './interfaces/ITicket';
 
 export interface ITicketModel extends ITicket, Document {}
 
- //Todo: change Date to DateTime type
+ // Todo: change Date to DateTime type
 let Message: object = {
   recieved: {type: Date, required: true},
   fromCustomer: {type: Boolean, required: true},
