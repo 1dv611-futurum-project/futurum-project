@@ -81,6 +81,7 @@ const mockData = [
 export class App extends React.Component<any, any> {
 
 	private static URL: string = 'http://localhost:8080';
+	private static PATH: string = '/socket';
 	private io: SocketIOClient.Socket;
 
 	constructor(props: any) {
@@ -89,9 +90,7 @@ export class App extends React.Component<any, any> {
 			tickets: mockData
 		};
 
-		this.io = SocketIO(App.URL, {
-			path: '/socket'
-		});
+		this.io = SocketIO(App.URL, { path: App.PATH });
 		this.listen();
 	}
 
@@ -117,7 +116,10 @@ export class App extends React.Component<any, any> {
 				<div className='app__content'>
 					{React.Children.map(this.props.children, (child: React.ReactElement<any>) =>
 						React.cloneElement(child, {
-							tickets: this.state.tickets
+							tickets: this.state.tickets,
+							addClient: this.state.tickets,
+							editClient: this.state.tickets,
+							deleteClient: this.state.tickets
 						})
 					)}
 				</div>
