@@ -7,11 +7,18 @@ import { ITicket } from './interfaces/ITicket';
 
 export interface ITicketModel extends ITicket, Document {}
 
+ //Todo: change Date to DateTime type
+const Message: object = {
+  recieved: {type: Date, required: true},
+  fromCustomer: {type: Boolean, required: true},
+  body: {type: String, required: true}
+};
+
 const TicketSchema: Schema = new Schema({
   recieved: {type: Date, required: true},
   title: {type: String, required: true},
   from: {type: String, required: true},
-  body: {type: String, required: true}
+  body: {type: Array<Message>, required: true}
 });
 
 export default model<ITicketModel>('Ticket', TicketSchema);
