@@ -1,3 +1,8 @@
+/**
+ * Module to handle the outgoing and incoming email connections.
+ */
+
+// Imports.
 import IMAPConnection from './IMAPConnection';
 import IMAPHandler from './IMAPHandler';
 import MailSender from './MailSender';
@@ -7,10 +12,16 @@ class EmailHandler {
   private IMAPHandler: IMAPHandler;
   private MailSender: MailSender;
 
+  /**
+   * Returns the incoming mailhandler.
+   */
   get Incoming(): IMAPHandler {
     return this.IMAPHandler;
   }
 
+  /**
+   * Returns the outgoing mailhandler.
+   */
   get Outgoing(): MailSender {
     return this.MailSender;
   }
@@ -21,18 +32,13 @@ class EmailHandler {
     this.MailSender = MailSender;
   }
 
+  /**
+   * Updates the IMAP-connection.
+   */
   public updateIMAPConnection() {
     this.IMAPHandler.connect(this.IMAPConnection);
   }
-
-  public sendMail(params: object): void {
-    this.MailSender.send({
-      from: process.env.IMAP_USER,
-      to: params.to,
-      subject: params.subject,
-      body: params.body
-    })
-  }
 }
 
+// Exports.
 export default new EmailHandler();

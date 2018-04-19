@@ -15,14 +15,16 @@ const whitelist = ['mopooy@gmail.com'];
  */
 class IMAPHandler extends events.EventEmitter {
 
+  private interval: number;
   private imapConnection: IMAPConnectionInterface;
   private ongoingTimeout: number;
 
   /**
    * Connects to the imap server.
    */
-  public connect(imapConnection: IMAPConnectionInterface): void {
+  public connect(imapConnection: IMAPConnectionInterface, interval?: number): void {
     this.imapConnection = imapConnection;
+    this.interval = interval || 60000;
 
     this.imapConnection.on('ready', this.handleInitialConnect.bind(this));
     this.imapConnection.on('error', this.handleConnectionError.bind(this));
@@ -51,7 +53,7 @@ class IMAPHandler extends events.EventEmitter {
       if (this.ongoingTimeout) {
         clearTimeout(this.ongoingTimeout);
       }
-      this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, 300000);
+      this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, this.interval);
     })
     .catch((err) => {
       this.handleConnectionError(err);
@@ -62,12 +64,12 @@ class IMAPHandler extends events.EventEmitter {
    * Emits the new mail as a message.
    */
   private handleNewMailEvent(mail: object): void {
-    // TODO: Check against whitelist to take different actions. emit it out under differend event-names?.
+    const message = this.formatMail(mail);
     if (this.ongoingTimeout) {
       clearTimeout(this.ongoingTimeout);
     }
-    this.emitMessage(mail);
-    this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, 300000);
+    this.emitMessage(message);
+    this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, this.interval);
   }
 
   /**
@@ -78,18 +80,97 @@ class IMAPHandler extends events.EventEmitter {
     if (this.ongoingTimeout) {
       clearTimeout(this.ongoingTimeout);
     }
-    this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, 300000);
+    this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, this.interval);
+  }
+
+  /**
+   * Formats the mail.
+   */
+  private formatMail(mail) {
+    let formatted;
+    if (this.isNewTicket(mail)) {
+      formatted = this.formatAsNewTicket(mail);
+      if (!this.isInWhitelist(mail.from[0].address)) {
+        formatted.type = 'forward';
+      }
+    } else {
+      formatted = this.formatAsAnswer(mail);
+    }
+
+    return formatted;
+  }
+
+  /**
+   * Checks if the mail is new or an answer.
+   */
+  private isNewTicket(mail) {
+    return mail.references === undefined;
+  }
+
+  /**
+   * Formats the mail as a new ticket.
+   */
+  private formatAsNewTicket(mail) {
+    const message = {
+      type: 'mail',
+      id: 0,
+      status: 0,
+      assignee: null,
+      mailID: mail.messageId,
+      created: mail.receivedDate,
+      title: mail.subject,
+      from: {
+        name: mail.from[0].name,
+        email: mail.from[0].address
+      },
+      messages: [
+        {
+          received: mail.receivedDate,
+          body: mail.text,
+          fromCustomer: true
+        }
+      ]
+    };
+
+    return message;
+  }
+
+  /**
+   * Formats as an answer.
+   */
+  private formatAsAnswer(mail) {
+    const message = {
+      type: 'answer',
+      mailID: mail.messageId,
+      inAnswerTo: mail.references[0],
+      received: mail.receivedDate,
+      body: mail.text,
+      fromCustomer: true
+    };
+
+    return message;
+  }
+
+  /**
+   * Checks if the sender is in the whitelist.
+   */
+  private isInWhitelist(address: string) {
+    let found = false;
+    // TODO: Logic.
+    whitelist.forEach((approved) => {
+      if (address.indexOf(approved) !== -1) {
+        return found = true;
+      }
+    });
+
+    return found;
   }
 
   /**
    * Emits a mail-event with the email.
    */
   private emitMessage(message: object): void {
-    if (message.type === 'ticket') {
-      this.emit('mail', message);
-    } else if (message.type === 'answer') {
-      this.emit('answer', message)
-    }
+    this.emit(message.type, message);
   }
 
   /**
