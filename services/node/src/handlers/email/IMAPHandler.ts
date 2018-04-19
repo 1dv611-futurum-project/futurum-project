@@ -155,7 +155,8 @@ class IMAPHandler extends events.EventEmitter {
    * Checks if the sender is in the whitelist.
    */
   private isInWhitelist(address: string) {
-    let found = false;
+    // Commented out whitelist-testing.
+    /*let found = false;
     // TODO: Logic.
     whitelist.forEach((approved) => {
       if (address.indexOf(approved) !== -1) {
@@ -163,7 +164,10 @@ class IMAPHandler extends events.EventEmitter {
       }
     });
 
-    return found;
+    return found;*/
+
+    // Everyone is whitelist now.
+    return true;
   }
 
   /**
