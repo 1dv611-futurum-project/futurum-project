@@ -129,7 +129,7 @@ class App {
       console.log(error);
       console.log('Make call to ws to send notification of error.');
       console.log('Possibly make call to email module to email the error to different email address:');
-      // EmailHandler.sendMail({to: 'dev@futurumdigital.se', subject: 'error', body: 'Error'})
+      // EmailHandler.Outgoing.send({to: 'dev@futurumdigital.se', subject: 'error', body: 'Error'})
     });
   }
 

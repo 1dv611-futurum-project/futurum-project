@@ -46,6 +46,12 @@ class MailSender extends events.EventEmitter {
     return this.sendMail(headers);
   }
 
+  /**
+   * Forwards an email to the given address.
+   * @param params {IEmail} the mail to forward.
+   * @param messageID {string} the messageID of the forwarded message.
+   * @param forwardingAddress {string} the address to forward to.
+   */
   public forward(params: IEmail, messageID: string, forwardingAddress: string): Promise<void> {
     const headers = this.getForwardingHeaders(params, messageID, forwardingAddress);
     return this.sendMail(headers);

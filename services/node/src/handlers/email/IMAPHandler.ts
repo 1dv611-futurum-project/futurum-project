@@ -156,7 +156,6 @@ class IMAPHandler extends events.EventEmitter {
    */
   private isInWhitelist(address: string) {
     let found = false;
-    console.log('checking whitelist')
     // TODO: Logic.
     whitelist.forEach((approved) => {
       if (address.indexOf(approved) !== -1) {
@@ -164,7 +163,6 @@ class IMAPHandler extends events.EventEmitter {
       }
     });
 
-    console.log('returning ' + found)
     return found;
   }
 
