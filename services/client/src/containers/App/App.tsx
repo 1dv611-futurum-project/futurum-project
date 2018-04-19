@@ -4,7 +4,7 @@
  */
 
 import * as React from 'react';
-import * as SocketIO from 'socket.io-client';
+import Socket from '../../Socket';
 import { Header } from '../../components/Header/Header';
 
 const mockData = [
@@ -80,9 +80,7 @@ const mockData = [
  */
 export class App extends React.Component<any, any> {
 
-	private static URL: string = 'http://localhost:8080';
-	private static PATH: string = '/socket';
-	private io: SocketIOClient.Socket;
+	private socket: Socket;
 
 	constructor(props: any) {
 		super(props);
@@ -90,16 +88,16 @@ export class App extends React.Component<any, any> {
 			tickets: mockData
 		};
 
-		this.io = SocketIO(App.URL, { path: App.PATH });
+		this.socket = new Socket();
 		this.listen();
 	}
 
 	/**
-	 * Initiate socket handling
+	 * Get socket ticket listener
 	 * @private
 	 */
 	private listen() {
-		this.io.on('socket', (msg: any) => {
+		this.socket.tickets((msg: any) => {
 			if (!msg.id) {
 				const newMessage = JSON.parse(msg);
 				this.setState({ tickets: [...this.state.tickets, newMessage] });
@@ -108,6 +106,14 @@ export class App extends React.Component<any, any> {
 	}
 
 	public render() {
+		const childProps = {
+			tickets: this.state.tickets,
+			clients: this.state.clients,
+			addClient: this.socket.client,
+			editClient: this.socket.client,
+			deleteClient: this.socket.client
+		};
+
 		return (
 			<div className='app__wrapper'>
 				<div className='app__sidebar'>
@@ -115,12 +121,7 @@ export class App extends React.Component<any, any> {
 				</div>
 				<div className='app__content'>
 					{React.Children.map(this.props.children, (child: React.ReactElement<any>) =>
-						React.cloneElement(child, {
-							tickets: this.state.tickets,
-							addClient: this.state.tickets,
-							editClient: this.state.tickets,
-							deleteClient: this.state.tickets
-						})
+						React.cloneElement(child, childProps)
 					)}
 				</div>
 			</div>

@@ -21,8 +21,8 @@ export default class Socket {
 		this.io = SocketIO(Socket.URL, { path: Socket.PATH });
 	}
 
-	public listen(cb: any) {
-		this.io.on('message', (msg: any) => cb);
+	public tickets(cb: any) {
+		this.io.on('socket', cb);
 	}
 
 	public message(data: any) {

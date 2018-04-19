@@ -29,6 +29,7 @@ export class ClientListPage extends React.Component<any, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
+			clients: this.props.clients || [],
 			showNewClient: false,
 		};
 
@@ -75,7 +76,7 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @param {Object} client - The new client
 	 */
 	private addClient(client: any) {
-		console.log(client);
+		this.props.addClient(client);
 	}
 
 	/**
@@ -84,7 +85,7 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @param {Object} client - The existing client data
 	 */
 	private editClient(client: any) {
-		console.log('Redigera ' + client);
+		this.props.editClient(client);
 	}
 
 	/**
@@ -93,6 +94,6 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @param {Object} client - The existing client data
 	 */
 	private deleteClient(client: any) {
-		console.log('Ta bort ' + client);
+		this.props.deleteClient(client);
 	}
 }
