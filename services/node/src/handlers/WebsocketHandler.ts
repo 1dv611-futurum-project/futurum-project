@@ -3,18 +3,28 @@
  */
 
 // Imports.
-const io = require('socket.io')({ path: '/socket' });
+import * as SocketIo from 'socket.io';
 
 /**
  * Handles the connection.
  */
 class WebsocketHandler {
 
-  private io: Socket;
-  private port = 3001;
+  private static readonly PORT: number = 3001;
+  private io: SocketIo.Server;
+  private port: string | number;
 
   constructor() {
-    this.io = io;
+    this.config();
+    this.sockets();
+  }
+
+  private config(): void {
+    this.port = process.env.PORT || WebsocketHandler.PORT;
+  }
+
+  private sockets(): void {
+    this.io = SocketIo({ path: '/socket' });
   }
 
   /**
@@ -26,7 +36,7 @@ class WebsocketHandler {
     this.io.listen(port);
     this.io.on('connection', (socket: any) => {
       console.log('Connected client on port %s.', this.port);
-      io.to(socket.id).emit('socket', { id: socket.id });
+      this.io.to(socket.id).emit('socket', { id: socket.id });
 
       socket.on('message', (m: any) => {
         console.log('[server](message): %s', JSON.stringify(m));
@@ -45,7 +55,7 @@ class WebsocketHandler {
    */
   public emit(data: object[]): void {
     try {
-    // Logic to see if socket is connected?
+      // Logic to see if socket is connected?
       this.io.emit('socket', JSON.stringify(data));
     } catch (error) {
       console.error(error);
