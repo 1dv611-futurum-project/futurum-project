@@ -30,8 +30,12 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 		this.handleChange = this.handleChange.bind(this);
 	}
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
-		const selected = this.state.selected !== '' ? this.state.selected : this.props.selected;
+		const selected = this.state.selected !== '' ? this.state.selected : this.props.selected || 0;
 		const status = this.getStatusText(selected);
 
 		return (
@@ -68,6 +72,7 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 	/**
 	 * Handles change when a new status is selected
 	 * @private
+	 * @param {String} selected - The newly selected status
 	 */
 	private handleChange(selected: string): void {
 		const statusNumber = this.getStatusNumber(selected);

@@ -34,6 +34,10 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 		this.handleModal = this.handleModal.bind(this);
 	}
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const ticket = this.props.data;
 

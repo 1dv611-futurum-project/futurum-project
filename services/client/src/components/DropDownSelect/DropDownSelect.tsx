@@ -29,8 +29,12 @@ export class DropDownSelect extends React.Component<IDropDownSelect, any> {
 		this.handleChange = this.handleChange.bind(this);
 	}
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
-		const selected = this.state.selected !== '' ? this.state.selected : this.props.selected;
+		const selected = this.state.selected !== '' ? this.state.selected : this.props.selected || 0;
 		const items = this.getMenuItems();
 
 		return (

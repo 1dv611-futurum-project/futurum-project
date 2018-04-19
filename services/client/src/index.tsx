@@ -6,6 +6,7 @@ import { App } from './containers/App/App';
 import './assets/sass/main.scss';
 import routes from './routes/routes';
 
+/* Render application */
 ReactDOM.render(
 	<Router history={browserHistory} routes={routes} />,
 	document.getElementById('app')

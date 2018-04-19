@@ -22,6 +22,11 @@ export interface IMessage {
  * Message class
  */
 export class Message extends React.Component<IMessage, any> {
+
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const { body, fromCustomer, received } = this.props.data;
 		const { customer, assignee } = this.props;
@@ -34,7 +39,7 @@ export class Message extends React.Component<IMessage, any> {
 				<div className='message__content'>
 					<p className='message__content__title'>
 						{fromCustomer ? customer : assignee},
-						<span className='message__content__title--regular'> {moment(received).format('L')}</span>
+						<span className='message__content__title--regular'> {moment(received, moment.ISO_8601).format('L')}</span>
 					</p>
 					<p className='message__content__text'>{body}</p>
 				</div>

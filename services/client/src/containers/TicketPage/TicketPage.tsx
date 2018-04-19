@@ -8,31 +8,6 @@ import { TicketOverview } from '../../components/TicketOverview/TicketOverview';
 import { Message } from '../../components/Message/Message';
 import { MessageInput } from '../../components/MessageInput/MessageInput';
 
-// TODO! Remove mock-up data
-const data = {
-	id: '13',
-	status: 1,
-	assignee: 'Anton Myrberg',
-	title: 'Applikationen fungerar inte',
-	created: '2018-04-04',
-	from: {
-		name: 'Johan Andersson',
-		email: 'kunden@kunden.se'
-	},
-	messages: [
-		{
-			received: '2018-04-10',
-			from: 'Anton Myrberg',
-			body: 'Hej!\nVi har tagit emot ditt meddelande.\nMvh Anton Myrberg, Futurum Digital'
-		},
-		{
-			received: '2018-04-04',
-			from: 'Johan Andersson',
-			body: 'Hej!\nVi har stött på ett problem som vi hade behövt hjälp med. Vänligen återkoppla!\n/Johan'
-		}
-	]
-};
-
 /**
  * TicketPage class
  */
@@ -45,7 +20,7 @@ export class TicketPage extends React.Component<any, any> {
 			ticket: false,
 			showNewMessage: false,
 			status: 0,
-			assignee: data.assignee
+			assignee: null
 		};
 
 		this.handleNewMessageClick = this.handleNewMessageClick.bind(this);
@@ -65,11 +40,15 @@ export class TicketPage extends React.Component<any, any> {
 
 		this.props.tickets.forEach((ticket: any) => {
 			if (ticket.id === Number(ticketId)) {
-				this.setState({ ticket, status: ticket.status });
+				this.setState({ ticket, status: ticket.status, assignee: ticket.assignee });
 			}
 		});
 	}
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const ticket = this.state.ticket;
 		const messages = ticket ? ticket.messages.map(this.getMessage) : [];

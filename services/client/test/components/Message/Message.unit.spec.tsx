@@ -8,18 +8,22 @@ import { Message } from '../../../src/components/Message/Message';
 
 describe('<Message />', () => {
 	let wrapper: any;
-	const props = { data: {
-		from: 'from',
-		received: 'received',
-		body: 'body'
-	}};
+	const props = {
+		data: {
+			fromCustomer: true,
+			received: 'received',
+			body: 'body'
+		},
+		customer: 'customer',
+		assignee: 'assignee'
+	};
 
 	before(() => {
 		wrapper = shallow(<Message {...props}/>);
 	});
 
 	it('should have an author and a date', () => {
-		let expected = props.data.from + ', ' + props.data.received
+		const expected = props.customer + ', ' + props.data.received;
 		expect(wrapper.find('.message__content__title').text()).to.equal(expected);
 	});
 

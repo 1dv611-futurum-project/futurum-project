@@ -20,8 +20,13 @@ export interface IClientList {
  * ClientList class
  */
 export class ClientList extends React.Component<IClientList, any> {
+
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
-		const { onEdit, onDelete} = this.props;
+		const { onEdit, onDelete } = this.props;
 
 		return (
 			<Table className='client-list__table'>

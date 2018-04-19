@@ -34,6 +34,10 @@ export class ClientInput extends React.Component<IClientInput, any> {
 		this.handleInput = this.handleInput.bind(this);
 	}
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const { open } = this.props;
 		const cssClasses = open ? 'client-list client-input' : 'client-list client-input client-input--hidden';

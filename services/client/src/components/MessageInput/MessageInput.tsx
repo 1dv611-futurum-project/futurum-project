@@ -31,6 +31,10 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 		this.handleClick = this.handleClick.bind(this);
 	}
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const { open } = this.props;
 		const cssClasses = open ? 'message message-input' : 'message message-input message-input--hidden';

@@ -11,9 +11,6 @@ import { Ticket } from '../../components/Ticket/Ticket';
  */
 export class AllTicketsPage extends React.Component<any, any> {
 
-	private tickets: any;
-	private index: number;
-
 	constructor(props: any) {
 		super(props);
 		this.state = {
@@ -23,6 +20,10 @@ export class AllTicketsPage extends React.Component<any, any> {
 		this.getTickets = this.getTickets.bind(this);
 	}
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const title = this.getTitle();
 		const tickets = this.props.tickets.map(this.getTickets).filter((ticket: any) => ticket !== undefined);

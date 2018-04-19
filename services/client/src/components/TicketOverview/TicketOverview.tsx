@@ -71,6 +71,10 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 		}
 	}
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const { id, assignee, title, created, from } = this.props.data;
 		const { handleClick, handleStatusChange, handleAssigneeChange } = this.props;
@@ -89,7 +93,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 				</div>
 				<div className='ticket-overview__info'>
 					<p className='ticket-overview__info__text'>Ärende skapat av {from ? from.name : ''}</p>
-					<p className='ticket-overview__info__text'>Mottaget {moment(created).format('LL')}</p>
+					<p className='ticket-overview__info__text'>Mottaget {moment(created, moment.ISO_8601).format('LL')}</p>
 					<AddButton text='Skriv ett svar' onClick={handleClick} />
 				</div>
 				<div className='ticket-overview__actions'>
