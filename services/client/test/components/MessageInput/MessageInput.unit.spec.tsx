@@ -35,7 +35,7 @@ describe('<MessageInput />', () => {
 	});
 
 	it('should send the input message', () => {
-		let expected;
+		let expected = '';
 		const input = 'test';
 
 		props.onClick = (message: string) => { expected = message; };
@@ -44,6 +44,16 @@ describe('<MessageInput />', () => {
 
 		wrapper.find(Button).simulate('click');
 		expect(input).to.equal(expected);
+		expect(wrapper.find('.message-input--hidden')).to.have.length(1);
+	});
+
+	it('should hide and empty the message input on send', () => {
+		wrapper = shallow(<MessageInput {...props}/>);
+		wrapper.setState({ message: 'test' });
+
+		wrapper.find(Button).simulate('click');
+		expect(wrapper.state('message')).to.equal('');
+		expect(wrapper.find('.message-input--hidden')).to.have.length(1);
 	});
 
 });

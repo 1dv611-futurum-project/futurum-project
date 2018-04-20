@@ -71,5 +71,6 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 	 */
 	private handleClick() {
 		this.props.onClick(this.state.message);
+		this.setState({ message: '' });
 	}
 }

@@ -29,7 +29,8 @@ export class Message extends React.Component<IMessage, any> {
 	 */
 	public render() {
 		const { body, fromCustomer, received } = this.props.data;
-		const { customer, assignee } = this.props;
+		const { customer } = this.props;
+		const assignee = this.props.assignee === null ? 'Futurum Digital' : this.props.assignee;
 
 		return (
 			<Paper className='message'>

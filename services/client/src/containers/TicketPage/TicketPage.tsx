@@ -4,6 +4,9 @@
  */
 
 import * as React from 'react';
+import * as moment from 'moment';
+import 'moment/locale/sv';
+
 import { TicketOverview } from '../../components/TicketOverview/TicketOverview';
 import { Message } from '../../components/Message/Message';
 import { MessageInput } from '../../components/MessageInput/MessageInput';
@@ -18,6 +21,7 @@ export class TicketPage extends React.Component<any, any> {
 
 		this.state = {
 			ticket: false,
+			messages: [],
 			showNewMessage: false,
 			status: 0,
 			assignee: null
@@ -26,6 +30,7 @@ export class TicketPage extends React.Component<any, any> {
 		this.handleNewMessageClick = this.handleNewMessageClick.bind(this);
 		this.handleStatusChange = this.handleStatusChange.bind(this);
 		this.handleAssigneeChange = this.handleAssigneeChange.bind(this);
+		this.handleSend = this.handleSend.bind(this);
 		this.getMessage = this.getMessage.bind(this);
 	}
 
@@ -40,7 +45,12 @@ export class TicketPage extends React.Component<any, any> {
 
 		this.props.tickets.forEach((ticket: any) => {
 			if (ticket.id === Number(ticketId)) {
-				this.setState({ ticket, status: ticket.status, assignee: ticket.assignee });
+				this.setState({
+					ticket,
+					messages: ticket.messages,
+					status: ticket.status,
+					assignee: ticket.assignee
+				});
 			}
 		});
 	}
@@ -51,7 +61,7 @@ export class TicketPage extends React.Component<any, any> {
 	 */
 	public render() {
 		const ticket = this.state.ticket;
-		const messages = ticket ? ticket.messages.map(this.getMessage) : [];
+		const messages = this.state.messages.map(this.getMessage);
 
 		return (
 			<div className='ticket__wrapper'>
@@ -102,7 +112,15 @@ export class TicketPage extends React.Component<any, any> {
 	 * @param {String} message - The written message
 	 */
 	private handleSend(message: string) {
-		console.log(message);
+		const messages = this.state.messages;
+		const newMessage = {
+			fromCustomer: false,
+			received: moment().format(),
+			body: message
+		};
+
+		messages.unshift(newMessage);
+		this.setState({ showNewMessage: false, messages });
 
 		// TODO! Handle message here.
 	}
