@@ -10,8 +10,8 @@ describe('<ClientList />', () => {
 	let wrapper: any;
 	let tableRow: any;
 	let clientName: string;
-	const props = { 
-		data: [{name: 'test', email: 'test', errands: 0}], 
+	const props = {
+		data: [{name: 'test', email: 'test', errands: 0}],
 		onEdit: (name: string) => { clientName = name; },
 		onDelete: (name: string) => { clientName = name; }
 	};
@@ -35,14 +35,14 @@ describe('<ClientList />', () => {
 	});
 
 	it('should get client name from edit-button', () => {
-		let expected = props.data[0].name;
+		const expected = props.data[0].name;
 
 		tableRow.find(IconButton).at(0).simulate('click');
 		expect(clientName).to.equal(expected);
 	});
 
 	it('should get client name from delete-button', () => {
-		let expected = props.data[0].name;
+		const expected = props.data[0].name;
 
 		tableRow.find(IconButton).at(1).simulate('click');
 		expect(clientName).to.equal(expected);
