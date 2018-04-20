@@ -22,7 +22,7 @@ class XOauth {
     this.updateGenerator();
   }
 
-  public updateGenerator() {
+  public updateGenerator(): void {
     const newOptions = this.getCredentials();
 
     if (newOptions
@@ -76,7 +76,7 @@ class XOauth {
   /**
    * Sets the generator.
    */
-  private getGenerator(): void {
+  private getGenerator() {
     return xoauth2.createXOAuth2Generator({
       user: this.options.user,
       clientId: this.options.clientID,

@@ -11,20 +11,22 @@ import * as SocketIo from 'socket.io';
 class WebsocketHandler {
 
   private static readonly PORT: number = 3001;
-  private io: SocketIo.Server;
+  private socket: SocketIo.Server;
   private port: string | number;
 
   constructor() {
     this.config();
     this.sockets();
+    this.listen(3001, () => {const lat = 0; } );
   }
 
   private config(): void {
-    this.port = process.env.PORT || WebsocketHandler.PORT;
+    // this.port = process.env.PORT || WebsocketHandler.PORT;
+    this.port = WebsocketHandler.PORT;
   }
 
   private sockets(): void {
-    this.io = SocketIo({ path: '/socket' });
+    this.socket = SocketIo({ path: '/socket' });
   }
 
   /**
@@ -33,17 +35,15 @@ class WebsocketHandler {
   public listen(port, callback): void {
     this.port = port || this.port;
 
-    this.io.listen(port);
-    this.io.on('connection', (socket: any) => {
+    this.socket.listen(port);
+    this.socket.on('connection', (socket: any) => {
       console.log('Connected client on port %s.', this.port);
-      this.io.to(socket.id).emit('socket', { id: socket.id });
+      this.socket.to(socket.id).emit('socket', { id: socket.id });
 
-      socket.on('message', (m: any) => {
-        console.log('[server](message): %s', JSON.stringify(m));
-        this.io.emit('message', m);
-      });
-
-      socket.on('disconnect', () => {
+      /**
+       * disconnect
+       */
+      this.socket.on('disconnect', () => {
         console.log('Client disconnected');
       });
     });
@@ -51,15 +51,57 @@ class WebsocketHandler {
   }
 
   /**
-   * Emits data to the client on all channels.
+   * Emits data to the server on ticket channels.
    */
-  public emit(data: object[]): void {
+  public emitTicket(ticket: any): void {
     try {
-      // Logic to see if socket is connected?
-      this.io.emit('socket', JSON.stringify(data));
+      this.socket.emit('ticket', JSON.stringify(ticket));
     } catch (error) {
       console.error(error);
     }
+  }
+
+  /**
+   * Emits data to the server on customer channels.
+   */
+  public emitCustomer(customer: object): void {
+    try {
+      this.socket.emit('customer', JSON.stringify(customer));
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Emits data to the server on settings channels.
+   */
+  public emitSettings(settings: object): void {
+    try {
+      this.socket.emit('settings', JSON.stringify(settings));
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Emits data to all ticket listeners.
+   */
+  public ticket(callback: any ): void {
+    this.socket.on('ticket', callback );
+  }
+
+  /**
+   * Emits data to all customer listeners.
+   */
+  public customer(callback: any ): void {
+    this.socket.on('customer', callback);
+  }
+
+  /**
+   * Emits data to all settings listeners.
+   */
+  public settings(callback: any ): void {
+    this.socket.on('customer', callback);
   }
 
   private originIsAllowed(origin): boolean {

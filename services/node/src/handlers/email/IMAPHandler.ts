@@ -7,7 +7,7 @@ import * as events from 'events';
 import IMAPConnectionInterface from './IMAPConnectionInterface';
 
 // This should be a database, only array for development
-const whitelist = ['mopooy@gmail.com'];
+const whitelist = ['mopooy@gmail.com', 'js223zs@student.lnu.se'];
 
 /**
  * Sets up a connection to the server and
@@ -73,7 +73,7 @@ class IMAPHandler extends events.EventEmitter {
   /**
    * Collects unread emails and sets timeout for collecting them again.
    */
-  private getUnreadEmails() {
+  private getUnreadEmails(): void {
     this.imapConnection.getUnreadEmails();
     if (this.ongoingTimeout) {
       clearTimeout(this.ongoingTimeout);
