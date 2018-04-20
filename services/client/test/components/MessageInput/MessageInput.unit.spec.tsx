@@ -36,14 +36,14 @@ describe('<MessageInput />', () => {
 
 	it('should send the input message', () => {
 		let expected;
-		const msg = 'test';
+		const input = 'test';
 
 		props.onClick = (message: string) => { expected = message; };
 		wrapper = shallow(<MessageInput {...props}/>);
-		wrapper.setState({ message: msg });
+		wrapper.setState({ message: input });
 
 		wrapper.find(Button).simulate('click');
-		expect(msg).to.equal(expected);
+		expect(input).to.equal(expected);
 	});
 
 });

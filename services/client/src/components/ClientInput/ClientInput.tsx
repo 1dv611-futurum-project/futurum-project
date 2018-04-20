@@ -11,7 +11,7 @@ import TextArea from 'react-textarea-autosize';
  * ClientInput Props Interface
  */
 export interface IClientInput {
-	onClick(message: string): any;
+	onClick(client: any): void;
 	open: boolean;
 }
 
