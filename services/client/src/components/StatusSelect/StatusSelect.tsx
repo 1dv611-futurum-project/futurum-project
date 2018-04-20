@@ -24,7 +24,7 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 		super(props);
 		this.state = {
 			statuses: ['Ej påbörjad', 'Påbörjad', 'Genomförd', 'Stängd'],
-			selected: ''
+			selected: this.props.selected || 0
 		};
 
 		this.handleChange = this.handleChange.bind(this);
@@ -35,13 +35,10 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 	 * @public
 	 */
 	public render() {
-		const selected = this.state.selected !== '' ? this.state.selected : this.props.selected || 0;
-		const status = this.getStatusText(selected);
-
 		return (
 			<span className='select'>
 				<DropDownSelect
-					selected={status}
+					selected={this.state.selected}
 					items={this.state.statuses}
 					onChange={this.handleChange}
 				/>
