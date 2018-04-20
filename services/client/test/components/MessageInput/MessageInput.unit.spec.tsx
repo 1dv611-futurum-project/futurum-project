@@ -10,7 +10,7 @@ import { MessageInput } from '../../../src/components/MessageInput/MessageInput'
 describe('<MessageInput />', () => {
 	let wrapper: any;
 	const props = {
-		onClick: (message: string) => {},
+		onClick: (message: string) => {return; },
 		open: true
 	};
 
@@ -36,9 +36,9 @@ describe('<MessageInput />', () => {
 
 	it('should send the input message', () => {
 		let expected;
-		let msg = 'test';
+		const msg = 'test';
 
-		props.onClick = (message: string) => { expected = message };
+		props.onClick = (message: string) => { expected = message; };
 		wrapper = shallow(<MessageInput {...props}/>);
 		wrapper.setState({ message: msg });
 
