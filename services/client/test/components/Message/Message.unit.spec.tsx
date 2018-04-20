@@ -11,7 +11,7 @@ describe('<Message />', () => {
 	const props = {
 		data: {
 			fromCustomer: true,
-			received: 'received',
+			received: '2018-04-27T23:25:05.000Z',
 			body: 'body'
 		},
 		customer: 'customer',
@@ -22,8 +22,9 @@ describe('<Message />', () => {
 		wrapper = shallow(<Message {...props}/>);
 	});
 
-	it('should have an author and a date', () => {
-		const expected = props.customer + ', ' + props.data.received;
+	it('should have an author and a date as locale convention', () => {
+		const expectedDateString = '2018-04-27';
+		const expected = props.customer + ', ' + expectedDateString;
 		expect(wrapper.find('.message__content__title').text()).to.equal(expected);
 	});
 

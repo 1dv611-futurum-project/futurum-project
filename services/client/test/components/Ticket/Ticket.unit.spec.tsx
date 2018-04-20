@@ -20,7 +20,7 @@ describe('<Ticket />', () => {
 				name: 'name',
 				email: 'email'
 			},
-			created: '27 april 2018',
+			created: '2018-04-27T23:25:05.000Z',
 			assignee: 'assignee',
 			status: 0
 		},
@@ -47,9 +47,10 @@ describe('<Ticket />', () => {
 		expect(wrapper.find('.ticket__id').text()).to.equal('#' + props.data.id);
 	});
 
-	it('should have a ticket created', () => {
+	it('should have a ticket created date in core format', () => {
+		const expectedDateString = '27 april 2018';
 		expect(wrapper.find('.ticket__content__information').at(0).text())
-			.to.equal('Mottaget: ' + props.data.created);
+			.to.equal('Mottaget: ' + expectedDateString);
 	});
 
 	it('should have a ticket assignee', () => {
