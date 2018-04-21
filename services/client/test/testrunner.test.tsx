@@ -11,3 +11,4 @@ import './components/Modal/Modal.unit.spec';
 import './components/StatusSelect/StatusSelect.unit.spec';
 import './components/Ticket/Ticket.unit.spec';
 import './components/TicketOverview/TicketOverview.unit.spec';
+import './components/SnackbarNotice/SnackbarNotice.unit.spec';

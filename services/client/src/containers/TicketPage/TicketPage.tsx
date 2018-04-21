@@ -10,6 +10,7 @@ import 'moment/locale/sv';
 import { TicketOverview } from '../../components/TicketOverview/TicketOverview';
 import { Message } from '../../components/Message/Message';
 import { MessageInput } from '../../components/MessageInput/MessageInput';
+import { SnackbarNotice } from '../../components/SnackbarNotice/SnackbarNotice';
 
 const assignees = ['Anton Myrberg', 'Sebastian Borgstedt'];
 
@@ -26,7 +27,9 @@ export class TicketPage extends React.Component<any, any> {
 			messages: [],
 			showNewMessage: false,
 			status: 0,
-			assignee: null
+			assignee: null,
+			snackMessage: '',
+			snackState: false
 		};
 
 		this.handleNewMessageClick = this.handleNewMessageClick.bind(this);
@@ -78,6 +81,11 @@ export class TicketPage extends React.Component<any, any> {
 					<MessageInput onClick={this.handleSend} open={this.state.showNewMessage} />
 					{messages}
 				</div>
+				<SnackbarNotice
+					message={this.state.snackMessage}
+					open={this.state.snackState}
+					onClose={this.handleSnackbarClose}
+				/>
 			</div>
 		);
 	}
@@ -133,7 +141,11 @@ export class TicketPage extends React.Component<any, any> {
 	 * @param {Number} status - The new status
 	 */
 	private handleStatusChange(status: number) {
-		this.setState({ status });
+		this.setState({
+			status,
+			snackState: true,
+			snackMessage: 'Status för ärendet har uppdaterats.'
+		});
 		console.log('changed status to ' + status);
 	}
 
@@ -143,7 +155,19 @@ export class TicketPage extends React.Component<any, any> {
 	 * @param {Number} assignee - The new assignee
 	 */
 	private handleAssigneeChange(assignee: string) {
-		this.setState({ assignee });
 		console.log('changed assignee to ' + assignee);
+		this.setState({
+			assignee,
+			snackState: true,
+			snackMessage: `Ärendet har tilldelats ${assignee}.`
+		});
+	}
+
+	/**
+	 * Handles manual close of SnackbarNotice
+	 * @private
+	 */
+	private handleSnackbarClose = (event: any) => {
+		this.setState({ snackState: false });
 	}
 }

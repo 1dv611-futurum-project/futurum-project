@@ -1,0 +1,16 @@
+/**
+ * SnackbarNotice component
+ */
+.snackbar {
+	padding: 0;
+	width: 350px;
+	height: 50px;
+	bottom: 20px !important;
+	left: 15px !important;
+
+	> div {
+		padding: 0 5px !important;
+		padding-left: 15px !important;
+		flex-wrap: nowrap;
+	}
+}

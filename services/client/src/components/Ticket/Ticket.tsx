@@ -15,7 +15,7 @@ import { TicketAction } from './TicketAction';
  */
 export interface ITicket {
 	data: any;
-	onSend(message: any): void;
+	onSend(message: any, mailCustomer: boolean): void;
 }
 
 /**
