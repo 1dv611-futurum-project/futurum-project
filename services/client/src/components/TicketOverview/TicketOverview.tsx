@@ -31,10 +31,12 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 
 	constructor(props: any) {
 		super(props);
+		const ticket = this.props.data;
+
 		this.state = {
-			color: '',
-			status: this.props.data.status || -1,
-			assignee: this.props.data.assignee || ''
+			color: this.getStatusColor(ticket.status),
+			status: ticket.status,
+			assignee: ticket.assignee
 		};
 
 		this.handleStatusChange = this.handleStatusChange.bind(this);
@@ -49,6 +51,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	public componentDidUpdate(prevProps: any): void {
 		if (prevProps.data !== this.props.data) {
 			const ticket = this.props.data;
+
 			this.setState({
 				color: this.getStatusColor(ticket.status),
 				status: ticket.status,
