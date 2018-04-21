@@ -1,16 +1,19 @@
+
+import { IMessage } from './interfaces/IMessage';
+
 /**
  * Message class.
  */
-class Message {
+class Message implements IMessage {
  // Todo: change Date to DateTime type
-  private recieved: Date;
-  private fromCustomer: boolean;
-  private body: string;
+  public recieved: Date;
+  public body: string;
+  public fromCustomer: boolean;
 
-  constructor(recieved: Date, fromCustomer: boolean, body: string) {
-    this.recieved = recieved;
-    this.fromCustomer = fromCustomer;
-    this.body = body;
+  constructor(message: object) {
+    this.recieved = message.recieved;
+    this.fromCustomer = message.fromCustomer;
+    this.body = message.body;
   }
 }
 

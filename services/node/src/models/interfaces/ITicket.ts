@@ -1,8 +1,10 @@
-import { IMessage } from './IMessage';
+import Message from '../Message';
 
 export interface ITicket {
-  recieved?: Date;
+  status?: string;
+  assignee?: string;
   title?: string;
   from?: string;
-  body?: IMessage[];
+  name?: string;
+  body?: Message[];
 }
