@@ -80,7 +80,7 @@ class App {
       console.log('Got mail:');
       console.log(mail);
       console.log('Make call to database to save the mail.');
-      this.websocketHandler.emitMail(mail); 
+      this.websocketHandler.emitTicket(mail);
     });
 
     EmailHandler.Incoming.on('answer', (mail) => {

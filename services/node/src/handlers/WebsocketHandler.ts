@@ -55,6 +55,8 @@ class WebsocketHandler {
    */
   public emitTicket(ticket: any): void {
     try {
+      let tick = JSON.stringify(ticket);
+      console.log(tick);
       this.socket.emit('ticket', JSON.stringify(ticket));
     } catch (error) {
       console.error(error);

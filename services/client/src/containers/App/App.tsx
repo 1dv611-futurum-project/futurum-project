@@ -96,8 +96,9 @@ export class App extends React.Component<any, any> {
 	 * Receive incoming ticket(s) and set appropriate state.
 	 */
 	private onTicket(): void {
-		this.websocketHandler.ticket( (ticket) => {
+		this.websocketHandler.ticket( (ticket: any) => {
 			try {
+				console.log('ticket:   ' + ticket);
 				ticket = JSON.parse(ticket);
 				this.state.tickets.push(ticket);
 			// this.setState( );
@@ -111,7 +112,7 @@ export class App extends React.Component<any, any> {
 	 * Receive incoming settings and set appropriate state.
 	 */
 	private onSettings(): void {
-		this.websocketHandler.ticket( (settings) => {
+		this.websocketHandler.settings( (settings: any) => {
 			// Todo
 		});
 	}
@@ -120,7 +121,7 @@ export class App extends React.Component<any, any> {
 	 * Receive incoming customer(s) and set appropriate state.
 	 */
 	private onCustomer(): void {
-		this.websocketHandler.ticket( (settings) => {
+		this.websocketHandler.customer( (customer: any) => {
 			// Todo
 		});
 	}

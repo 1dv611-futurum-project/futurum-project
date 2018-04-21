@@ -14,7 +14,7 @@ class WebsocketHandler {
 
 	// private EM: EventEmitter = new events.EventEmitter();
 	private static URL: string = 'http://localhost:8080';
-	private socket: SocketIO.Socket;
+	private socket: SocketIOClient.Socket;
 
 	constructor() {
 		this.listen();
