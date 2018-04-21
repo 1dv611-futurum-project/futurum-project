@@ -11,6 +11,8 @@ import { TicketOverview } from '../../components/TicketOverview/TicketOverview';
 import { Message } from '../../components/Message/Message';
 import { MessageInput } from '../../components/MessageInput/MessageInput';
 
+const assignees = ['Anton Myrberg', 'Sebastian Borgstedt'];
+
 /**
  * TicketPage class
  */
@@ -66,11 +68,11 @@ export class TicketPage extends React.Component<any, any> {
 		return (
 			<div className='ticket__wrapper'>
 				<TicketOverview
-					data={ticket}
-					status={this.state.status}
 					handleClick={this.handleNewMessageClick}
 					handleStatusChange={this.handleStatusChange}
 					handleAssigneeChange={this.handleAssigneeChange}
+					assignees={assignees}
+					data={ticket}
 				/>
 				<div className='ticket__wrapper__messages'>
 					<MessageInput onClick={this.handleSend} open={this.state.showNewMessage} />

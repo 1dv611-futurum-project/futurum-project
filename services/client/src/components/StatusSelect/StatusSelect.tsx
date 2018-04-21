@@ -20,14 +20,30 @@ export interface IStatusSelect {
  */
 export class StatusSelect extends React.Component<IStatusSelect, any> {
 
+	private static STATUSES: string[] = ['Ej påbörjad', 'Påbörjad', 'Genomförd', 'Stängd'];
+
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			statuses: ['Ej påbörjad', 'Påbörjad', 'Genomförd', 'Stängd'],
+			statuses: StatusSelect.STATUSES,
 			selected: this.props.selected || 0
 		};
 
 		this.handleChange = this.handleChange.bind(this);
+	}
+
+	/**
+	 * componentDidUpdate - Update state to new props
+	 * @public
+	 * @param {any} prevProps
+	 */
+	public componentDidUpdate(prevProps: any) {
+		if (prevProps !== this.props) {
+			this.setState({
+				statuses: StatusSelect.STATUSES,
+				selected: this.props.selected
+			});
+		}
 	}
 
 	/**
@@ -47,33 +63,12 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 	}
 
 	/**
-	 * Gets the correct status message from number
-	 * @private
-	 * @param {Number} statusNumber - The status number (0-3)
-	 * @returns {String} - The status as a string
-	 */
-	private getStatusText(statusNumber: number): string {
-		return this.state.statuses[statusNumber];
-	}
-
-	/**
-	 * Gets the correct status number from message
-	 * @private
-	 * @param {string} statusText - The status in text
-	 * @returns {Number} - The status as a number
-	 */
-	private getStatusNumber(statusText: string): number {
-		return this.state.statuses.indexOf(statusText);
-	}
-
-	/**
 	 * Handles change when a new status is selected
 	 * @private
 	 * @param {String} selected - The newly selected status
 	 */
-	private handleChange(selected: string): void {
-		const statusNumber = this.getStatusNumber(selected);
+	private handleChange(selected: number): void {
 		this.setState({ selected });
-		this.props.onChange(statusNumber, selected);
+		this.props.onChange(selected, this.state.statuses[selected]);
 	}
 }

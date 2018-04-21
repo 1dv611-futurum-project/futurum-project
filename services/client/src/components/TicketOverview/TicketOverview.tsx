@@ -20,7 +20,7 @@ export interface ITicketOverview {
 	handleClick(): any;
 	handleStatusChange(status: number): any;
 	handleAssigneeChange(assignee: string): any;
-	status: number;
+	assignees: string[];
 	data: any;
 }
 
@@ -33,41 +33,27 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 		super(props);
 		this.state = {
 			color: '',
-			status: -1,
-			assignee: 0
+			status: this.props.data.status || -1,
+			assignee: this.props.data.assignee || ''
 		};
+
+		this.handleStatusChange = this.handleStatusChange.bind(this);
+		this.handleAssigneeChange = this.handleAssigneeChange.bind(this);
 	}
 
 	/**
-	 * getDerivedStateFromProps
-	 * Sets the correct ticket color based on status.
+	 * componentDidUpdate - Update state to new props
 	 * @public
-	 * @param {Object} nextProps
-	 * @param {Object} prevState
-	 * @returns {Object} - The state object
+	 * @param {any} prevProps
 	 */
-	public static getDerivedStateFromProps(nextProps: any, prevState: any) {
-		if (nextProps.status !== prevState.status || prevState.status === '') {
-			let status;
-			switch (nextProps.status) {
-				case 0:
-					status = 'red';
-					break;
-				case 1:
-					status = 'blue';
-					break;
-				case 2:
-				case 3:
-					status = 'green';
-					break;
-			}
-
-			return {
-				color: status,
-				status: nextProps.status
-			};
-		} else {
-			return null;
+	public componentDidUpdate(prevProps: any): void {
+		if (prevProps.data !== this.props.data) {
+			const ticket = this.props.data;
+			this.setState({
+				color: this.getStatusColor(ticket.status),
+				status: ticket.status,
+				assignee: ticket.assignee
+			});
 		}
 	}
 
@@ -75,15 +61,13 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	 * The render method
 	 * @public
 	 */
-	public render() {
-		const { id, assignee, title, created, from } = this.props.data;
+	public render(): any {
+		const { id, title, assignee, created, from } = this.props.data;
 		const { handleClick, handleStatusChange, handleAssigneeChange } = this.props;
-		const assignees = ['Anton Myrberg', 'Sebastian Borgstedt'];
-		const colorClasses = `ticket-overview__color ticket-overview__color--${this.state.color}`;
 
 		return (
 			<Paper className='ticket-overview'>
-				<span className={colorClasses} />
+				<span className={`ticket-overview__color ticket-overview__color--${this.state.color}`}/>
 				<div className='ticket-overview__header'>
 					<PlayArrow className='ticket-overview__header__icon'/>
 					<h1 className='ticket-overview__header__title'>
@@ -99,14 +83,62 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 				<div className='ticket-overview__actions'>
 					<div className='ticket-overview__actions--status'>
 						<p className='ticket-overview__actions__label'>Status:</p>
-						<StatusSelect selected={this.state.status} onChange={handleStatusChange} />
+						<StatusSelect
+							selected={this.state.status}
+							onChange={this.handleStatusChange}
+						/>
 					</div>
 					<div className='ticket-overview__actions--assigned'>
 						<p className='ticket-overview__actions__label'>Tilldelad:</p>
-						<DropDownSelect selected={assignee ? assignee : 0} onChange={handleAssigneeChange} items={assignees} />
+						<DropDownSelect
+							selected={this.state.assignee}
+							items={this.props.assignees}
+							onChange={this.handleAssigneeChange}
+						/>
 					</div>
 				</div>
 			</Paper>
 		);
+	}
+
+	/**
+	 * Gets the status color
+	 * @private
+	 * @param {number} status - The status number (0-3)
+	 */
+	private getStatusColor(status: number): string {
+		switch (status) {
+			case 0:
+				return'red';
+			case 1:
+				return 'blue';
+			case 2:
+			case 3:
+				return 'green';
+		}
+	}
+
+	/**
+	 * Handles status change for ticket
+	 * @private
+	 * @param {number} status - The status number (0-3)
+	 */
+	private handleStatusChange(status: number): void {
+		const color = this.getStatusColor(status);
+
+		this.props.handleStatusChange(status);
+		this.setState({ color, status });
+	}
+
+	/**
+	 * Handles assignee change for ticket
+	 * @private
+	 * @param {number} selected - The selected index
+	 */
+	private handleAssigneeChange(selected: number): void {
+		const assignee = this.props.assignees[selected];
+
+		this.props.handleAssigneeChange(assignee);
+		this.setState({ assignee });
 	}
 }
