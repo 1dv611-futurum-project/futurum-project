@@ -8,11 +8,11 @@ export interface ITicketModel extends ITicket, Document {}
 
  // Todo: change Date to DateTime type
 const TicketSchema: Schema = new Schema({
-  status: {type: String, default: 'Ej påbörjad'},
+  status: {type: Number, default: 0},
   assignee: {type: String, required: false},
   title: {type: String, required: false},
   from: {type: String, required: true},
-  name: {type: String, required: false},
+  customerName: {type: String, required: false},
   body: {type: [], required: true}
 });
 

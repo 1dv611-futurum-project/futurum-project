@@ -6,12 +6,12 @@ import { IMessage } from './interfaces/IMessage';
  */
 class Message implements IMessage {
  // Todo: change Date to DateTime type
-  public recieved: Date;
+  public received: Date;
   public body: string;
   public fromCustomer: boolean;
 
   constructor(message: object) {
-    this.recieved = message.recieved;
+    this.received = message.received;
     this.fromCustomer = message.fromCustomer;
     this.body = message.body;
   }

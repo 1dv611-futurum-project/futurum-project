@@ -1,10 +1,10 @@
 import Message from '../Message';
 
 export interface ITicket {
-  status?: string;
+  status?: number;
   assignee?: string;
   title?: string;
   from?: string;
-  name?: string;
+  customerName?: string;
   body?: Message[];
 }
