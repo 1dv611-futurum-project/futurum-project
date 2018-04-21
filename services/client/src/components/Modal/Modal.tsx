@@ -12,8 +12,8 @@ import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, B
 export interface IModal {
 	title: string;
 	message: string;
-	disagree?: string;
 	agree: string;
+	disagree?: string;
 	onChange(agree: boolean): void;
 }
 
