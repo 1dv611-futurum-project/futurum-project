@@ -10,46 +10,35 @@ describe('<DropDownSelect />', () => {
 	let wrapper: any;
 	const props: any = {
 		selected: 0,
+		items: ['0', '1', '2'],
 		onChange: (fn: any) => fn
 	};
-	const statusCodes = {
-		0: 'Ej påbörjad',
-		1: 'Påbörjad',
-		2: 'Genomförd',
-		3: 'Stängd',
-	} as any;
 
 	before(() => {
 		wrapper = shallow(<DropDownSelect {...props}/>);
 	});
 
-	// it('should have correct status text', () => {
-	// 	// tslint:disable-next-line:forin
-	// 	for (const status in statusCodes) {
-	// 		props.selected = JSON.parse(status);
-	// 		wrapper = shallow(<StatusSelect {...props}/>);
+	it('should have MenuItems from items', () => {
+		props.items.forEach((item: string, i: number) => {
+			expect(wrapper.find(MenuItem).at(i).props().value).to.equal(item);
+		});
+	});
 
-	// 		expect(wrapper.find(DropDownSelect).props().selected).to.equal(statusCodes[status]);
-	// 	}
-	// });
+	it('should have value from selected index', () => {
+		props.items.forEach((item: string, i: number) => {
+			props.selected = i;
+			wrapper = shallow(<DropDownSelect {...props}/>);
 
-	// it('should have correct status texts to choose from', () => {
-	// 	// tslint:disable-next-line:forin
-	// 	for (const status in statusCodes) {
-	// 		expect(wrapper.find(DropDownSelect).props().items[status]).to.equal(statusCodes[status]);
-	// 	}
-	// });
+			expect(wrapper.find(Select).props().value).to.equal(item);
+		});
+	});
 
-	// it('should get status and status text on select', () => {
-	// 	const expected = 0;
+	it('should have value from selected string', () => {
+		props.items.forEach((item: string) => {
+			props.selected = item;
+			wrapper = shallow(<DropDownSelect {...props}/>);
 
-	// 	props.onChange = (status: number, statusText: string) => {
-	// 		expect(status).to.equal(expected);
-	// 		expect(statusText).to.equal(statusCodes[expected]);
-	// 	};
-	// 	wrapper = shallow(<StatusSelect {...props}/>);
-
-	// 	const dropDownSelect = wrapper.find(DropDownSelect).dive();
-	// 	dropDownSelect.find(Select).simulate('change', {target: { value : statusCodes[expected]}});
-	// });
+			expect(wrapper.find(Select).props().value).to.equal(item);
+		});
+	});
 });
