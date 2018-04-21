@@ -6,6 +6,8 @@
 import * as events from 'events';
 
 import Customer from './../../models/Customer';
+import Assignee from './../../models/Assignee';
+import Ticket from './../../models/Ticket';
 
 /**
  * Sets up and handles the database.
@@ -144,6 +146,24 @@ class DBHandler extends events.EventEmitter {
             reject(error);
           });
         break;
+      case 'ticket':
+        Ticket.findOne(info)
+          .then((ticket) => {
+            resolve(ticket);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+        break;
+      case 'assignee':
+        Assignee.findOne(info)
+          .then((assignee) => {
+            resolve(assignee);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+        break;
       default:
         resolve();
         break;
@@ -168,6 +188,24 @@ class DBHandler extends events.EventEmitter {
             reject(error);
           });
         break;
+      case 'ticket':
+        Ticket.find(info)
+          .then((ticket) => {
+            resolve(ticket);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+        break;
+      case 'assignee':
+        Assignee.find(info)
+          .then((assignee) => {
+            resolve(assignee);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+        break;
       default:
         resolve();
         break;
@@ -177,12 +215,38 @@ class DBHandler extends events.EventEmitter {
 
   private createNewFromType(type: string, info: object): Promise<object> {
     return new Promise((resolve, reject) => {
+      /**
+       * Check that object doesn't already exist in DB.
+       * if ( Customer.findOne(info) ) {
+       *  reject();
+       * }
+       */
       type = type.toLowerCase();
       let toSave;
 
       switch (type) {
       case 'customer':
         toSave = new Customer(info);
+        toSave.save()
+          .then((saved) => {
+            resolve(saved);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+        break;
+      case 'ticket':
+        toSave = new Ticket(info);
+        toSave.save()
+          .then((saved) => {
+            resolve(saved);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+        break;
+      case 'assignee':
+        toSave = new Assignee(info);
         toSave.save()
           .then((saved) => {
             resolve(saved);
@@ -201,3 +265,19 @@ class DBHandler extends events.EventEmitter {
 
 // Exports.
 export default DBHandler;
+
+/*
+ * Example email to map to db objects
+{ type: 'ticket',
+  id: 0,
+  status: 0,
+  assignee: null,
+  mailID: 'CAHm9NZDiA=EYN9N7_r66TFr49ws0JYoEEjXbMU9Y2i4W9w8fug@mail.gmail.com',
+  created: 2018-04-21T13:48:01.000Z,
+  title: 'master',
+  from: { name: 'Johan Söderlund', email: 'js223zs@student.lnu.se' },
+  messages: 
+    [ { received: 2018-04-21T13:48:01.000Z,
+        body: 'are you?\n',
+        fromCustomer: true } ] }
+*/
