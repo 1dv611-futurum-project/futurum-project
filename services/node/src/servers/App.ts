@@ -16,6 +16,8 @@ import DBHandler from './../handlers/db/DBHandler';
 import DBConnection from './../handlers/db/DBConnection';
 import EmailHandler from './../handlers/email/EmailHandler';
 import WebsocketHandler from './../handlers/WebsocketHandler';
+import Ticket from './../models/Ticket';
+import Mail from './../models/Mail';
 
 /**
  * Express app.
@@ -75,18 +77,90 @@ class App {
     this.DBHandler.connect('mongodb://futurum-db:27017');
   }
 
+/*
+ * Example email to map to db objects
+{ type: 'ticket',
+  id: 0,
+  status: 0,
+  assignee: null,
+  mailID: 'CAHm9NZDiA=EYN9N7_r66TFr49ws0JYoEEjXbMU9Y2i4W9w8fug@mail.gmail.com',
+  created: 2018-04-21T13:48:01.000Z,
+  title: 'master',
+  from: { name: 'Johan Söderlund', email: 'js223zs@student.lnu.se' },
+  messages: 
+    [ { received: 2018-04-21T13:48:01.000Z,
+        body: 'are you?\n',
+        fromCustomer: true } ] }
+*/
+
+/*
+      status: {type: Number, default: 0},
+  assignee: {type: String, required: false},
+  title: {type: String, required: false},
+  from: {type: String, required: true},
+  customerName: {type: String, required: false},
+  body: {type: [], required: true}
+
+
+  this.received = message.received;
+    this.fromCustomer = message.fromCustomer;
+    this.body = message.body;
+  */
+
+  private createNewMails(mail: object): Mail[] {
+    try {
+      const mailBodies = [];
+      mail.messages.forEach((element) => {
+        mailBodies.push(new Mail({
+          received: element.received,
+          fromCustomer: element.fromCustomer,
+          body: element.body}));
+      });
+      return mailBodies;
+    } catch (error) {
+      console.error(error);
+    }
+    return;
+  }
+
+  private createNewTicket(mail: object, mailBodies: Mail[]): object {
+    try {
+      const ticket = new Ticket({
+        status: mail.status,
+        assignee: mail.assignee,
+        title: mail.title,
+        from: mail.from.email,
+        customerName: mail.from.name,
+        body: mailBodies
+      });
+      return ticket;
+    } catch (error) {
+      console.error(error);
+    }
+    return;
+  }
+
   private handleIncomingEmails(): void {
     EmailHandler.Incoming.on('mail', (mail) => {
       console.log('Got mail:');
       console.log(mail);
-      console.log('Make call to database to save the mail.');
-      this.websocketHandler.emitTicket(mail);
+
+      try {
+        const ticket = this.createNewTicket(mail, this.createNewMails(mail));
+        this.DBHandler.createNewFromType(mail.type, ticket);
+        this.websocketHandler.emitTicket(ticket);
+      } catch (error) {
+        console.error(error);
+      }
     });
 
     EmailHandler.Incoming.on('answer', (mail) => {
       console.log('Got answer:');
       console.log(mail);
       console.log('Make call to database to save the answer.');
+      this.DBHandler.addOrUpdate(mail.type, this.createNewMails(mail));
+      const ticket = this.DBHandler.getOne(mail.type, this.createNewMails(mail));
+      this.websocketHandler.emitTicket(ticket);
       // Emit answer to client
     });
 

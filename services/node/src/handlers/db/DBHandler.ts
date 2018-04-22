@@ -73,6 +73,9 @@ class DBHandler extends events.EventEmitter {
       .then((allFound) => {
         if (allFound.length > 0) {
           const updated = allFound.map((found) => {
+            /**
+             * Todo: Implement set?
+             */
             found.set(info);
             return found.save();
           });
@@ -213,7 +216,7 @@ class DBHandler extends events.EventEmitter {
     });
   }
 
-  private createNewFromType(type: string, info: object): Promise<object> {
+  public createNewFromType(type: string, info: object): Promise<object> {
     return new Promise((resolve, reject) => {
       /**
        * Check that object doesn't already exist in DB.
@@ -226,8 +229,8 @@ class DBHandler extends events.EventEmitter {
 
       switch (type) {
       case 'customer':
-        toSave = new Customer(info);
-        toSave.save()
+        // toSave = new Customer(info);
+        info.save()
           .then((saved) => {
             resolve(saved);
           })
@@ -236,8 +239,8 @@ class DBHandler extends events.EventEmitter {
           });
         break;
       case 'ticket':
-        toSave = new Ticket(info);
-        toSave.save()
+        // toSave = new Ticket(info);
+        info.save()
           .then((saved) => {
             resolve(saved);
           })
@@ -246,8 +249,8 @@ class DBHandler extends events.EventEmitter {
           });
         break;
       case 'assignee':
-        toSave = new Assignee(info);
-        toSave.save()
+        // toSave = new Assignee(info);
+        info.save()
           .then((saved) => {
             resolve(saved);
           })

@@ -1,4 +1,4 @@
-import Message from '../Message';
+import Mail from '../Mail';
 
 export interface ITicket {
   status?: number;
@@ -6,5 +6,5 @@ export interface ITicket {
   title?: string;
   from?: string;
   customerName?: string;
-  body?: Message[];
+  body?: Mail[];
 }
