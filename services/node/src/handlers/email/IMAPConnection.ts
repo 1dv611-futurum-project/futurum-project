@@ -39,7 +39,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    */
   public updateCredentials(): void {
     XOauth.updateGenerator();
-
     if (this.imap) {
       this.closeConnection();
     }
@@ -172,7 +171,9 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   private collectUnread(): Promise<object[]> {
     return new Promise((resolve, reject) => {
       const messages = [];
-      this.imap.search([ 'UNSEEN' ], (err: Error, indicesToFetch: number[]) => {
+      const fortnightAgo = new Date(Date.now() - 12096e5);
+      this.imap.search( [['OR', 'RECENT', [ 'UNSEEN', ['SINCE', fortnightAgo] ] ] ],
+      (err: Error, indicesToFetch: number[]) => {
         if (err) {
           return reject({message: 'An error occured while searching the inbox for unread messages.'});
         }
@@ -192,7 +193,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
 
             mp.on('end', (mail: object) => {
               messages.push(mail);
-
               if (messages.length === indicesToFetch.length) {
                 resolve(messages);
               }

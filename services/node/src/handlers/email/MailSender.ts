@@ -96,7 +96,7 @@ class MailSender extends events.EventEmitter {
    */
   private getNewEmailHeaders(params: IEmail): string[] {
     let headers = this.getBaseHeaders(params.to, params.from);
-    headers.push('Subject: ' + params.subject);
+    headers.push('Subject: ' + this.getSubject(params.subject));
     headers = headers.concat(this.getBody(params.body));
     return headers;
   }
@@ -107,7 +107,7 @@ class MailSender extends events.EventEmitter {
    */
   private getReplyHeaders(params: IEmail, messageID): string[] {
     let headers = this.getBaseHeaders(params.to, params.from);
-    headers.push('Subject: Re: ' + params.subject);
+    headers.push('Subject: Re: ' + this.getSubject(params.subject));
     headers.push('In-Reply-To: <' + messageID + '>');
     headers = headers.concat(this.getBody(params.body));
     return headers;
@@ -119,7 +119,7 @@ class MailSender extends events.EventEmitter {
   private getForwardingHeaders(params: IEmail, messageID: string, forwardingAddress: string): string[] {
     let headers = this.getBaseHeaders(forwardingAddress, params.from);
     headers.push('Message-ID: <' + messageID + '>');
-    headers.push('Subject: Vbf: ' + params.subject);
+    headers.push('Subject: Vbf: ' + this.getSubject(params.subject));
     headers.push('Reply-To: <' + params.from + '>');
     headers = headers.concat(this.getBody(params.body));
     return headers;
@@ -162,6 +162,17 @@ class MailSender extends events.EventEmitter {
     base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
 
     return base64EncodedEmail;
+  }
+
+  /**
+   * Base64-Encodes the subject and adds char-encoding info.
+   * @param subject {string} The subject to encode.
+   */
+  private getSubject(subject: string): string {
+    const encodedSub = Buffer.from(subject).toString('base64');
+    const formattedSub = '=?utf-8?B?' + encodedSub + '?=';
+
+    return formattedSub;
   }
 
   /**

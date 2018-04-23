@@ -87,7 +87,7 @@ class App {
   created: 2018-04-21T13:48:01.000Z,
   title: 'master',
   from: { name: 'Johan Söderlund', email: 'js223zs@student.lnu.se' },
-  messages: 
+  messages:
     [ { received: 2018-04-21T13:48:01.000Z,
         body: 'are you?\n',
         fromCustomer: true } ] }
@@ -100,7 +100,6 @@ class App {
   from: {type: String, required: true},
   customerName: {type: String, required: false},
   body: {type: [], required: true}
-
 
   this.received = message.received;
     this.fromCustomer = message.fromCustomer;
@@ -144,6 +143,17 @@ class App {
     EmailHandler.Incoming.on('mail', (mail) => {
       console.log('Got new ticket:');
       console.log(mail);
+
+      console.log('sending')
+      EmailHandler.Outgoing.send({to: process.env.IMAP_FORWARDING_ADDRESS, subject: 'Åäö.', body: 'it works'})
+      console.log('forwarding')
+      const forward = {from: mail.from.email, body: mail.messages[0].body, subject: mail.title};
+      EmailHandler.Outgoing.forward(forward, mail.mailID, process.env.IMAP_FORWARDING_ADDRESS)
+      .then(() => {
+        console.log('is forward')
+      })
+      console.log('answering')
+      EmailHandler.Outgoing.answer({to: mail.from.email, subject: mail.title, body: 'svar'})
 
       try {
         const ticket = this.createNewTicket(mail, this.createNewMails(mail));

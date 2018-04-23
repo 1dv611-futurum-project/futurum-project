@@ -37,6 +37,7 @@ class PassportStrategies {
         if (authorized) {
           process.env[PassportStrategies.accessTokenEnv] = process.env[PassportStrategies.accessTokenEnv] || accessToken;
           process.env[PassportStrategies.refreshTokenEnv] = process.env[PassportStrategies.refreshTokenEnv] || refreshToken;
+
           return done(null, profile);
 
         } else {
