@@ -16,3 +16,4 @@ describe('testrunner', () => {
 require('./db-tests/mongoose-models-test-suite')
 require('./db-tests/db-connection-test-suite')
 require('./db-tests/db-handler-test-suite')
+require('./email-tests/email-handler-test-suite')

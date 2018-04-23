@@ -71,6 +71,7 @@
     "nodemon": "1.17.2",
     "puppeteer": "^1.2.0",
     "react-hot-loader": "^4.0.0",
+    "reflec-ts": "^0.3.9",
     "sass-loader": "^6.0.7",
     "source-map-loader": "^0.2.3",
     "style-loader": "^0.20.3",
