@@ -19,6 +19,74 @@ import WebsocketHandler from './../handlers/WebsocketHandler';
 import Ticket from './../models/Ticket';
 import Mail from './../models/Mail';
 
+const mockData = [
+	{
+		type: 'ticket',
+		id: 3,
+		status: 2,
+		assignee: 'Anton Myrberg',
+		mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
+		created: '2018-04-17T17:56:58.000Z',
+		title: 'Ett test',
+		from: {
+			name: 'Dev Devsson',
+			email: 'dev@futurumdigital.se'
+		},
+		messages: [
+			{
+				received: '2018-04-17T17:56:58.000Z',
+				body: 'Vi har mottagit ditt meddelande och återkommer inom kort. Mvh Anton Myrberg',
+				fromCustomer: false
+			},
+			{
+				received: '2018-04-17T17:56:58.000Z',
+				body: 'adfafdasfa ',
+				fromCustomer: true
+			}
+		]
+	},
+	{
+		type: 'ticket',
+		id: 12,
+		status: 1,
+		assignee: null,
+		mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
+		created: '2018-04-17T17:56:58.000Z',
+		title: 'Vi har ett problem',
+		from: {
+			name: 'Dev Devsson',
+			email: 'dev@futurumdigital.se'
+		},
+		messages: [
+			{
+				received: '2018-04-17T17:56:58.000Z',
+				body: 'adfafdasfa ',
+				fromCustomer: true
+			}
+		]
+	},
+	{
+		type: 'ticket',
+		id: 6,
+		status: 2,
+		assignee: 'Sebastian Borgstedt',
+		mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
+		created: '2018-04-17T17:56:58.000Z',
+		title: 'Nu har det blivit tokigt',
+		from: {
+			name: 'Dev Devsson',
+			email: 'dev@futurumdigital.se'
+		},
+		messages: [
+			{
+				received: '2018-04-17T17:56:58.000Z',
+				body: 'adfafdasfa ',
+				fromCustomer: true
+			}
+		]
+	}
+];
+
 /**
  * Express app.
  */
@@ -35,10 +103,35 @@ class App {
     this.authRouter = authRouter;
     this.DBHandler = new DBHandler(new DBConnection());
     this.websocketHandler = WebsocketHandler;
+/*
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
+    async function demo() {
+      console.log('Taking a break...');
+      await sleep(2000);
+      console.log('Two second later');
+    }
+    
+    demo();
+    */
+
+    this.onSocketConnection();
     this.middleware();
     this.mountRoutes();
     this.handleIncomingEmails();
     this.handleDB();
+  }
+
+
+
+  private onSocketConnection() {
+    const tickArr = [];
+    tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
+    tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
+    tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
+    this.websocketHandler.emitTickets(tickArr);
   }
 
   private middleware(): void {
@@ -139,6 +232,7 @@ class App {
     }
     return;
   }
+
 
   private handleIncomingEmails(): void {
     EmailHandler.Incoming.on('mail', (mail) => {

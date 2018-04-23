@@ -7,73 +7,6 @@ import * as React from 'react';
 import Socket from '../../Socket';
 import { Header } from '../../components/Header/Header';
 
-const mockData = [
-	{
-		type: 'ticket',
-		id: 3,
-		status: 2,
-		assignee: 'Anton Myrberg',
-		mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-		created: '2018-04-17T17:56:58.000Z',
-		title: 'Ett test',
-		from: {
-			name: 'Dev Devsson',
-			email: 'dev@futurumdigital.se'
-		},
-		messages: [
-			{
-				received: '2018-04-17T17:56:58.000Z',
-				body: 'Vi har mottagit ditt meddelande och återkommer inom kort. Mvh Anton Myrberg',
-				fromCustomer: false
-			},
-			{
-				received: '2018-04-17T17:56:58.000Z',
-				body: 'adfafdasfa ',
-				fromCustomer: true
-			}
-		]
-	},
-	{
-		type: 'ticket',
-		id: 12,
-		status: 1,
-		assignee: null,
-		mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-		created: '2018-04-17T17:56:58.000Z',
-		title: 'Vi har ett problem',
-		from: {
-			name: 'Dev Devsson',
-			email: 'dev@futurumdigital.se'
-		},
-		messages: [
-			{
-				received: '2018-04-17T17:56:58.000Z',
-				body: 'adfafdasfa ',
-				fromCustomer: true
-			}
-		]
-	},
-	{
-		type: 'ticket',
-		id: 6,
-		status: 2,
-		assignee: 'Sebastian Borgstedt',
-		mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-		created: '2018-04-17T17:56:58.000Z',
-		title: 'Nu har det blivit tokigt',
-		from: {
-			name: 'Dev Devsson',
-			email: 'dev@futurumdigital.se'
-		},
-		messages: [
-			{
-				received: '2018-04-17T17:56:58.000Z',
-				body: 'adfafdasfa ',
-				fromCustomer: true
-			}
-		]
-	}
-];
 
 /**
  * App class
@@ -85,11 +18,14 @@ export class App extends React.Component<any, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			tickets: mockData
+			tickets: [],
+			customers: []
 		};
 
 		this.socket = new Socket();
 		this.listen();
+		this.getTickets();
+		this.getCustomers();
 	}
 
 	/**
@@ -97,7 +33,7 @@ export class App extends React.Component<any, any> {
 	 * @private
 	 */
 	private listen() {
-		this.socket.tickets((msg: any) => {
+		this.socket.onTicket((msg: any) => {
 			if (!msg.id) {
 				const newMessage = JSON.parse(msg);
 				this.setState({ tickets: [...this.state.tickets, newMessage] });
@@ -105,13 +41,28 @@ export class App extends React.Component<any, any> {
 		});
 	}
 
+	private getTickets() {
+		this.socket.onTickets((tickets: any) => {
+			if (tickets) {
+				tickets = JSON.parse(tickets);
+				this.setState({ tickets });
+			}
+		});
+	}
+
+	private getCustomers() {
+		this.socket.onCustomers((customers: any) => {
+			if (customers) {
+				customers = JSON.parse(customers);
+				this.setState({ customers });
+			}
+		});
+	}
+
 	public render() {
 		const childProps = {
 			tickets: this.state.tickets,
-			clients: this.state.clients,
-			addClient: this.socket.client,
-			editClient: this.socket.client,
-			deleteClient: this.socket.client
+			clients: this.state.customers
 		};
 
 		return (

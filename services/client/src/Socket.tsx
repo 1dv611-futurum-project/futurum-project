@@ -21,15 +21,28 @@ export default class Socket {
 		this.io = SocketIO(Socket.URL, { path: Socket.PATH });
 	}
 
-	public tickets(cb: any) {
-		this.io.on('socket', cb);
+	public onTicket(cb: any) {
+		this.io.on('ticket', cb);
 	}
 
-	public message(data: any) {
-		this.io.emit('message', data);
+	public onTickets(cb: any) {
+		this.io.on('tickets', cb);
 	}
 
-	public client(data: any) {
-		this.io.emit('client', data);
+	public onCustomers(cb: any) {
+		this.io.on('customers', cb);
 	}
+
+	public emitSettings(settings: object[]) {
+		this.io.emit('settings', settings);
+	}
+
+	public emitTicket(ticket: object) {
+		this.io.emit('ticket', ticket);
+	}
+
+	public emitCustomer(customer: object) {
+		this.io.emit('customer', customer);
+	}
+
 }

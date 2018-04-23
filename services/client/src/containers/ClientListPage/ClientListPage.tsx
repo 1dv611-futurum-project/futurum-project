@@ -54,7 +54,7 @@ export class ClientListPage extends React.Component<any, any> {
 					<ClientInput onClick={this.addClient} open={this.state.showNewClient} />
 				</div>
 				<ClientList
-					data={clients}
+					data={this.state.clients}
 					onEdit={this.editClient}
 					onDelete={this.deleteClient}
 				/>
