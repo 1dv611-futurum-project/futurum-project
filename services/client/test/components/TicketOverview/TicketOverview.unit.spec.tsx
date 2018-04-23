@@ -15,10 +15,10 @@ describe('<TicketOverview />', () => {
 		handleClick: () => {return; },
 		handleStatusChange: (fn: number) => fn,
 		handleAssigneeChange: (fn: string) => fn,
-		status: 0,
+		assignees: ['assignee'],
 		data: {
 			id: 'id',
-			status: 'status',
+			status: 0,
 			assignee: 'assignee',
 			title: 'title',
 			created: 'created',
@@ -52,39 +52,28 @@ describe('<TicketOverview />', () => {
 		wrapper = shallow(<TicketOverview {...props}/>);
 	});
 
-	function getColorState(status: number) {
-		props.status = status;
-		wrapper = shallow(<TicketOverview {...props}/>);
-
-		return wrapper.state('color');
-	}
-
 	it('should have correct status color', () => {
 		// tslint:disable-next-line:forin
 		for (const status in statusCodes) {
 			const statusInt = JSON.parse(status);
-			const color = getColorState(statusInt);
+			wrapper = newWrapperProps(statusInt);
+			const color = wrapper.state('color');
 
 			expect(color).to.equal(colors[statusInt]);
 		}
 	});
 
-	it('should have correct status color class', () => {
-		// tslint:disable-next-line:forin
-		for (const status in statusCodes) {
-			const statusInt = JSON.parse(status);
-			const color = getColorState(statusInt);
-
-			expect(wrapper.find(`.ticket-overview__color--${color}`)).to.have.length(1);
-		}
-	});
+	function newWrapperProps(status: number): any {
+		props.data.status = status;
+		return shallow(<TicketOverview {...props}/>);
+	}
 
 	it('should have a list of statuses to choose from', () => {
-		expect(wrapper.find('.ticket-overview__actions--status').find(StatusSelect)).to.have.length(1);
+		expect(wrapper.find(StatusSelect)).to.have.length(1);
 	});
 
 	it('should have a list of assignees to choose from', () => {
-		expect(wrapper.find('.ticket-overview__actions--assigned').find(DropDownSelect)).to.have.length(1);
+		expect(wrapper.find(DropDownSelect)).to.have.length(1);
 	});
 
 	it('should have an answer button', () => {

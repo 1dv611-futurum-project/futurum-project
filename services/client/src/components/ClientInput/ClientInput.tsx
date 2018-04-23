@@ -11,7 +11,7 @@ import TextArea from 'react-textarea-autosize';
  * ClientInput Props Interface
  */
 export interface IClientInput {
-	onClick(message: string): any;
+	onClick(client: any): void;
 	open: boolean;
 }
 
@@ -34,6 +34,10 @@ export class ClientInput extends React.Component<IClientInput, any> {
 		this.handleInput = this.handleInput.bind(this);
 	}
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const { open } = this.props;
 		const cssClasses = open ? 'client-list client-input' : 'client-list client-input client-input--hidden';

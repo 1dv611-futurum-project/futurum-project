@@ -19,6 +19,11 @@ export interface IAddButton {
  * AddButton class
  */
 export class AddButton extends React.Component<IAddButton, any> {
+
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const { text, onClick } = this.props;
 

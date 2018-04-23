@@ -8,18 +8,23 @@ import { Message } from '../../../src/components/Message/Message';
 
 describe('<Message />', () => {
 	let wrapper: any;
-	const props = { data: {
-		from: 'from',
-		received: 'received',
-		body: 'body'
-	}};
+	const props = {
+		data: {
+			fromCustomer: true,
+			received: '2018-04-27T23:25:05.000Z',
+			body: 'body'
+		},
+		customer: 'customer',
+		assignee: 'assignee'
+	};
 
 	before(() => {
 		wrapper = shallow(<Message {...props}/>);
 	});
 
-	it('should have an author and a date', () => {
-		let expected = props.data.from + ', ' + props.data.received
+	it('should have an author and a date as locale convention', () => {
+		const expectedDateString = '2018-04-27';
+		const expected = props.customer + ', ' + expectedDateString;
 		expect(wrapper.find('.message__content__title').text()).to.equal(expected);
 	});
 

@@ -4,34 +4,15 @@
  */
 
 import * as React from 'react';
+import * as moment from 'moment';
+import 'moment/locale/sv';
+
 import { TicketOverview } from '../../components/TicketOverview/TicketOverview';
 import { Message } from '../../components/Message/Message';
 import { MessageInput } from '../../components/MessageInput/MessageInput';
+import { SnackbarNotice } from '../../components/SnackbarNotice/SnackbarNotice';
 
-// TODO! Remove mock-up data
-const data = {
-	id: '13',
-	status: 1,
-	assignee: 'Anton Myrberg',
-	title: 'Applikationen fungerar inte',
-	created: '2018-04-04',
-	from: {
-		name: 'Johan Andersson',
-		email: 'kunden@kunden.se'
-	},
-	messages: [
-		{
-			received: '2018-04-10',
-			from: 'Anton Myrberg',
-			body: 'Hej!\nVi har tagit emot ditt meddelande.\nMvh Anton Myrberg, Futurum Digital'
-		},
-		{
-			received: '2018-04-04',
-			from: 'Johan Andersson',
-			body: 'Hej!\nVi har stött på ett problem som vi hade behövt hjälp med. Vänligen återkoppla!\n/Johan'
-		}
-	]
-};
+const assignees = ['Anton Myrberg', 'Sebastian Borgstedt'];
 
 /**
  * TicketPage class
@@ -43,14 +24,18 @@ export class TicketPage extends React.Component<any, any> {
 
 		this.state = {
 			ticket: false,
+			messages: [],
 			showNewMessage: false,
 			status: 0,
-			assignee: data.assignee
+			assignee: null,
+			snackMessage: '',
+			snackState: false
 		};
 
 		this.handleNewMessageClick = this.handleNewMessageClick.bind(this);
 		this.handleStatusChange = this.handleStatusChange.bind(this);
 		this.handleAssigneeChange = this.handleAssigneeChange.bind(this);
+		this.handleSend = this.handleSend.bind(this);
 		this.getMessage = this.getMessage.bind(this);
 	}
 
@@ -65,28 +50,42 @@ export class TicketPage extends React.Component<any, any> {
 
 		this.props.tickets.forEach((ticket: any) => {
 			if (ticket.id === Number(ticketId)) {
-				this.setState({ ticket, status: ticket.status });
+				this.setState({
+					ticket,
+					messages: ticket.messages,
+					status: ticket.status,
+					assignee: ticket.assignee
+				});
 			}
 		});
 	}
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const ticket = this.state.ticket;
-		const messages = ticket ? ticket.messages.map(this.getMessage) : [];
+		const messages = this.state.messages.map(this.getMessage);
 
 		return (
 			<div className='ticket__wrapper'>
 				<TicketOverview
-					data={ticket}
-					status={this.state.status}
 					handleClick={this.handleNewMessageClick}
 					handleStatusChange={this.handleStatusChange}
 					handleAssigneeChange={this.handleAssigneeChange}
+					assignees={assignees}
+					data={ticket}
 				/>
 				<div className='ticket__wrapper__messages'>
 					<MessageInput onClick={this.handleSend} open={this.state.showNewMessage} />
 					{messages}
 				</div>
+				<SnackbarNotice
+					message={this.state.snackMessage}
+					open={this.state.snackState}
+					onClose={this.handleSnackbarClose}
+				/>
 			</div>
 		);
 	}
@@ -123,7 +122,15 @@ export class TicketPage extends React.Component<any, any> {
 	 * @param {String} message - The written message
 	 */
 	private handleSend(message: string) {
-		console.log(message);
+		const messages = this.state.messages;
+		const newMessage = {
+			fromCustomer: false,
+			received: moment().format(),
+			body: message
+		};
+
+		messages.unshift(newMessage);
+		this.setState({ showNewMessage: false, messages });
 
 		// TODO! Handle message here.
 	}
@@ -134,7 +141,11 @@ export class TicketPage extends React.Component<any, any> {
 	 * @param {Number} status - The new status
 	 */
 	private handleStatusChange(status: number) {
-		this.setState({ status });
+		this.setState({
+			status,
+			snackState: true,
+			snackMessage: 'Status för ärendet har uppdaterats.'
+		});
 		console.log('changed status to ' + status);
 	}
 
@@ -144,7 +155,19 @@ export class TicketPage extends React.Component<any, any> {
 	 * @param {Number} assignee - The new assignee
 	 */
 	private handleAssigneeChange(assignee: string) {
-		this.setState({ assignee });
 		console.log('changed assignee to ' + assignee);
+		this.setState({
+			assignee,
+			snackState: true,
+			snackMessage: `Ärendet har tilldelats ${assignee}.`
+		});
+	}
+
+	/**
+	 * Handles manual close of SnackbarNotice
+	 * @private
+	 */
+	private handleSnackbarClose = (event: any) => {
+		this.setState({ snackState: false });
 	}
 }

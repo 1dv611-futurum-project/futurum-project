@@ -9,14 +9,14 @@ module.exports = function(config) {
     frameworks: ['es6-shim', 'mocha', 'chai'],
 
     files: [
-      'test/index.test.tsx'
+      'test/testrunner.test.tsx'
     ],
 
     exclude: [
     ],
 
     preprocessors: {
-      'test/index.test.tsx': ['webpack']
+      'test/testrunner.test.tsx': ['webpack']
     },
 
     mime: {

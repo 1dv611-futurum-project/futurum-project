@@ -10,9 +10,9 @@ import { Select, MenuItem } from 'material-ui';
  * DropDownSelect Props Interface
  */
 export interface IDropDownSelect {
-	selected: string;
-	items: any;
-	onChange(event: any): void;
+	selected: number;
+	items: string[];
+	onChange(selected: number): void;
 }
 
 /**
@@ -23,19 +23,39 @@ export class DropDownSelect extends React.Component<IDropDownSelect, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			selected: ''
+			selected: this.props.selected || 0
 		};
 
 		this.handleChange = this.handleChange.bind(this);
 	}
 
+	/**
+	 * componentDidUpdate - Update state to new props
+	 * @public
+	 * @param {any} prevProps
+	 */
+	public componentDidUpdate(prevProps: any) {
+		if (prevProps !== this.props) {
+			this.setState({
+				selected: this.props.selected
+			});
+		}
+	}
+
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
-		const selected = this.state.selected !== '' ? this.state.selected : this.props.selected;
-		const items = this.getMenuItems();
+		const selected = this.getSelectedIndex(this.state.selected);
+		const value = this.props.items[selected] || '';
+		const items = this.props.items.map((item: any, i: number) => {
+			return <MenuItem key={i} value={item} className='dropdown-select__item'>{item}</MenuItem>;
+		});
 
 		return (
 			<Select
-				value={selected}
+				value={value}
 				onChange={this.handleChange}
 				classes={{root: 'dropdown-select', icon: 'dropdown-select__icon'}}
 			>
@@ -45,23 +65,26 @@ export class DropDownSelect extends React.Component<IDropDownSelect, any> {
 	}
 
 	/**
-	 * Gets the menu items for the select
-	 * @returns {Array} - The menu items
+	 * Handles change of selected value
+	 * @private
+	 * @param {any} event - The submitted event
 	 */
-	private getMenuItems() {
-		const { items } = this.props;
+	private handleChange(event: any) {
+		const selected = this.getSelectedIndex(event.target.value);
 
-		return items.map((item: any, i: number) => {
-			return <MenuItem key={i} value={item} className='dropdown-select__item'>{item}</MenuItem>;
-		});
+		this.setState({ selected: selected });
+		this.props.onChange(selected);
 	}
 
 	/**
-	 * Handles change of selected value
+	 * Get selected value index
 	 * @private
+	 * @param {string | number} value - The selected value
 	 */
-	private handleChange(event: any) {
-		this.setState({ selected: event.target.value });
-		this.props.onChange(event.target.value);
+	private getSelectedIndex(value: string | number) {
+		if (typeof value === 'string') {
+			return this.props.items.indexOf(value);
+		}
+		return value;
 	}
 }

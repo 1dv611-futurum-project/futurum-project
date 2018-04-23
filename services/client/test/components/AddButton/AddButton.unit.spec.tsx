@@ -9,7 +9,7 @@ import { AddButton } from '../../../src/components/AddButton/AddButton';
 describe('<AddButton />', () => {
 	let wrapper: any;
 	let count: number;
-	const props = { text: 'test', onClick: () => { count++ }};
+	const props = { text: 'test', onClick: () => { count++; }};
 
 	before(() => {
 		count = 0;
@@ -21,7 +21,7 @@ describe('<AddButton />', () => {
 	});
 
 	it('should execute function on button click', () => {
-		let expected = 1;
+		const expected = 1;
 
 		wrapper.find(Button).simulate('click');
 		expect(count).to.equal(expected);

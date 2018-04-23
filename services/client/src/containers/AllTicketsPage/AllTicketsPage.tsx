@@ -5,24 +5,29 @@
 
 import * as React from 'react';
 import { Ticket } from '../../components/Ticket/Ticket';
+import { SnackbarNotice } from '../../components/SnackbarNotice/SnackbarNotice';
 
 /**
  * AllTicketsPage class
  */
 export class AllTicketsPage extends React.Component<any, any> {
 
-	private tickets: any;
-	private index: number;
-
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			tickets: this.props.tickets || []
+			tickets: this.props.tickets || [],
+			snackMessage: '',
+			snackState: false
 		};
 
 		this.getTickets = this.getTickets.bind(this);
+		this.sendStatusChange = this.sendStatusChange.bind(this);
 	}
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const title = this.getTitle();
 		const tickets = this.props.tickets.map(this.getTickets).filter((ticket: any) => ticket !== undefined);
@@ -33,6 +38,11 @@ export class AllTicketsPage extends React.Component<any, any> {
 				<div className='tickets__wrapper'>
 					{tickets.reverse()}
 				</div>
+				<SnackbarNotice
+					message={this.state.snackMessage}
+					open={this.state.snackState}
+					onClose={this.handleSnackbarClose}
+				/>
 			</div>
 		);
 	}
@@ -83,8 +93,25 @@ export class AllTicketsPage extends React.Component<any, any> {
 	 * Handles status change on tickets
 	 * @private
 	 * @param {String} status - The new status
+	 * @param {Boolean} mailCustomer - If customer should get an email about the status change
 	 */
-	private sendStatusChange(status: string) {
+	private sendStatusChange(status: string, mailCustomer: boolean) {
 		console.log('Got status code: ' + status);
+
+		const snackMessage = mailCustomer ? 'Status för ärendet har uppdaterats och skickats till kund.' :
+			'Status för ärendet har uppdaterats.';
+
+		this.setState({
+			snackState: true,
+			snackMessage
+		});
+	}
+
+	/**
+	 * Handles manual close of SnackbarNotice
+	 * @private
+	 */
+	private handleSnackbarClose = (event: any) => {
+		this.setState({ snackState: false });
 	}
 }

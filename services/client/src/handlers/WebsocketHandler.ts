@@ -3,7 +3,7 @@
  */
 
 // Imports.
-import * as events from 'events';
+// import * as events from 'events';
 import * as SocketIO from 'socket.io-client';
 // const EM = new events.EventEmitter();
 
@@ -12,8 +12,8 @@ import * as SocketIO from 'socket.io-client';
  */
 class WebsocketHandler {
 
-	// private EM: EventEmitter = new events.EventEmitter();
 	private static URL: string = 'http://localhost:8080';
+	private static PATH: string = '/socket';
 	private socket: SocketIOClient.Socket;
 
 	constructor() {
@@ -25,11 +25,7 @@ class WebsocketHandler {
 	 */
 	private listen(): void {
 		this.socket = SocketIO(WebsocketHandler.URL, {
-			path: '/socket'
-		});
-
-		this.socket.on('connect', () => {
-			console.log('client connected in websockethandler');
+			path: WebsocketHandler.PATH
 		});
 	}
 
@@ -71,12 +67,13 @@ class WebsocketHandler {
 		*/
 	public ticket(callback: any ): void {
 		this.socket.on('ticket', callback );
-		/*
-		EM.on('onTicket', () => {
-			console.log('EM.on');
-			EM.emit('onTicket', this.ticket);
-		});
+	}
+
+	/**
+		* Emits data to all ticket listeners.
 		*/
+	public tickets(callback: any ): void {
+		this.socket.on('tickets', callback );
 	}
 
 	/**
