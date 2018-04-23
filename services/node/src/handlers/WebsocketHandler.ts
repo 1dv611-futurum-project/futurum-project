@@ -53,15 +53,29 @@ class WebsocketHandler {
   /**
    * Emits data to the server on ticket channels.
    */
-  public emitTicket(ticket: any): void {
+  public emitTicket(ticket: object): void {
     try {
-      let tick = JSON.stringify(ticket);
+      const tick = JSON.stringify(ticket);
       console.log(tick);
       this.socket.emit('ticket', JSON.stringify(ticket));
     } catch (error) {
       console.error(error);
     }
   }
+
+  /**
+   * Emits data to the server on ticket channels.
+   */
+  public emitTickets(ticket: object[]): void {
+    try {
+      const tick = JSON.stringify(ticket);
+      console.log(tick);
+      this.socket.emit('ticket', JSON.stringify(ticket));
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 
   /**
    * Emits data to the server on customer channels.

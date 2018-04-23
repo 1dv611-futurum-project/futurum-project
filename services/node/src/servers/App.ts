@@ -147,7 +147,7 @@ class App {
 
       try {
         const ticket = this.createNewTicket(mail, this.createNewMails(mail));
-        this.DBHandler.createNewFromType(mail.type, ticket);
+        // this.DBHandler.createNewFromType(mail.type, ticket);
         this.websocketHandler.emitTicket(ticket);
       } catch (error) {
         console.error(error);
