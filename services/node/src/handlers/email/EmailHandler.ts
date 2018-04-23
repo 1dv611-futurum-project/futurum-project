@@ -1,8 +1,8 @@
 /**
- * Module to wrap handlers for email.
+ * Module to handle the outgoing and incoming email connections.
  */
 
-// Imports
+// Imports.
 import IMAPConnection from './IMAPConnection';
 import IMAPHandler from './IMAPHandler';
 import MailSender from './MailSender';
@@ -44,5 +44,5 @@ class EmailHandler {
   }
 }
 
-// Exports
+// Exports.
 export default new EmailHandler();

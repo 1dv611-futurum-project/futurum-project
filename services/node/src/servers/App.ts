@@ -142,7 +142,7 @@ class App {
 
   private handleIncomingEmails(): void {
     EmailHandler.Incoming.on('mail', (mail) => {
-      console.log('Got mail:');
+      console.log('Got new ticket:');
       console.log(mail);
 
       try {
@@ -155,13 +155,29 @@ class App {
     });
 
     EmailHandler.Incoming.on('answer', (mail) => {
-      console.log('Got answer:');
+      console.log('Got answer on existing ticket:');
       console.log(mail);
       console.log('Make call to database to save the answer.');
       this.DBHandler.addOrUpdate(mail.type, this.createNewMails(mail));
       const ticket = this.DBHandler.getOne(mail.type, this.createNewMails(mail));
       this.websocketHandler.emitTicket(ticket);
       // Emit answer to client
+    });
+
+    EmailHandler.Incoming.on('forward', (mail) => {
+      console.log('Got mail not in whitelist:');
+      console.log(mail);
+      console.log('forwarding the mail');
+      const forward = {from: mail.from.email, body: mail.messages[0].body, subject: mail.title};
+      EmailHandler.Outgoing.forward(forward, mail.mailID, process.env.IMAP_FORWARDING_ADDRESS)
+      .then(() => {
+        console.log('mail is forwarded');
+      })
+      .catch((error) => {
+        console.log('could not forward');
+        console.log(error);
+      });
+      console.log('emit forward to client?');
     });
 
     EmailHandler.Incoming.on('unauth', (payload) => {
@@ -187,7 +203,7 @@ class App {
       console.log(error);
       console.log('Make call to ws to send notification of error.');
       console.log('Possibly make call to email module to email the error to different email address:');
-      // EmailHandler.sendMail({to: 'dev@futurumdigital.se', subject: 'error', body: 'Error'})
+      // EmailHandler.Outgoing.send({to: 'dev@futurumdigital.se', subject: 'error', body: 'Error'})
     });
   }
 
