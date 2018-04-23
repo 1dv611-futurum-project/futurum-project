@@ -94,7 +94,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
           host: 'imap.gmail.com',
           port: 993,
           tls: true,
-		      tlsOptions: { rejectUnauthorized: false }
+          tlsOptions: { rejectUnauthorized: false }
         });
 
         this.imap.once('ready', this.handleInitialConnect.bind(this));
@@ -293,10 +293,10 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   }
 
   /**
-   * Emits connection-end events.
+   * Emits connection-change events.
    */
   private handleServerChange(seqno, info): void {
-    if (info.flags.indexOf('\\Seen') === -1) {
+    if ((info && info.flags && info.flags.indexOf('\\Seen') === -1) || !info) {
       this.emitMessage('change', {
         message: 'Someone or something is accessing the emails externally, ' +
         'server should probably be restarted to ensure continued validity.'

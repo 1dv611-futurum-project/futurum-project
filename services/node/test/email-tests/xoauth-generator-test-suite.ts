@@ -1,5 +1,5 @@
 /**
- * Test suite for the Email interface.
+ * Test suite for the xoauth-class.
  */
 
 // Requires

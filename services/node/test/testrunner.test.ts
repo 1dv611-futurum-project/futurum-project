@@ -18,3 +18,4 @@ require('./db-tests/db-connection-test-suite');
 require('./db-tests/db-handler-test-suite');
 require('./email-tests/email-handler-test-suite');
 require('./email-tests/xoauth-generator-test-suite');
+require('./email-tests/imap-connection-test-suite');
