@@ -6,14 +6,20 @@
 import * as React from 'react';
 import * as io from 'socket.io-client';
 import { Header } from '../../components/Header/Header';
+import WebsocketHandler from '../../handlers/WebsocketHandler';
 
 /**
  * App class
  */
 export class App extends React.Component<any, any> {
+	private websocketHandler: WebsocketHandler;
 
 	constructor(props: any) {
 		super(props);
+		this.websocketHandler = new WebsocketHandler();
+		this.onTicket();
+		this.onCustomer();
+		this.onSettings();
 
 		this.state = {
 			tickets: [
@@ -86,6 +92,40 @@ export class App extends React.Component<any, any> {
 		};
 	}
 
+	/*
+	 * Receive incoming ticket(s) and set appropriate state.
+	 */
+	private onTicket(): void {
+		this.websocketHandler.ticket( (ticket: any) => {
+			try {
+				console.log('ticket:   ' + ticket);
+				ticket = JSON.parse(ticket);
+				this.state.tickets.push(ticket);
+			// this.setState( );
+			} catch (error) {
+				console.error(error);
+			}
+		});
+	}
+
+	/*
+	 * Receive incoming settings and set appropriate state.
+	 */
+	private onSettings(): void {
+		this.websocketHandler.settings( (settings: any) => {
+			// Todo
+		});
+	}
+
+	/*
+	 * Receive incoming customer(s) and set appropriate state.
+	 */
+	private onCustomer(): void {
+		this.websocketHandler.customer( (customer: any) => {
+			// Todo
+		});
+	}
+
 	/**
 	 * componentDidMount
 	 * @public
@@ -104,7 +144,7 @@ export class App extends React.Component<any, any> {
 		});
 
 		socket.on('connect', () => {
-			console.log('client connected');
+			console.log('client connected in App');
 		});
 
 		socket.on('socket', (msg: any) => {
@@ -135,7 +175,7 @@ export class App extends React.Component<any, any> {
 			// 		}
 			// 	]
 			// };
-            //
+			//
 			// this.setState({ tickets: [...this.state.tickets, mockMessage] });
 		});
 	}

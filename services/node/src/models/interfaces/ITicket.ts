@@ -1,6 +1,10 @@
+import Mail from '../Mail';
+
 export interface ITicket {
-  recieved?: Date;
+  status?: number;
+  assignee?: string;
   title?: string;
   from?: string;
-  body?: string;
+  customerName?: string;
+  body?: Mail[];
 }

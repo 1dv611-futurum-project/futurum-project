@@ -29,7 +29,7 @@ class MainRouter {
   /**
    * Mounts the routes.
    */
-  private mountRoutes() {
+  private mountRoutes(): void {
     this.mainRouter.get('/', this.rootRoute);
     this.mainRouter.get('/connection', this.connectionRoute);
   }
