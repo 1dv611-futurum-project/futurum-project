@@ -25,4 +25,4 @@ COPY . $PATH_APP/
 RUN npm build
 
 ENTRYPOINT ["npm", "run"]
-CMD ["server"]
+CMD ["start"]
