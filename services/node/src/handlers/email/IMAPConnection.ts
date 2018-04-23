@@ -51,7 +51,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Returns an array of objects representing the unread emails
    * and emits a message event for each unread email.
    */
-  public getUnreadEmails(): Promise {
+  public getUnreadEmails(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.collectAndEmitUnread()
       .then(() => {
@@ -66,7 +66,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   /**
    * Listen for incoming emails and emits a message when they are recieved.
    */
-  public listenForNewEmails(): Promise {
+  public listenForNewEmails(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.imap.once('mail', this.collectAndEmitUnread.bind(this));
       resolve();
@@ -94,7 +94,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
           host: 'imap.gmail.com',
           port: 993,
           tls: true,
-		      tlsOptions: { rejectUnauthorized: false }
+          tlsOptions: { rejectUnauthorized: false }
         });
 
         this.imap.once('ready', this.handleInitialConnect.bind(this));
@@ -132,7 +132,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Opens the inbox.
    * Returns a Promise that resolves with the open box.
    */
-  private openInbox(): Promise {
+  private openInbox(): Promise<void> {
     return new Promise((resolve, reject) => {
       const readonly = false;
       this.imap.openBox(this.boxName, readonly, (err: Error, box: Box) => {
@@ -148,7 +148,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Collects the unread emails from the Imap-connection,
    * marks them as read, and emits them as events.
    */
-  private collectAndEmitUnread(): Promise {
+  private collectAndEmitUnread(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.collectUnread()
       .then((emails: object[]) => {
@@ -169,7 +169,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   /**
    * Collects all the unread messages in the open box.
    */
-  private collectUnread(): Promise {
+  private collectUnread(): Promise<object[]> {
     return new Promise((resolve, reject) => {
       const messages = [];
       this.imap.search([ 'UNSEEN' ], (err: Error, indicesToFetch: number[]) => {
@@ -178,7 +178,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
         }
 
         if (indicesToFetch.length === 0) {
-          return resolve();
+          return resolve(null);
         }
 
         const fetchMessages = this.imap.fetch(indicesToFetch, {
@@ -191,21 +191,20 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
             stream.pipe(mp);
 
             mp.on('end', (mail: object) => {
-              const message = this.formatMail(mail);
-              messages.push(message);
+              messages.push(mail);
 
               if (messages.length === indicesToFetch.length) {
                 resolve(messages);
               }
             });
           });
-        });
 
-        fetchMessages.on('end', () => {
-          this.imap.setFlags(indicesToFetch, ['\\Seen'], (error: Error) => {
-            if (error) {
-              this.emitMessage('error', {message: 'Error marking messages as read in the inbox.'});
-            }
+          fetchMessages.on('end', () => {
+            this.imap.setFlags(indicesToFetch, ['\\Seen'], (error: Error) => {
+              if (error) {
+                this.emitMessage('error', {message: 'Error marking messages as read in the inbox.'});
+              }
+            });
           });
         });
 
@@ -214,56 +213,6 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
         });
       });
     });
-  }
-
-  /**
-   * Formats the mail.
-   */
-  private formatMail(mail) {
-    if (this.isNewTicket(mail)) {
-      return this.formatAsNewTicket(mail);
-    }
-
-    return this.formatAsAnswer(mail);
-  }
-
-  /**
-   * Checks if the mail is new or an answer.
-   */
-  private isNewTicket(mail) {
-    return mail.references === undefined;
-  }
-
-  /**
-   * Formats the mail as a new ticket.
-   */
-  private formatAsNewTicket(mail) {
-    const message = {
-      type: 'ticket',
-      id: this.id++,
-      status: 0,
-      assignee: null,
-      mailID: mail.messageId,
-      created: mail.receivedDate,
-      title: mail.subject,
-      from: {
-        name: mail.from[0].name,
-        email: mail.from[0].address
-      },
-      messages: [
-        {
-          received: mail.receivedDate,
-          body: mail.text,
-          fromCustomer: true
-        }
-      ]
-    };
-
-    return message;
-  }
-
-  private formatAsAnswer(mail) {
-    // TODO
   }
 
   /**
@@ -293,10 +242,10 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   }
 
   /**
-   * Emits connection-end events.
+   * Emits connection-change events.
    */
   private handleServerChange(seqno, info): void {
-    if (info.flags.indexOf('\\Seen') === -1) {
+    if ((info && info.flags && info.flags.indexOf('\\Seen') === -1) || !info) {
       this.emitMessage('change', {
         message: 'Someone or something is accessing the emails externally, ' +
         'server should probably be restarted to ensure continued validity.'

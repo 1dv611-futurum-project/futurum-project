@@ -6,12 +6,11 @@
 import * as xoauth2 from 'xoauth2';
 
 /**
- * Instantiation takes an options object containing:
- * user: {the email address},
- * clientID: {the client id},
- * clientSecret: {the client secret},
- * refreshToken: {the refresh token},
- * accessToken: {the access token}
+ * Instantiates an xoauth generator
+ * using environment variables.
+ * Needs environment variables to exist
+ * names IMAP_CLIENT_ID, IMAP_CLIENT_SECRET
+ * IMAP_ACCESS_TOKEN, IMAP_REFRESH_TOKEN, IMAP_USER.
  */
 class XOauth {
 
@@ -22,6 +21,10 @@ class XOauth {
     this.updateGenerator();
   }
 
+  /**
+   * Updates the generator if new access- or refresh-tokens
+   * has been sat in the environment variables.
+   */
   public updateGenerator(): void {
     const newOptions = this.getCredentials();
 
@@ -41,12 +44,16 @@ class XOauth {
   public getToken(): Promise<string> {
     return new Promise((resolve, reject) => {
       this.updateGenerator();
-      this.xoauth2gen.getToken((err, token) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(token);
-      });
+      if (this.xoauth2gen) {
+        this.xoauth2gen.getToken((err, token) => {
+          if (err) {
+            reject(err);
+          }
+          resolve(token);
+        });
+      } else {
+        reject('No generator');
+      }
     });
   }
 
