@@ -39,6 +39,7 @@
     "xoauth2": "^1.2.0"
   },
   "devDependencies": {
+    "@types/mocha": "^5.2.0",
     "@types/mongodb": "^3.0.15",
     "@types/mongoose": "^5.0.9",
     "awesome-typescript-loader": "^4.0.1",

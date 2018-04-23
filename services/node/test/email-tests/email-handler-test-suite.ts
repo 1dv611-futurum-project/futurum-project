@@ -3,7 +3,8 @@
  */
 
 // Requires
-let expect = require('chai').expect;
+import { expect } from 'chai';
+import { it, describe, before, after } from 'mocha';
 import EmailHandler from './../../src/handlers/email/EmailHandler';
 import * as events from 'events';
 

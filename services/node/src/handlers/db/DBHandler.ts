@@ -225,7 +225,7 @@ class DBHandler extends events.EventEmitter {
        * }
        */
       type = type.toLowerCase();
-      let toSave;
+      const toSave;
 
       switch (type) {
       case 'customer':
@@ -279,7 +279,7 @@ export default DBHandler;
   created: 2018-04-21T13:48:01.000Z,
   title: 'master',
   from: { name: 'Johan Söderlund', email: 'js223zs@student.lnu.se' },
-  messages: 
+  messages:
     [ { received: 2018-04-21T13:48:01.000Z,
         body: 'are you?\n',
         fromCustomer: true } ] }

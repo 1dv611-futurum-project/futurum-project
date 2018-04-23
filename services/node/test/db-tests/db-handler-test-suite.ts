@@ -3,16 +3,17 @@
  */
 
 // Requires
-let expect = require('chai').expect;
-let sinon = require('sinon');
-let mongoose = require('mongoose');
-let correctConnectionString = 'mongodb://futurum-db:27017';
+import { expect } from 'chai';
+import { it, describe, before, after } from 'mocha';
+import * as sinon from 'sinon';
+import * as mongoose from 'mongoose';
+const correctConnectionString = 'mongodb://futurum-db:27017';
 
 import DBHandler from './../../src/handlers/db/DBHandler';
 import DBConnection from './../../src/handlers/db/DBConnection';
-let DBConnectionInstance = new DBConnection();
-let sut = new DBHandler(DBConnectionInstance);
-sut.on('error', () => {});
+const DBConnectionInstance = new DBConnection();
+const sut = new DBHandler(DBConnectionInstance);
+sut.on('error', () => { console.log('Expected error.'); });
 
 // Tests
 describe('DBHandler', () => {

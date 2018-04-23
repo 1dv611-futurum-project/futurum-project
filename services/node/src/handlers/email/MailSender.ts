@@ -156,7 +156,7 @@ class MailSender extends events.EventEmitter {
    * Base64-Encodes the email.
    * @param headers {string[]} The headers to encode.
    */
-  private getBase64EncodedEmailFromHeaders(headers: string[]): Buffer {
+  private getBase64EncodedEmailFromHeaders(headers: string[]): string {
     const email = headers.join('\r\n').trim();
     let base64EncodedEmail = new Buffer(email).toString('base64');
     base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');

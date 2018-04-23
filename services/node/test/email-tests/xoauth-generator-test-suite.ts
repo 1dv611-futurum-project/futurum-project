@@ -3,12 +3,12 @@
  */
 
 // Requires
-let expect = require('chai').expect;
+import { expect } from 'chai';
+import { it, describe, before, after } from 'mocha';
 import XOauthGen from './../../src/handlers/email/Xoauth2Generator';
 
 // Tests
 describe('XOauth2Generator', () => {
-
   before((done) => {
     removeCredentials();
     done();

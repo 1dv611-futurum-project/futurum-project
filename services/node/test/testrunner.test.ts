@@ -3,7 +3,8 @@
  */
 
 // Variables
-let expect = require('chai').expect;
+import { expect } from 'chai';
+import { it, describe, before, after } from 'mocha';
 
 describe('testrunner', () => {
   it('should return pass on 1 + 1 equals 2', (done) => {

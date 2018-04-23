@@ -27,7 +27,6 @@ class XOauth {
    */
   public updateGenerator(): void {
     const newOptions = this.getCredentials();
-    console.log('updating generator')
 
     if (newOptions
        && (!this.options

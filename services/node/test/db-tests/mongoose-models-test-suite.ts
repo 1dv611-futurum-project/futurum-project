@@ -3,28 +3,29 @@
  */
 
 // Requires
-let expect = require('chai').expect
-import Customer from './../../src/models/Customer'
+import {expect } from 'chai';
+import { it, describe, before, after } from 'mocha';
+import Customer from './../../src/models/Customer';
 
 // Tests
 describe('Mongoose Models', () => {
   describe('Customer', () => {
     it('should be invalid if name is empty', (done) => {
-      let cust = new Customer({email: 'halla'})
+      const cust = new Customer({email: 'halla@halla.com'});
 
       cust.validate((err) => {
-          expect(err.errors.name).to.exist
-          done()
-      })
-    })
+        expect(err.errors.name).to.exist;
+        done();
+      });
+    });
 
     it('should be invalid if email is empty', (done) => {
-      let cust = new Customer({name: 'halla'})
+      const cust = new Customer({name: 'halla@halla.com'});
 
       cust.validate((err) => {
-          expect(err.errors.email).to.exist
-          done()
-      })
-    })
-  })
-})
+        expect(err.errors.email).to.exist;
+        done();
+      });
+    });
+  });
+});

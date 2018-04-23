@@ -238,17 +238,6 @@ class App {
       console.log('Got new ticket:');
       console.log(mail);
 
-      console.log('sending')
-      EmailHandler.Outgoing.send({to: process.env.IMAP_FORWARDING_ADDRESS, subject: 'Åäö.', body: 'it works'})
-      console.log('forwarding')
-      const forward = {from: mail.from.email, body: mail.messages[0].body, subject: mail.title};
-      EmailHandler.Outgoing.forward(forward, mail.mailID, process.env.IMAP_FORWARDING_ADDRESS)
-      .then(() => {
-        console.log('is forward')
-      })
-      console.log('answering')
-      EmailHandler.Outgoing.answer({to: mail.from.email, subject: mail.title, body: 'svar'})
-
       try {
         const ticket = this.createNewTicket(mail, this.createNewMails(mail));
         // this.DBHandler.createNewFromType(mail.type, ticket);

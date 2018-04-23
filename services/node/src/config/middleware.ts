@@ -56,7 +56,6 @@ class Middleware {
       if ((variablesExist && variablesChanged) || secondsSinceUpdate > 3500) {
         Middleware.IMAPaccessToken = process.env.IMAP_ACCESS_TOKEN;
         Middleware.IMAPrefreshToken = process.env.IMAP_REFRESH_TOKEN;
-        console.log('updating IMAP')
         EmailHandler.updateIMAPConnection();
         Middleware.latestIMAPUpdateSecondsSinceEpoch = (new Date().getTime() / 1000);
       }

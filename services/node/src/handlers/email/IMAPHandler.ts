@@ -17,7 +17,7 @@ class IMAPHandler extends events.EventEmitter {
 
   private interval: number;
   private imapConnection: IMAPConnectionInterface;
-  private ongoingTimeout: number;
+  private ongoingTimeout: Timer;
 
   /**
    * Connects to the imap server.
