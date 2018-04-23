@@ -49,7 +49,7 @@ class IMAPHandler extends events.EventEmitter {
       return this.imapConnection.listenForNewEmails();
     })
     .then(() => {
-      // Set up timeout to check for new emails every five minutes, to make sure they are not lost
+      // Set up timeout to check for new emails every minute, to make sure they are not lost
       if (this.ongoingTimeout) {
         clearTimeout(this.ongoingTimeout);
       }
@@ -86,7 +86,7 @@ class IMAPHandler extends events.EventEmitter {
   /**
    * Formats the mail.
    */
-  private formatMail(mail) {
+  private formatMail(mail: object): object {
     let formatted;
     if (this.isNewTicket(mail)) {
       formatted = this.formatAsNewTicket(mail);
@@ -103,14 +103,14 @@ class IMAPHandler extends events.EventEmitter {
   /**
    * Checks if the mail is new or an answer.
    */
-  private isNewTicket(mail) {
+  private isNewTicket(mail: object): boolean {
     return mail.references === undefined;
   }
 
   /**
    * Formats the mail as a new ticket.
    */
-  private formatAsNewTicket(mail) {
+  private formatAsNewTicket(mail: object): object {
     const message = {
       type: 'mail',
       id: 0,
@@ -138,7 +138,7 @@ class IMAPHandler extends events.EventEmitter {
   /**
    * Formats as an answer.
    */
-  private formatAsAnswer(mail) {
+  private formatAsAnswer(mail: object): object {
     const message = {
       type: 'answer',
       mailID: mail.messageId,
@@ -154,7 +154,7 @@ class IMAPHandler extends events.EventEmitter {
   /**
    * Checks if the sender is in the whitelist.
    */
-  private isInWhitelist(address: string) {
+  private isInWhitelist(address: string): boolean {
     // Commented out whitelist-testing.
     /*let found = false;
     // TODO: Logic.

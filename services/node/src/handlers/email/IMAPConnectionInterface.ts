@@ -10,8 +10,8 @@ import * as events from 'events';
  */
 interface IMAPConnectionInterface extends events.EventEmitter {
   updateCredentials(): void;
-  getUnreadEmails(): Promise;
-  listenForNewEmails(): Promise;
+  getUnreadEmails(): Promise<void>;
+  listenForNewEmails(): Promise<void>;
   closeConnection(): void;
 }
 

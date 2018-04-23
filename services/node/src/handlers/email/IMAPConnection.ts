@@ -51,8 +51,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Returns an array of objects representing the unread emails
    * and emits a message event for each unread email.
    */
-  public getUnreadEmails(): Promise {
-    console.log('collecting unread emails');
+  public getUnreadEmails(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.collectAndEmitUnread()
       .then(() => {
@@ -67,7 +66,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   /**
    * Listen for incoming emails and emits a message when they are recieved.
    */
-  public listenForNewEmails(): Promise {
+  public listenForNewEmails(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.imap.once('mail', this.collectAndEmitUnread.bind(this));
       resolve();
@@ -133,7 +132,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Opens the inbox.
    * Returns a Promise that resolves with the open box.
    */
-  private openInbox(): Promise {
+  private openInbox(): Promise<void> {
     return new Promise((resolve, reject) => {
       const readonly = false;
       this.imap.openBox(this.boxName, readonly, (err: Error, box: Box) => {
@@ -149,7 +148,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
    * Collects the unread emails from the Imap-connection,
    * marks them as read, and emits them as events.
    */
-  private collectAndEmitUnread(): Promise {
+  private collectAndEmitUnread(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.collectUnread()
       .then((emails: object[]) => {
@@ -170,7 +169,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   /**
    * Collects all the unread messages in the open box.
    */
-  private collectUnread(): Promise {
+  private collectUnread(): Promise<object[]> {
     return new Promise((resolve, reject) => {
       const messages = [];
       this.imap.search([ 'UNSEEN' ], (err: Error, indicesToFetch: number[]) => {
@@ -179,7 +178,7 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
         }
 
         if (indicesToFetch.length === 0) {
-          return resolve();
+          return resolve(null);
         }
 
         const fetchMessages = this.imap.fetch(indicesToFetch, {
