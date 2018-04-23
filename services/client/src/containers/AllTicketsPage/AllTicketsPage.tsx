@@ -24,6 +24,12 @@ export class AllTicketsPage extends React.Component<any, any> {
 		this.sendStatusChange = this.sendStatusChange.bind(this);
 	}
 
+	public componentDidMount() {
+		this.props.tickets.onAllTickets((tickets: any) => {
+			this.setState({ tickets });
+		});
+	}
+
 	/**
 	 * The render method
 	 * @public

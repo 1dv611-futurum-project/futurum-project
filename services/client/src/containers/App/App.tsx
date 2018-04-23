@@ -4,16 +4,15 @@
  */
 
 import * as React from 'react';
-import Socket from '../../Socket';
+import SocketFactory from '../../handlers/SocketFactory';
 import { Header } from '../../components/Header/Header';
-
 
 /**
  * App class
  */
 export class App extends React.Component<any, any> {
 
-	private socket: Socket;
+	private socket: SocketFactory;
 
 	constructor(props: any) {
 		super(props);
@@ -22,47 +21,18 @@ export class App extends React.Component<any, any> {
 			customers: []
 		};
 
-		this.socket = new Socket();
-		this.listen();
-		this.getTickets();
-		this.getCustomers();
+		this.socket = new SocketFactory();
 	}
 
 	/**
-	 * Get socket ticket listener
-	 * @private
+	 * The render method
+	 * @public
 	 */
-	private listen() {
-		this.socket.onTicket((msg: any) => {
-			if (!msg.id) {
-				const newMessage = JSON.parse(msg);
-				this.setState({ tickets: [...this.state.tickets, newMessage] });
-			}
-		});
-	}
-
-	private getTickets() {
-		this.socket.onTickets((tickets: any) => {
-			if (tickets) {
-				tickets = JSON.parse(tickets);
-				this.setState({ tickets });
-			}
-		});
-	}
-
-	private getCustomers() {
-		this.socket.onCustomers((customers: any) => {
-			if (customers) {
-				customers = JSON.parse(customers);
-				this.setState({ customers });
-			}
-		});
-	}
-
 	public render() {
 		const childProps = {
-			tickets: this.state.tickets,
-			clients: this.state.customers
+			tickets: this.socket.tickets(),
+			customers: this.socket.customers(),
+			settings: this.socket.settings()
 		};
 
 		return (

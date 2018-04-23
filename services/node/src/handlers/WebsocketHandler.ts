@@ -6,30 +6,30 @@
 import * as SocketIo from 'socket.io';
 
 const mockData = [
-	{
-		type: 'ticket',
-		id: 3,
-		status: 2,
-		assignee: 'Anton Myrberg',
-		mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-		created: '2018-04-17T17:56:58.000Z',
-		title: 'Ett test',
+  {
+    type: 'ticket',
+    id: 3,
+    status: 2,
+    assignee: 'Anton Myrberg',
+    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
+    created: '2018-04-17T17:56:58.000Z',
+    title: 'Ett test igen',
     from: {
       name: 'Dev Devsson',
-			email: 'dev@futurumdigital.se'
-		},
+      email: 'dev@futurumdigital.se'
+    },
     messages: [
-  {
-    received: '2018-04-17T17:56:58.000Z',
-    body: 'Vi har mottagit ditt meddelande och återkommer inom kort. Mvh Anton Myrberg',
-    fromCustomer: false
-  },
-  {
-    received: '2018-04-17T17:56:58.000Z',
-    body: 'adfafdasfa ',
-    fromCustomer: true
-  }
-]
+      {
+        received: '2018-04-17T17:56:58.000Z',
+        body: 'Vi har mottagit ditt meddelande och återkommer inom kort. Mvh Anton Myrberg',
+        fromCustomer: false
+      },
+      {
+        received: '2018-04-17T17:56:58.000Z',
+        body: 'adfafdasfa ',
+        fromCustomer: true
+      }
+    ]
   },
   {
     type: 'ticket',
