@@ -195,7 +195,6 @@ class IMAPHandler extends events.EventEmitter {
    * Emits that the server has sent a message.
    */
   private handleServerMessage(payload: object): void {
-    console.log('Server Message');
     this.emit('message', payload);
   }
 
@@ -203,7 +202,6 @@ class IMAPHandler extends events.EventEmitter {
    * Emits that the server has changed.
    */
   private handleServerChange(payload: object): void {
-    console.log('Server changed');
     this.emit('tamper', payload);
   }
 
