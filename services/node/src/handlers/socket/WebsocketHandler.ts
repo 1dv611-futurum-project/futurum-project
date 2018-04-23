@@ -25,11 +25,11 @@ class WebsocketHandler {
   private pusher: Pusher;
   private receiver: Receiver;
 
-  get SocketPusher(): Pusher {
+  public get SocketPusher(): Pusher {
     return this.pusher;
   }
 
-  get SocketReceiver(): Receiver {
+  public get SocketReceiver(): Receiver {
     return this.receiver;
   }
 
