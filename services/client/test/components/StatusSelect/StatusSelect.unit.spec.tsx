@@ -24,21 +24,9 @@ describe('<StatusSelect />', () => {
 		wrapper = shallow(<StatusSelect {...props}/>);
 	});
 
-	it('should have correct status text', () => {
-		// tslint:disable-next-line:forin
-		for (const status in statusCodes) {
-			props.selected = JSON.parse(status);
-			wrapper = shallow(<StatusSelect {...props}/>);
-
-			expect(wrapper.find(DropDownSelect).props().selected).to.equal(statusCodes[status]);
-		}
-	});
-
-	it('should have correct status texts to choose from', () => {
-		// tslint:disable-next-line:forin
-		for (const status in statusCodes) {
-			expect(wrapper.find(DropDownSelect).props().items[status]).to.equal(statusCodes[status]);
-		}
+	it('should have correct status texts', () => {
+		const expected = Object.values(statusCodes);
+		expect(wrapper.state().statuses).to.have.members(expected);
 	});
 
 	it('should get status and status text on select', () => {

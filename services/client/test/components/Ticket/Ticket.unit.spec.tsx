@@ -2,6 +2,8 @@ import * as mocha from 'mocha';
 import * as React from 'react';
 import { mount, shallow } from 'enzyme';
 import { expect } from 'chai';
+import * as moment from 'moment';
+import 'moment/locale/sv';
 
 import { Link } from 'react-router';
 import { Card, CardHeader, CardActions } from 'material-ui';
@@ -14,8 +16,11 @@ describe('<Ticket />', () => {
 		data: {
 			id: '0',
 			title: 'title',
-			author: 'author',
-			created: 'created',
+			from: {
+				name: 'name',
+				email: 'email'
+			},
+			created: '2018-04-27T23:25:05.000Z',
 			assignee: 'assignee',
 			status: 0
 		},
@@ -35,16 +40,17 @@ describe('<Ticket />', () => {
 	});
 
 	it('should have an author', () => {
-		expect(wrapper.find(CardHeader).props()).to.have.property('subheader', props.data.author);
+		expect(wrapper.find(CardHeader).props()).to.have.property('subheader', props.data.from.name);
 	});
 
 	it('should have a ticket ID', () => {
 		expect(wrapper.find('.ticket__id').text()).to.equal('#' + props.data.id);
 	});
 
-	it('should have a ticket created', () => {
+	it('should have a ticket created date in core format', () => {
+		const expectedDateString = '27 april 2018';
 		expect(wrapper.find('.ticket__content__information').at(0).text())
-			.to.equal('Mottaget: ' + props.data.created);
+			.to.equal('Mottaget: ' + expectedDateString);
 	});
 
 	it('should have a ticket assignee', () => {

@@ -12,8 +12,8 @@ import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, B
 export interface IModal {
 	title: string;
 	message: string;
-	disagree?: string;
 	agree: string;
+	disagree?: string;
 	onChange(agree: boolean): void;
 }
 
@@ -22,6 +22,10 @@ export interface IModal {
  */
 export class Modal extends React.Component<IModal, any> {
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const { title, message, agree, disagree } = this.props;
 
@@ -48,6 +52,11 @@ export class Modal extends React.Component<IModal, any> {
 		);
 	}
 
+	/**
+	 * Handles closing of Modal
+	 * @public
+	 * @param {Any} agree - Whether or not to close the Modal
+	 */
 	private handleClose = (agree: any) => {
 		if (typeof agree !== 'boolean') {
 			this.props.onChange(false);

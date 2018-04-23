@@ -14,6 +14,10 @@ import { AddButton } from '../../components/AddButton/AddButton';
  */
 export class SettingsPage extends React.Component<any, any> {
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		return (
 			<div className='settings__wrapper'>
@@ -30,6 +34,11 @@ export class SettingsPage extends React.Component<any, any> {
 		);
 	}
 
+	/**
+	 * Handles color change
+	 * @private
+	 * @param {String} color - The new color
+	 */
 	private onChange(color: string) {
 		console.log(color);
 	}

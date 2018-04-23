@@ -14,7 +14,7 @@ import { Modal } from '../Modal/Modal';
 export interface ITicketAction {
 	data: any;
 	onStatusChange(status: number): void;
-	onSend(message: string): void;
+	onSend(message: string, mailCustomer: boolean): void;
 }
 
 /**
@@ -34,6 +34,10 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 		this.handleModal = this.handleModal.bind(this);
 	}
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const ticket = this.props.data;
 
@@ -44,8 +48,8 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 						<Modal
 							title={`Uppdaterat status av "${ticket.title}"`}
 							message={`Skicka statusuppdateringen ${this.state.statusText} till kund?`}
-							disagree={'Avbryt'}
-							agree={'Skicka'}
+							disagree={'Nej'}
+							agree={'Ja, skicka'}
 							onChange={this.handleModal}
 						/> : null
 					}
@@ -74,9 +78,7 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 	 * @param {Boolean} doSend - If status change should be sent or not
 	 */
 	private handleModal(doSend: boolean): void {
-		if (doSend) {
-			this.props.onSend(this.state.status);
-		}
+		this.props.onSend(this.state.status, doSend);
 		this.closeModal();
 	}
 

@@ -12,6 +12,11 @@ import { Link } from 'react-router';
  * Header class
  */
 export class Header extends React.Component<any, any> {
+
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		return (
 			<Paper className='header'>

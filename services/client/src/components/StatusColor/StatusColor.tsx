@@ -30,6 +30,10 @@ export class StatusColor extends React.Component<IStatusColor, any> {
 		};
 	}
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const { color, status } = this.props;
 
@@ -52,6 +56,11 @@ export class StatusColor extends React.Component<IStatusColor, any> {
 		);
 	}
 
+	/**
+	 * Gets the correct color.
+	 * @private
+	 * @param {String} color - The color as a string
+	 */
 	private getColor(color: string) {
 		switch (color) {
 			case 'red': {
@@ -69,14 +78,27 @@ export class StatusColor extends React.Component<IStatusColor, any> {
 		}
 	}
 
+	/**
+	 * Handles click
+	 * @private
+	 */
 	private handleClick = () => {
 		this.setState({ displayColorPicker: !this.state.displayColorPicker });
 	}
 
+	/**
+	 * Handles close
+	 * @private
+	 */
 	private handleClose = () => {
 		this.setState({ displayColorPicker: false });
 	}
 
+	/**
+	 * Handels change
+	 * @private
+	 * @param {Any} color - The newly selected color
+	 */
 	private handleChange = (color: any) => {
 		this.setState({ color: color });
 		this.props.onChange(color);

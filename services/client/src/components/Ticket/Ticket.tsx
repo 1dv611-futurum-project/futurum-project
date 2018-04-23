@@ -15,7 +15,7 @@ import { TicketAction } from './TicketAction';
  */
 export interface ITicket {
 	data: any;
-	onSend(message: any): void;
+	onSend(message: any, mailCustomer: boolean): void;
 }
 
 /**
@@ -40,6 +40,10 @@ export class Ticket extends React.Component<ITicket, any> {
 		this.handleStatusColor(this.props.data.status);
 	}
 
+	/**
+	 * The render method
+	 * @public
+	 */
 	public render() {
 		const ticket = this.props.data;
 		const colorClasses = `ticket__color ticket__color--${this.state.color}`;
@@ -56,7 +60,7 @@ export class Ticket extends React.Component<ITicket, any> {
 					/>
 				</Link>
 				<CardContent className='ticket__content'>
-					<p className='ticket__content__information'>Mottaget: {moment(ticket.created).format('LL')}</p>
+					<p className='ticket__content__information'>Mottaget: {moment(ticket.created, moment.ISO_8601).format('LL')}</p>
 					<p className='ticket__content__information'>Tilldelat:
 						<span className='ticket__content__information--bold'> {ticket.assignee ? ticket.assignee : '—'}</span>
 					</p>
@@ -73,6 +77,7 @@ export class Ticket extends React.Component<ITicket, any> {
 	/**
 	 * Handles status change for ticket by changing colors
 	 * @private
+	 * @param {Number} status - The status number
 	 */
 	private handleStatusColor(status: number): void {
 		switch (status) {
