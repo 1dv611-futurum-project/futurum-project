@@ -26,38 +26,39 @@ export class TicketPage extends React.Component<any, any> {
 			ticket: false,
 			messages: [],
 			showNewMessage: false,
-			status: 0,
-			assignee: null,
 			snackMessage: '',
 			snackState: false
 		};
 
 		this.handleNewMessageClick = this.handleNewMessageClick.bind(this);
-		this.handleStatusChange = this.handleStatusChange.bind(this);
-		this.handleAssigneeChange = this.handleAssigneeChange.bind(this);
-		this.handleSend = this.handleSend.bind(this);
+		this.onStatusChange = this.onStatusChange.bind(this);
+		this.onAssigneeChange = this.onAssigneeChange.bind(this);
+		this.handleMessage = this.handleMessage.bind(this);
 		this.getMessage = this.getMessage.bind(this);
 	}
 
-	/**
-	 * componentDidMount
-	 * Set state with data for currently viewed ticket
-	 * @public
-	 */
 	public componentDidMount() {
 		const { pathname } = this.props.location;
 		const ticketId = pathname[0] === '/' ? pathname.slice(8) : pathname.slice(7);
 
 		this.props.allTickets.forEach((ticket: any) => {
 			if (ticket.id === Number(ticketId)) {
-				this.setState({
-					ticket,
-					messages: ticket.messages,
-					status: ticket.status,
-					assignee: ticket.assignee
-				});
+				this.setState({ ticket });
 			}
 		});
+	}
+
+	public componentDidUpdate(prevProps: any) {
+		if (prevProps !== this.props) {
+			const { pathname } = this.props.location;
+			const ticketId = pathname[0] === '/' ? pathname.slice(8) : pathname.slice(7);
+
+			this.props.allTickets.forEach((ticket: any) => {
+				if (ticket.id === Number(ticketId)) {
+					this.setState({ ticket });
+				}
+			});
+		}
 	}
 
 	/**
@@ -65,20 +66,23 @@ export class TicketPage extends React.Component<any, any> {
 	 * @public
 	 */
 	public render() {
-		const ticket = this.state.ticket;
 		const messages = this.state.messages.map(this.getMessage);
 
 		return (
 			<div className='ticket__wrapper'>
 				<TicketOverview
 					handleClick={this.handleNewMessageClick}
-					handleStatusChange={this.handleStatusChange}
-					handleAssigneeChange={this.handleAssigneeChange}
+					handleStatusChange={this.onStatusChange}
+					handleAssigneeChange={this.onAssigneeChange}
 					assignees={assignees}
-					data={ticket}
+					ticket={this.state.ticket}
 				/>
 				<div className='ticket__wrapper__messages'>
-					<MessageInput onClick={this.handleSend} open={this.state.showNewMessage} />
+					<MessageInput
+						open={this.state.showNewMessage}
+						ticket={this.state.ticket}
+						onClick={this.handleMessage}
+					/>
 					{messages}
 				</div>
 				<SnackbarNotice
@@ -121,18 +125,12 @@ export class TicketPage extends React.Component<any, any> {
 	 * @private
 	 * @param {String} message - The written message
 	 */
-	private handleSend(message: string) {
-		const messages = this.state.messages;
-		const newMessage = {
-			fromCustomer: false,
-			received: moment().format(),
-			body: message
-		};
-
-		messages.unshift(newMessage);
+	private handleMessage(ticket: any) {
+		const messages = ticket.messages;
+		console.log(messages);
 		this.setState({ showNewMessage: false, messages });
 
-		this.props.ticketAction.emitMail(message);
+		this.props.ticketAction.emitMessage({ ticket });
 	}
 
 	/**
@@ -140,13 +138,13 @@ export class TicketPage extends React.Component<any, any> {
 	 * @private
 	 * @param {Number} status - The new status
 	 */
-	private handleStatusChange(status: number) {
+	private onStatusChange(ticket: any, send: boolean) {
 		this.setState({
-			status,
+			status: ticket.status,
 			snackState: true,
 			snackMessage: 'Status för ärendet har uppdaterats.'
 		});
-		this.props.ticketAction.emitStatus(status);
+		this.props.ticketAction.emitStatus({ticket, send});
 	}
 
 	/**
@@ -154,13 +152,13 @@ export class TicketPage extends React.Component<any, any> {
 	 * @private
 	 * @param {Number} assignee - The new assignee
 	 */
-	private handleAssigneeChange(assignee: string) {
+	private onAssigneeChange(ticket: any) {
 		this.setState({
-			assignee,
+			assignee: ticket.assignee,
 			snackState: true,
-			snackMessage: `Ärendet har tilldelats ${assignee}.`
+			snackMessage: `Ärendet har tilldelats ${ticket.assignee}.`
 		});
-		this.props.ticketAction.emitAssignee(assignee);
+		this.props.ticketAction.emitAssignee(ticket);
 	}
 
 	/**

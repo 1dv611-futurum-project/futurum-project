@@ -29,21 +29,21 @@ export class App extends React.Component<any, any> {
 	}
 
 	public ticketsListener() {
-		this.socket.tickets().onAllTickets((tickets: any) => {
+		this.socket.ticketChannel().onTickets((tickets: any) => {
 			tickets = JSON.parse(tickets);
 			this.setState({ tickets });
 		});
 	}
 
 	public customersListener() {
-		this.socket.customers().onAllCustomers((customers: any) => {
+		this.socket.customerChannel().onCustomers((customers: any) => {
 			customers = JSON.parse(customers);
 			this.setState({ customers });
 		});
 	}
 
 	public settingsListener() {
-		this.socket.settings().onSettings((settings: any) => {
+		this.socket.settingChannel().onSettings((settings: any) => {
 			settings = JSON.parse(settings);
 			this.setState({ settings });
 		});
@@ -58,9 +58,9 @@ export class App extends React.Component<any, any> {
 			allTickets: this.state.tickets,
 			allCustomers: this.state.customers,
 			allSettings: this.state.settings,
-			ticketAction: this.socket.tickets(),
-			customerAction: this.socket.customers(),
-			settingsAction: this.socket.settings()
+			ticketAction: this.socket.ticketChannel(),
+			customerAction: this.socket.customerChannel(),
+			settingsAction: this.socket.settingChannel()
 		};
 
 		return (

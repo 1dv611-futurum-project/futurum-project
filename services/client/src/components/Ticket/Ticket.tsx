@@ -14,8 +14,8 @@ import { TicketAction } from './TicketAction';
  * Ticket Props Interface
  */
 export interface ITicket {
-	data: any;
-	onSend(message: any, mailCustomer: boolean): void;
+	ticket: any;
+	onSend(ticket: any, send: boolean): void;
 }
 
 /**
@@ -37,7 +37,7 @@ export class Ticket extends React.Component<ITicket, any> {
 	 * Initiates status color from ticket data
 	 */
 	public componentDidMount() {
-		this.handleStatusColor(this.props.data.status);
+		this.handleStatusColor(this.props.ticket.status);
 	}
 
 	/**
@@ -45,7 +45,7 @@ export class Ticket extends React.Component<ITicket, any> {
 	 * @public
 	 */
 	public render() {
-		const ticket = this.props.data;
+		const ticket = this.props.ticket;
 		const colorClasses = `ticket__color ticket__color--${this.state.color}`;
 
 		return (
@@ -66,7 +66,7 @@ export class Ticket extends React.Component<ITicket, any> {
 					</p>
 				</CardContent>
 				<TicketAction
-					data={ticket}
+					ticket={ticket}
 					onStatusChange={this.handleStatusColor}
 					onSend={this.props.onSend}
 				/>

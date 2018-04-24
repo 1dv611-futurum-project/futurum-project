@@ -12,7 +12,7 @@ import { Modal } from '../Modal/Modal';
  * TicketAction Props Interface
  */
 export interface ITicketAction {
-	data: any;
+	ticket: any;
 	onStatusChange(status: number): void;
 	onSend(message: string, mailCustomer: boolean): void;
 }
@@ -26,7 +26,7 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 		super(props);
 		this.state = {
 			displayModal: false,
-			status: this.props.data.status,
+			status: this.props.ticket.status,
 			statusText: ''
 		};
 
@@ -39,7 +39,7 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 	 * @public
 	 */
 	public render() {
-		const ticket = this.props.data;
+		const ticket = this.props.ticket;
 
 		return (
 			<CardActions className='ticket__actions'>
@@ -78,7 +78,7 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 	 * @param {Boolean} doSend - If status change should be sent or not
 	 */
 	private handleModal(doSend: boolean): void {
-		this.props.onSend(this.state.status, doSend);
+		this.props.onSend(this.props.ticket, doSend);
 		this.closeModal();
 	}
 

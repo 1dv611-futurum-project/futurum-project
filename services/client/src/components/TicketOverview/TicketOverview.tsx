@@ -18,10 +18,10 @@ import { AddButton } from '../AddButton/AddButton';
  */
 export interface ITicketOverview {
 	handleClick(): any;
-	handleStatusChange(status: number): any;
-	handleAssigneeChange(assignee: string): any;
+	handleStatusChange(ticket: any, send: boolean): any;
+	handleAssigneeChange(ticket: any): any;
 	assignees: string[];
-	data: any;
+	ticket: any;
 }
 
 /**
@@ -31,12 +31,11 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 
 	constructor(props: any) {
 		super(props);
-		const ticket = this.props.data;
 
 		this.state = {
-			color: this.getStatusColor(ticket.status),
-			status: ticket.status,
-			assignee: ticket.assignee
+			color: this.getStatusColor(this.props.ticket.status),
+			status: this.props.ticket.status,
+			assignee: this.props.ticket.assignee
 		};
 
 		this.handleStatusChange = this.handleStatusChange.bind(this);
@@ -49,8 +48,8 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	 * @param {any} prevProps
 	 */
 	public componentDidUpdate(prevProps: any): void {
-		if (prevProps.data !== this.props.data) {
-			const ticket = this.props.data;
+		if (prevProps.ticket !== this.props.ticket) {
+			const ticket = this.props.ticket;
 
 			this.setState({
 				color: this.getStatusColor(ticket.status),
@@ -65,7 +64,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	 * @public
 	 */
 	public render(): any {
-		const { id, title, assignee, created, from } = this.props.data;
+		const { id, title, assignee, created, from } = this.props.ticket;
 		const { handleClick, handleStatusChange, handleAssigneeChange } = this.props;
 
 		return (
@@ -127,9 +126,12 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	 * @param {number} status - The status number (0-3)
 	 */
 	private handleStatusChange(status: number): void {
-		const color = this.getStatusColor(status);
+		console.log(status);
+		this.props.ticket.status = status;
+		// TODO: Add modal for send ticket change or not
+		this.props.handleStatusChange(this.props.ticket, false);
 
-		this.props.handleStatusChange(status);
+		const color = this.getStatusColor(status);
 		this.setState({ color, status });
 	}
 
@@ -139,9 +141,10 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	 * @param {number} selected - The selected index
 	 */
 	private handleAssigneeChange(selected: number): void {
-		const assignee = this.props.assignees[selected];
+		this.props.ticket.assignee = this.props.assignees[selected];
+		this.props.handleAssigneeChange(this.props.ticket);
 
-		this.props.handleAssigneeChange(assignee);
+		const assignee = this.props.assignees[selected];
 		this.setState({ assignee });
 	}
 }

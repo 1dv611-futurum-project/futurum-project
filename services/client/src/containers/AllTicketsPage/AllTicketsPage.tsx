@@ -20,7 +20,7 @@ export class AllTicketsPage extends React.Component<any, any> {
 		};
 
 		this.getTickets = this.getTickets.bind(this);
-		this.sendStatusChange = this.sendStatusChange.bind(this);
+		this.onStatusChange = this.onStatusChange.bind(this);
 	}
 
 	/**
@@ -73,7 +73,7 @@ export class AllTicketsPage extends React.Component<any, any> {
 	 */
 	private getTickets(ticket: any, i: any): any {
 		const location = this.props.location.pathname;
-		const ticketJsx = <Ticket key={i} data={ticket} onSend={this.sendStatusChange} />;
+		const ticketJsx = <Ticket key={i} ticket={ticket} onSend={this.onStatusChange} />;
 
 		if (location.indexOf('open') !== -1 && ticket.status === 0) {
 			return ticketJsx;
@@ -94,15 +94,15 @@ export class AllTicketsPage extends React.Component<any, any> {
 	 * @param {String} status - The new status
 	 * @param {Boolean} mailCustomer - If customer should get an email about the status change
 	 */
-	private sendStatusChange(status: string, mailCustomer: boolean) {
-		this.props.ticketAction.emitStatus(status);
-		const snackMessage = mailCustomer ? 'Status för ärendet har uppdaterats och skickats till kund.' :
+	private onStatusChange(ticket: any, send: boolean) {
+		const snackMessage = send ? 'Status för ärendet har uppdaterats och skickats till kund.' :
 			'Status för ärendet har uppdaterats.';
-
 		this.setState({
 			snackState: true,
 			snackMessage
 		});
+
+		this.props.ticketAction.emitStatus({ ticket, send });
 	}
 
 	/**

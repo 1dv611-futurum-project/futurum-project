@@ -22,10 +22,10 @@ export class SettingsPage extends React.Component<any, any> {
 		return (
 			<div className='settings__wrapper'>
 				<h1 className='client-list-page__header__title'>Redigera statusfärger</h1>
-				<StatusColor color={'red'} status={'Ej påbörjad'} onChange={this.onChange} />
-				<StatusColor color={'blue'} status={'Påbörjad'} onChange={this.onChange} />
-				<StatusColor color={'green'} status={'Genomförd'} onChange={this.onChange} />
-				<StatusColor color={'green'} status={'Stängd'} onChange={this.onChange} />
+				<StatusColor color={'red'} status={'Ej påbörjad'} onChange={this.onColorChange} />
+				<StatusColor color={'blue'} status={'Påbörjad'} onChange={this.onColorChange} />
+				<StatusColor color={'green'} status={'Genomförd'} onChange={this.onColorChange} />
+				<StatusColor color={'green'} status={'Stängd'} onChange={this.onColorChange} />
 				<br />
 				<Divider />
 				<h1 className='client-list-page__header__title'>Redigera ansvariga</h1>
@@ -39,7 +39,19 @@ export class SettingsPage extends React.Component<any, any> {
 	 * @private
 	 * @param {String} color - The new color
 	 */
-	private onChange(color: string) {
-		console.log(color);
+	private onColorChange(color: string) {
+		this.props.settingsAction.emitColor(color);
+	}
+
+	private addAssignee(color: string) {
+		// TODO: Add assignee
+	}
+
+	private editAssignee(color: string) {
+		// TODO: Edit assignee
+	}
+
+	private deleteAssignee(color: string) {
+		// TODO: Edit assignee
 	}
 }

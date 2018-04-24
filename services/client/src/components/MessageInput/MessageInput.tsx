@@ -11,8 +11,9 @@ import TextArea from 'react-textarea-autosize';
  * MessageInput Props Interface
  */
 export interface IMessageInput {
-	onClick(message: string): any;
 	open: boolean;
+	ticket: any;
+	onClick(ticket: any): void;
 }
 
 /**
@@ -70,7 +71,13 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 	 * @private
 	 */
 	private handleClick() {
-		this.props.onClick(this.state.message);
+		this.props.ticket.messages.push({
+			received: new Date().toString(),
+			body: this.state.message,
+			fromCustomer: false
+		});
+
 		this.setState({ message: '' });
+		this.props.onClick(this.props.ticket);
 	}
 }
