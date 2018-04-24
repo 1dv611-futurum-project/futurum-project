@@ -130,10 +130,9 @@ class IMAPHandler extends events.EventEmitter {
   private formatAsNewTicket(mail: IReceivedEmail): IReceivedTicket {
     const message = ({} as IReceivedTicket);
 
-    // TODO: remove later when database in place
+    // TODO: possibly remove later when database in place?
     message.status = 0;
     message.assignee = null;
-    message.id = 0;
 
     message.mailID = mail.messageId;
     message.created = mail.receivedDate;

@@ -29,5 +29,5 @@ dbConnectionTests.run();
 dbHandlerTests.run();
 xoauthTests.run();
 ImapHandlerTests.run();
-ImapHandlerTests.run();
+ImapConnectionTests.run();
 emailHandlerTests.run();

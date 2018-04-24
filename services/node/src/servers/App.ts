@@ -16,6 +16,7 @@ import DBHandler from './../handlers/db/DBHandler';
 import DBConnection from './../handlers/db/DBConnection';
 import EmailHandler from './../handlers/email/EmailHandler';
 import WebsocketHandler from './../handlers/WebsocketHandler';
+import IReceivedTicket from './../handlers/email/interfaces/IReceivedTicket';
 import Ticket from './../models/Ticket';
 import Mail from './../models/Mail';
 
@@ -197,7 +198,7 @@ class App {
     this.body = message.body;
   */
 
-  private createNewMails(mail: object): Mail[] {
+  private createNewMails(mail: IReceivedTicket): Mail[] {
     try {
       const mailBodies = [];
       mail.messages.forEach((element) => {
@@ -213,7 +214,7 @@ class App {
     return;
   }
 
-  private createNewTicket(mail: object, mailBodies: Mail[]): object {
+  private createNewTicket(mail: IReceivedTicket, mailBodies: Mail[]): object {
     try {
       const ticket = new Ticket({
         status: mail.status,

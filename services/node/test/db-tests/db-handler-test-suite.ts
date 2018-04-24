@@ -15,7 +15,8 @@ const DBConnectionInstance = new DBConnection();
 const sut = new DBHandler(DBConnectionInstance);
 const correctConnectionString = 'mongodb://futurum-db:27017';
 
-sut.on('error', () => { console.log('Expected error.'); });
+// Catch expected connection error to allow the tests to continue.
+sut.on('error', () => { console.log(''); });
 
 /**
  * Run the tests.

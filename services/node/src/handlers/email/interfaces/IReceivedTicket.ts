@@ -4,6 +4,8 @@
 
 // Exports.
 export default interface IReceivedTicket {
+  assignee: any;
+  status: number;
   mailID: string;
   created: string;
   title: string;
