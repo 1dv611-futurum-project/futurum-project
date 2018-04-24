@@ -3,7 +3,7 @@
  */
 export enum TicketEvent {
 	CHANNEL = 'tickets',
-	STATUS = 'ticket_update',
-	ASSIGNEE = 'ticket_status',
+	STATUS = 'ticket_status',
+	ASSIGNEE = 'ticket_assignee',
 	MESSAGE = 'ticket_message'
 }

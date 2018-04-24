@@ -86,6 +86,8 @@ const customerMock = [ {
     numberOfErrands: 5
   } ];
 
+const assigneesMock = ['Anton Myrberg', 'Sebastian Borgstedt', 'Dev Devsson'];
+
 const settingsMock = [];
 
 /**
@@ -115,6 +117,7 @@ class WebsocketHandler {
   private onConnect() {
     this.socket.on('connection', (socket: any) => {
       this.emitTickets(mockData);
+      this.emitAssignees(assigneesMock);
       this.emitCustomers(customerMock);
       this.emitSettings(settingsMock);
 
@@ -160,6 +163,17 @@ class WebsocketHandler {
   public emitTickets(tickets: object[]): void {
     try {
       this.socket.emit('tickets', JSON.stringify(tickets));
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Emits data to the server on assignee channels.
+   */
+  public emitAssignees(assignees: string[]): void {
+    try {
+      this.socket.emit('assignees', JSON.stringify(assignees));
     } catch (error) {
       console.error(error);
     }

@@ -18,12 +18,14 @@ export class App extends React.Component<any, any> {
 		super(props);
 		this.state = {
 			tickets: [],
+			assignees: [],
 			customers: [],
 			settings: [],
 		};
 
 		this.socket = new SocketFactory();
 		this.ticketsListener();
+		this.assigneesListener();
 		this.customersListener();
 		this.settingsListener();
 	}
@@ -32,6 +34,13 @@ export class App extends React.Component<any, any> {
 		this.socket.ticketChannel().onTickets((tickets: any) => {
 			tickets = JSON.parse(tickets);
 			this.setState({ tickets });
+		});
+	}
+
+	public assigneesListener() {
+		this.socket.assigneeChannel().onAssignees((assignees: any) => {
+			assignees = JSON.parse(assignees);
+			this.setState({ assignees });
 		});
 	}
 
@@ -56,6 +65,7 @@ export class App extends React.Component<any, any> {
 	public render() {
 		const childProps = {
 			allTickets: this.state.tickets,
+			allAssignees: this.state.assignees,
 			allCustomers: this.state.customers,
 			allSettings: this.state.settings,
 			ticketAction: this.socket.ticketChannel(),

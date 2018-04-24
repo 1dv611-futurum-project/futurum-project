@@ -4,6 +4,7 @@
 
 import * as SocketIO from 'socket.io-client';
 import TicketChannel from './channels/TicketChannel';
+import AssigneeChannel from './channels/AssigneeChannel';
 import CustomerChannel from './channels/CustomerChannel';
 import SettingChannel from './channels/SettingChannel';
 
@@ -27,6 +28,10 @@ export default class SocketFactory {
 
 	public ticketChannel() {
 		return new TicketChannel(this.io);
+	}
+
+	public assigneeChannel() {
+		return new AssigneeChannel(this.io);
 	}
 
 	public customerChannel() {

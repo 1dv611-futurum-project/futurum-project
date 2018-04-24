@@ -12,8 +12,6 @@ import { Message } from '../../components/Message/Message';
 import { MessageInput } from '../../components/MessageInput/MessageInput';
 import { SnackbarNotice } from '../../components/SnackbarNotice/SnackbarNotice';
 
-const assignees = ['Anton Myrberg', 'Sebastian Borgstedt'];
-
 /**
  * TicketPage class
  */
@@ -74,7 +72,7 @@ export class TicketPage extends React.Component<any, any> {
 					handleClick={this.handleNewMessageClick}
 					handleStatusChange={this.onStatusChange}
 					handleAssigneeChange={this.onAssigneeChange}
-					assignees={assignees}
+					assignees={this.props.allAssignees}
 					ticket={this.state.ticket}
 				/>
 				<div className='ticket__wrapper__messages'>
