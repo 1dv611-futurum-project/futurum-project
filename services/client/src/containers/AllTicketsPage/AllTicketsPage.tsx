@@ -15,7 +15,6 @@ export class AllTicketsPage extends React.Component<any, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			tickets: this.props.tickets || [],
 			snackMessage: '',
 			snackState: false
 		};
@@ -30,7 +29,7 @@ export class AllTicketsPage extends React.Component<any, any> {
 	 */
 	public render() {
 		const title = this.getTitle();
-		const tickets = this.props.tickets.map(this.getTickets).filter((ticket: any) => ticket !== undefined);
+		const tickets = this.props.allTickets.map(this.getTickets).filter((ticket: any) => ticket !== undefined);
 
 		return (
 			<div className='tickets'>
@@ -96,8 +95,7 @@ export class AllTicketsPage extends React.Component<any, any> {
 	 * @param {Boolean} mailCustomer - If customer should get an email about the status change
 	 */
 	private sendStatusChange(status: string, mailCustomer: boolean) {
-		console.log('Got status code: ' + status);
-
+		this.props.ticketAction.emitStatus(status);
 		const snackMessage = mailCustomer ? 'Status för ärendet har uppdaterats och skickats till kund.' :
 			'Status för ärendet har uppdaterats.';
 

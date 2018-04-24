@@ -48,7 +48,7 @@ export class TicketPage extends React.Component<any, any> {
 		const { pathname } = this.props.location;
 		const ticketId = pathname[0] === '/' ? pathname.slice(8) : pathname.slice(7);
 
-		this.props.tickets.forEach((ticket: any) => {
+		this.props.allTickets.forEach((ticket: any) => {
 			if (ticket.id === Number(ticketId)) {
 				this.setState({
 					ticket,
@@ -132,7 +132,7 @@ export class TicketPage extends React.Component<any, any> {
 		messages.unshift(newMessage);
 		this.setState({ showNewMessage: false, messages });
 
-		// TODO! Handle message here.
+		this.props.ticketAction.emitMail(message);
 	}
 
 	/**
@@ -146,7 +146,7 @@ export class TicketPage extends React.Component<any, any> {
 			snackState: true,
 			snackMessage: 'Status för ärendet har uppdaterats.'
 		});
-		console.log('changed status to ' + status);
+		this.props.ticketAction.emitStatus(status);
 	}
 
 	/**
@@ -155,12 +155,12 @@ export class TicketPage extends React.Component<any, any> {
 	 * @param {Number} assignee - The new assignee
 	 */
 	private handleAssigneeChange(assignee: string) {
-		console.log('changed assignee to ' + assignee);
 		this.setState({
 			assignee,
 			snackState: true,
 			snackMessage: `Ärendet har tilldelats ${assignee}.`
 		});
+		this.props.ticketAction.emitAssignee(assignee);
 	}
 
 	/**

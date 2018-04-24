@@ -49,7 +49,7 @@ export class ClientList extends React.Component<IClientList, any> {
 							<Tooltip title='Redigera'>
 								<IconButton
 									className='client-list__table--btn'
-									onClick={() => onEdit(client.name)}
+									onClick={() => onEdit(client)}
 								>
 									<ModeEdit />
 								</IconButton>
@@ -57,7 +57,7 @@ export class ClientList extends React.Component<IClientList, any> {
 							<Tooltip title='Ta bort'>
 								<IconButton
 									className='client-list__table--btn'
-									onClick={() => onDelete(client.name)}
+									onClick={() => onDelete(client)}
 								>
 									<Delete />
 								</IconButton>
