@@ -18,10 +18,35 @@ export class App extends React.Component<any, any> {
 		super(props);
 		this.state = {
 			tickets: [],
-			customers: []
+			customers: [],
+			settings: [],
 		};
 
 		this.socket = new SocketFactory();
+		this.ticketsListener();
+		this.customersListener();
+		this.settingsListener();
+	}
+
+	public ticketsListener() {
+		this.socket.tickets().onAllTickets((tickets: any) => {
+			tickets = JSON.parse(tickets);
+			this.setState({ tickets });
+		});
+	}
+
+	public customersListener() {
+		this.socket.customers().onAllCustomers((customers: any) => {
+			customers = JSON.parse(customers);
+			this.setState({ customers });
+		});
+	}
+
+	public settingsListener() {
+		this.socket.settings().onSettings((settings: any) => {
+			settings = JSON.parse(settings);
+			this.setState({ settings });
+		});
 	}
 
 	/**
@@ -30,9 +55,12 @@ export class App extends React.Component<any, any> {
 	 */
 	public render() {
 		const childProps = {
-			tickets: this.socket.tickets(),
-			customers: this.socket.customers(),
-			settings: this.socket.settings()
+			allTickets: this.state.tickets,
+			allCustomers: this.state.customers,
+			allSettings: this.state.settings,
+			ticketAction: this.socket.tickets(),
+			customerAction: this.socket.customers(),
+			settingsAction: this.socket.settings()
 		};
 
 		return (

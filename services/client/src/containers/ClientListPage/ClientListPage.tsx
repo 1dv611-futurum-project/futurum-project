@@ -29,18 +29,11 @@ export class ClientListPage extends React.Component<any, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			clients: [],
 			showNewClient: false,
 		};
 
 		this.handleAddClientClick = this.handleAddClientClick.bind(this);
 		this.addClient = this.addClient.bind(this);
-	}
-
-	public componentDidMount() {
-		this.props.customers.onAllCustomers((clients: any) => {
-			this.setState({ clients });
-		});
 	}
 
 	/**
@@ -60,7 +53,7 @@ export class ClientListPage extends React.Component<any, any> {
 					<ClientInput onClick={this.addClient} open={this.state.showNewClient} />
 				</div>
 				<ClientList
-					data={this.state.clients}
+					data={this.props.allCustomers}
 					onEdit={this.editClient}
 					onDelete={this.deleteClient}
 				/>
@@ -82,7 +75,7 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @param {Object} client - The new client
 	 */
 	private addClient(client: any) {
-		this.props.customers.addCustomer(client);
+		this.props.customerAction.addCustomer(client);
 	}
 
 	/**
@@ -91,7 +84,7 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @param {Object} client - The existing client data
 	 */
 	private editClient(client: any) {
-		this.props.customers.editCustomer(client);
+		this.props.customerAction.editCustomer(client);
 	}
 
 	/**
@@ -100,6 +93,6 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @param {Object} client - The existing client data
 	 */
 	private deleteClient(client: any) {
-		this.props.customers.deleteCustomer(client);
+		this.props.customerAction.deleteCustomer(client);
 	}
 }

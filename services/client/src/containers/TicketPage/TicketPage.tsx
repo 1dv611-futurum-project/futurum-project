@@ -48,7 +48,7 @@ export class TicketPage extends React.Component<any, any> {
 		const { pathname } = this.props.location;
 		const ticketId = pathname[0] === '/' ? pathname.slice(8) : pathname.slice(7);
 
-		this.props.tickets.forEach((ticket: any) => {
+		this.props.allTickets.forEach((ticket: any) => {
 			if (ticket.id === Number(ticketId)) {
 				this.setState({
 					ticket,
