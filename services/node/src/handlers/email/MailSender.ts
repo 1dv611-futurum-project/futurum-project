@@ -5,7 +5,7 @@
 // Imports
 import * as events from 'events';
 import { google } from 'googleapis';
-import IEmail from './IEmail';
+import IEmail from './interfaces/IEmail';
 const OAuth2 = google.auth.OAuth2;
 
 class MailSender extends events.EventEmitter {
@@ -203,3 +203,4 @@ class MailSender extends events.EventEmitter {
 
 // Exports
 export default new MailSender();
+export type GmailSender = MailSender;

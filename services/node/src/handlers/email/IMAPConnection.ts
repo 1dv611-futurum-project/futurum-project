@@ -6,9 +6,10 @@
 import * as Imap from 'imap';
 import { Box, ImapMessage } from 'imap';
 import * as events from 'events';
-import * as MailParser from 'mailparser-mit';
+import { MailParser } from 'mailparser-mit';
 import IMAPConnectionInterface from './IMAPConnectionInterface';
 import XOauth from './Xoauth2Generator';
+import { Xoauth2Generator } from './Xoauth2Generator';
 
 /**
  * Sets up a connection to the imap-server.
@@ -21,11 +22,11 @@ import XOauth from './Xoauth2Generator';
  * and validity of server might be compromised.
  * Unauth when credentials are missing and the connection cannot be established.
  */
-class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterface {
+class Connection extends events.EventEmitter implements IMAPConnectionInterface {
 
   private boxName = 'INBOX';
   private imap: Imap;
-  private xoauthGenerator: XOauth;
+  private xoauthGenerator: Xoauth2Generator;
   private isConnected: boolean;
   private id = 0;
 
@@ -187,8 +188,8 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
         });
 
         fetchMessages.on('message', (msg: ImapMessage, seqno: number) => {
-          msg.on('body', (stream: ReadableStream, info: object) => {
-            const mp = new MailParser.MailParser();
+          msg.on('body', (stream: NodeJS.ReadableStream, info: object) => {
+            const mp = new MailParser();
             stream.pipe(mp);
 
             mp.on('end', (mail: object) => {
@@ -262,4 +263,5 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
 }
 
 // Exports.
-export default new IMAPConnection();
+export default new Connection();
+export type IMAPConnection = Connection;

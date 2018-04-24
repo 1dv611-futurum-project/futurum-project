@@ -43,7 +43,7 @@ class DBConnection extends events.EventEmitter {
    */
   private setUpDBListeners(): void {
     this.db = mongoose.connection;
-    mongoose.Promise = global.Promise;
+    (mongoose as any).Promise = global.Promise;
 
     this.db.on('error', (err) => {
       this.emit('connection-error', err);

@@ -1,5 +1,5 @@
 /**
- * Email interface for communicating with the email module.
+ * Email interface for communicating with the MailSender module.
  */
 
 // Exports.

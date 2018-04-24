@@ -30,15 +30,7 @@ class MainRouter {
    * Mounts the routes.
    */
   private mountRoutes(): void {
-    this.mainRouter.get('/', this.rootRoute);
     this.mainRouter.get('/connection', this.connectionRoute);
-  }
-
-  /**
-   * Testroute.
-   */
-  private rootRoute(request: express.Request, response: express.Response): void {
-    response.status(200).json('Testrouter');
   }
 
   /**

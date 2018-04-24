@@ -225,7 +225,7 @@ class DBHandler extends events.EventEmitter {
        * }
        */
       type = type.toLowerCase();
-      const toSave;
+      let toSave;
 
       switch (type) {
       case 'customer':

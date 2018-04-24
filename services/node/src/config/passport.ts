@@ -8,8 +8,8 @@ import * as Google from 'passport-google-oauth20';
 
 class PassportStrategies {
 
-  private static accessTokenEnv = 'IMAP_ACCESS_TOKEN';
-  private static refreshTokenEnv = 'IMAP_REFRESH_TOKEN';
+  private accessTokenEnv = 'IMAP_ACCESS_TOKEN';
+  private refreshTokenEnv = 'IMAP_REFRESH_TOKEN';
 
   /**
    * Initiates the passport strategies.
@@ -35,8 +35,8 @@ class PassportStrategies {
         }
 
         if (authorized) {
-          process.env[PassportStrategies.accessTokenEnv] = process.env[PassportStrategies.accessTokenEnv] || accessToken;
-          process.env[PassportStrategies.refreshTokenEnv] = process.env[PassportStrategies.refreshTokenEnv] || refreshToken;
+          process.env[this.accessTokenEnv] = process.env[this.accessTokenEnv] || accessToken;
+          process.env[this.refreshTokenEnv] = process.env[this.refreshTokenEnv] || refreshToken;
 
           return done(null, profile);
 

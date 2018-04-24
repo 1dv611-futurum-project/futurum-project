@@ -4,7 +4,7 @@
 
 // Imports
 import * as events from 'events';
-import IMAPConnectionInterface from './IMAPConnectionInterface';
+import IMAPConnectionInterface from './interfaces/IMAPConnectionInterface';
 
 // This should be a database, only array for development
 const whitelist = ['mopooy@gmail.com', 'js223zs@student.lnu.se'];
@@ -219,3 +219,4 @@ class IMAPHandler extends events.EventEmitter {
 
 // Exports.
 export default new IMAPHandler();
+export type IMAPConnectionHandler = IMAPHandler;
