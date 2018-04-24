@@ -6,9 +6,11 @@
 import * as Imap from 'imap';
 import { Box, ImapMessage } from 'imap';
 import * as events from 'events';
-import * as MailParser from 'mailparser-mit';
-import IMAPConnectionInterface from './IMAPConnectionInterface';
+import { MailParser } from 'mailparser-mit';
+import IMAPConnectionInterface from './interfaces/IMAPConnectionInterface';
 import XOauth from './Xoauth2Generator';
+import { Xoauth2Generator } from './Xoauth2Generator';
+import { IMAPError } from './../../config/errors';
 
 /**
  * Sets up a connection to the imap-server.
@@ -21,13 +23,12 @@ import XOauth from './Xoauth2Generator';
  * and validity of server might be compromised.
  * Unauth when credentials are missing and the connection cannot be established.
  */
-class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterface {
+class Connection extends events.EventEmitter implements IMAPConnectionInterface {
 
   private boxName = 'INBOX';
   private imap: Imap;
-  private xoauthGenerator: XOauth;
+  private xoauthGenerator: Xoauth2Generator;
   private isConnected: boolean;
-  private id = 0;
 
   constructor() {
     super();
@@ -187,8 +188,8 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
         });
 
         fetchMessages.on('message', (msg: ImapMessage, seqno: number) => {
-          msg.on('body', (stream: ReadableStream, info: object) => {
-            const mp = new MailParser.MailParser();
+          msg.on('body', (stream: NodeJS.ReadableStream, info: object) => {
+            const mp = new MailParser();
             stream.pipe(mp);
 
             mp.on('end', (mail: object) => {
@@ -202,14 +203,14 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
           fetchMessages.on('end', () => {
             this.imap.setFlags(indicesToFetch, ['\\Seen'], (error: Error) => {
               if (error) {
-                this.emitMessage('error', {message: 'Error marking messages as read in the inbox.'});
+                this.emitMessage('error', new IMAPError('Error marking messages as read in the inbox.'));
               }
             });
           });
         });
 
         fetchMessages.once('error', (error: Error) => {
-          reject({type: 'fetch', message: 'An error occured while fetching unread messages.'});
+          reject(new IMAPError('Error marking messages as read in the inbox.'));
         });
       });
     });
@@ -218,12 +219,9 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
   /**
    * Emits connection errors.
    */
-  private handleConnectionError(err: object): void {
+  private handleConnectionError(err: Error): void {
     this.isConnected = false;
-    const error = {};
-    error.message = err.message || 'An error with the IMAP-connection occured.';
-    error.type = err.type || 'Connection';
-    this.emitMessage('error', error);
+    this.emitMessage('error', new IMAPError(err.message || 'An error with the IMAP-connection occured.'));
   }
 
   /**
@@ -262,4 +260,5 @@ class IMAPConnection extends events.EventEmitter implements IMAPConnectionInterf
 }
 
 // Exports.
-export default new IMAPConnection();
+export default new Connection();
+export type IMAPConnection = Connection;

@@ -4,6 +4,8 @@
 
 // Imports
 import * as xoauth2 from 'xoauth2';
+import IIMAPCredentials from './interfaces/IIMAPCredentials';
+import { NoIMAPCredentialsError } from './../../config/errors';
 
 /**
  * Instantiates an xoauth generator
@@ -52,7 +54,7 @@ class XOauth {
           resolve(token);
         });
       } else {
-        reject('No generator');
+        reject(new NoIMAPCredentialsError('No generator'));
       }
     });
   }
@@ -62,13 +64,13 @@ class XOauth {
    * returns them in an object, otherwise
    * emits unauth-error.
    */
-  private getCredentials(): object {
+  private getCredentials(): IIMAPCredentials {
     if (process.env.IMAP_USER
         && process.env.IMAP_CLIENT_ID
         && process.env.IMAP_CLIENT_SECRET
         && process.env.IMAP_ACCESS_TOKEN
         && process.env.IMAP_REFRESH_TOKEN) {
-      const credentials = {};
+      const credentials = ({} as IIMAPCredentials);
       credentials.user = process.env.IMAP_USER;
       credentials.clientID = process.env.IMAP_CLIENT_ID;
       credentials.clientSecret = process.env.IMAP_CLIENT_SECRET;
@@ -96,3 +98,4 @@ class XOauth {
 
 // Exports.
 export default new XOauth();
+export type Xoauth2Generator = XOauth;

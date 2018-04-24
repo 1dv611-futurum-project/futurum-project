@@ -4,7 +4,10 @@
 
 // Imports
 import * as events from 'events';
-import IMAPConnectionInterface from './IMAPConnectionInterface';
+import IMAPConnectionInterface from './interfaces/IMAPConnectionInterface';
+import IReceivedEmail from './interfaces/IReceivedEmail';
+import IReceivedTicket from './interfaces/IReceivedTicket';
+import IReceivedAnswer from './interfaces/IReceivedAnswer';
 
 // This should be a database, only array for development
 const whitelist = ['mopooy@gmail.com', 'js223zs@student.lnu.se'];
@@ -15,9 +18,13 @@ const whitelist = ['mopooy@gmail.com', 'js223zs@student.lnu.se'];
  */
 class IMAPHandler extends events.EventEmitter {
 
+  private static TICKET = 'mail';
+  private static ANSWER = 'answer';
+  private static FORWARD = 'forward';
+
   private interval: number;
   private imapConnection: IMAPConnectionInterface;
-  private ongoingTimeout: Timer;
+  private ongoingTimeout: NodeJS.Timer;
 
   /**
    * Connects to the imap server.
@@ -63,12 +70,21 @@ class IMAPHandler extends events.EventEmitter {
   /**
    * Emits the new mail as a message.
    */
-  private handleNewMailEvent(mail: object): void {
-    const message = this.formatMail(mail);
+  private handleNewMailEvent(mail: IReceivedEmail): void {
+    const mailType = this.getType(mail);
+    let formattedMessage;
+
+    if (mailType === IMAPHandler.TICKET || mailType === IMAPHandler.FORWARD) {
+      formattedMessage = this.formatAsNewTicket(mail);
+    } else {
+      formattedMessage = this.formatAsAnswer(mail);
+    }
+
+    this.emitMessage(formattedMessage, mailType);
+
     if (this.ongoingTimeout) {
       clearTimeout(this.ongoingTimeout);
     }
-    this.emitMessage(message);
     this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, this.interval);
   }
 
@@ -84,53 +100,54 @@ class IMAPHandler extends events.EventEmitter {
   }
 
   /**
-   * Formats the mail.
+   * Gets the type of the mail.
    */
-  private formatMail(mail: object): object {
-    let formatted;
+  private getType(mail: IReceivedEmail): string {
+    let type;
+
     if (this.isNewTicket(mail)) {
-      formatted = this.formatAsNewTicket(mail);
+      type = IMAPHandler.TICKET;
       if (!this.isInWhitelist(mail.from[0].address)) {
-        formatted.type = 'forward';
+        type = IMAPHandler.FORWARD;
       }
     } else {
-      formatted = this.formatAsAnswer(mail);
+      type = IMAPHandler.ANSWER;
     }
 
-    return formatted;
+    return type;
   }
 
   /**
    * Checks if the mail is new or an answer.
    */
-  private isNewTicket(mail: object): boolean {
+  private isNewTicket(mail: IReceivedEmail): boolean {
     return mail.references === undefined;
   }
 
   /**
    * Formats the mail as a new ticket.
    */
-  private formatAsNewTicket(mail: object): object {
-    const message = {
-      type: 'mail',
-      id: 0,
-      status: 0,
-      assignee: null,
-      mailID: mail.messageId,
-      created: mail.receivedDate,
-      title: mail.subject,
-      from: {
-        name: mail.from[0].name,
-        email: mail.from[0].address
-      },
-      messages: [
-        {
-          received: mail.receivedDate,
-          body: mail.text,
-          fromCustomer: true
-        }
-      ]
+  private formatAsNewTicket(mail: IReceivedEmail): IReceivedTicket {
+    const message = ({} as IReceivedTicket);
+
+    // TODO: possibly remove later when database in place?
+    message.status = 0;
+    message.assignee = null;
+
+    message.mailID = mail.messageId;
+    message.created = mail.receivedDate;
+    message.title = mail.subject;
+    message.from = {
+      name: mail.from[0].name,
+      email: mail.from[0].address
     };
+    message.messages = [
+      {
+        received: mail.receivedDate,
+        body: mail.text,
+        fromCustomer: true
+      }
+    ];
 
     return message;
   }
@@ -138,15 +155,14 @@ class IMAPHandler extends events.EventEmitter {
   /**
    * Formats as an answer.
    */
-  private formatAsAnswer(mail: object): object {
-    const message = {
-      type: 'answer',
-      mailID: mail.messageId,
-      inAnswerTo: mail.references[0],
-      received: mail.receivedDate,
-      body: mail.text,
-      fromCustomer: true
-    };
+  private formatAsAnswer(mail: IReceivedEmail): IReceivedAnswer {
+    const message = ({} as IReceivedAnswer);
+
+    message.mailID = mail.messageId;
+    message.inAnswerTo = mail.references[0];
+    message.received = mail.receivedDate;
+    message.body = mail.text;
+    message.fromCustomer = true;
 
     return message;
   }
@@ -171,10 +187,10 @@ class IMAPHandler extends events.EventEmitter {
   }
 
   /**
-   * Emits a mail-event with the email.
+   * Emits the given event with the given mail.
    */
-  private emitMessage(message: object): void {
-    this.emit(message.type, message);
+  private emitMessage(mail: object, mailType: string): void {
+    this.emit(mailType, mail);
   }
 
   /**
@@ -219,3 +235,4 @@ class IMAPHandler extends events.EventEmitter {
 
 // Exports.
 export default new IMAPHandler();
+export type IMAPConnectionHandler = IMAPHandler;

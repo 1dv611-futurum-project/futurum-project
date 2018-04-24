@@ -16,75 +16,76 @@ import DBHandler from './../handlers/db/DBHandler';
 import DBConnection from './../handlers/db/DBConnection';
 import EmailHandler from './../handlers/email/EmailHandler';
 import WebsocketHandler from './../handlers/WebsocketHandler';
+import IReceivedTicket from './../handlers/email/interfaces/IReceivedTicket';
 import Ticket from './../models/Ticket';
 import Mail from './../models/Mail';
 
 const mockData = [
-	{
-		type: 'ticket',
-		id: 3,
-		status: 2,
-		assignee: 'Anton Myrberg',
-		mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-		created: '2018-04-17T17:56:58.000Z',
-		title: 'Ett test',
-		from: {
-			name: 'Dev Devsson',
-			email: 'dev@futurumdigital.se'
-		},
-		messages: [
-			{
-				received: '2018-04-17T17:56:58.000Z',
-				body: 'Vi har mottagit ditt meddelande och återkommer inom kort. Mvh Anton Myrberg',
-				fromCustomer: false
-			},
-			{
-				received: '2018-04-17T17:56:58.000Z',
-				body: 'adfafdasfa ',
-				fromCustomer: true
-			}
-		]
-	},
-	{
-		type: 'ticket',
-		id: 12,
-		status: 1,
-		assignee: null,
-		mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-		created: '2018-04-17T17:56:58.000Z',
-		title: 'Vi har ett problem',
-		from: {
-			name: 'Dev Devsson',
-			email: 'dev@futurumdigital.se'
-		},
-		messages: [
-			{
-				received: '2018-04-17T17:56:58.000Z',
-				body: 'adfafdasfa ',
-				fromCustomer: true
-			}
-		]
-	},
-	{
-		type: 'ticket',
-		id: 6,
-		status: 2,
-		assignee: 'Sebastian Borgstedt',
-		mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-		created: '2018-04-17T17:56:58.000Z',
-		title: 'Nu har det blivit tokigt',
-		from: {
-			name: 'Dev Devsson',
-			email: 'dev@futurumdigital.se'
-		},
-		messages: [
-			{
-				received: '2018-04-17T17:56:58.000Z',
-				body: 'adfafdasfa ',
-				fromCustomer: true
-			}
-		]
-	}
+  {
+    type: 'ticket',
+    id: 3,
+    status: 2,
+    assignee: 'Anton Myrberg',
+    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
+    created: '2018-04-17T17:56:58.000Z',
+    title: 'Ett test',
+    from: {
+      name: 'Dev Devsson',
+      email: 'dev@futurumdigital.se'
+    },
+    messages: [
+      {
+        received: '2018-04-17T17:56:58.000Z',
+        body: 'Vi har mottagit ditt meddelande och återkommer inom kort. Mvh Anton Myrberg',
+        fromCustomer: false
+      },
+      {
+        received: '2018-04-17T17:56:58.000Z',
+        body: 'adfafdasfa ',
+        fromCustomer: true
+      }
+    ]
+  },
+  {
+    type: 'ticket',
+    id: 12,
+    status: 1,
+    assignee: null,
+    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
+    created: '2018-04-17T17:56:58.000Z',
+    title: 'Vi har ett problem',
+    from: {
+      name: 'Dev Devsson',
+      email: 'dev@futurumdigital.se'
+    },
+    messages: [
+      {
+        received: '2018-04-17T17:56:58.000Z',
+        body: 'adfafdasfa ',
+        fromCustomer: true
+      }
+    ]
+  },
+  {
+    type: 'ticket',
+    id: 6,
+    status: 2,
+    assignee: 'Sebastian Borgstedt',
+    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
+    created: '2018-04-17T17:56:58.000Z',
+    title: 'Nu har det blivit tokigt',
+    from: {
+      name: 'Dev Devsson',
+      email: 'dev@futurumdigital.se'
+    },
+    messages: [
+      {
+        received: '2018-04-17T17:56:58.000Z',
+        body: 'adfafdasfa ',
+        fromCustomer: true
+      }
+    ]
+  }
 ];
 
 /**
@@ -107,24 +108,23 @@ class App {
     function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
-    
+
     async function demo() {
       console.log('Taking a break...');
       await sleep(2000);
       console.log('Two second later');
     }
-    
+
     demo();
     */
 
     this.onSocketConnection();
     this.middleware();
     this.mountRoutes();
+    this.handleErrors();
     this.handleIncomingEmails();
     this.handleDB();
   }
-
-
 
   private onSocketConnection() {
     const tickArr = [];
@@ -142,7 +142,6 @@ class App {
     this.express.use(middleware.security());
     this.express.use(middleware.checkConnection());
     this.express.use(middleware.updateIMAPConnection());
-    this.express.use(this.errorHandler);
   }
 
   private mountRoutes(): void {
@@ -151,6 +150,10 @@ class App {
     this.express.use('/node/auth', this.authRouter);
     this.express.use('/auth', this.authRouter);
     this.express.all('*', this.emptyHandler);
+  }
+
+  private handleErrors(): void {
+    this.express.use(this.errorHandler);
   }
 
   private handleDB(): void {
@@ -199,7 +202,7 @@ class App {
     this.body = message.body;
   */
 
-  private createNewMails(mail: object): Mail[] {
+  private createNewMails(mail: IReceivedTicket): Mail[] {
     try {
       const mailBodies = [];
       mail.messages.forEach((element) => {
@@ -215,7 +218,7 @@ class App {
     return;
   }
 
-  private createNewTicket(mail: object, mailBodies: Mail[]): object {
+  private createNewTicket(mail: IReceivedTicket, mailBodies: Mail[]): object {
     try {
       const ticket = new Ticket({
         status: mail.status,
@@ -231,7 +234,6 @@ class App {
     }
     return;
   }
-
 
   private handleIncomingEmails(): void {
     EmailHandler.Incoming.on('mail', (mail) => {
@@ -310,7 +312,8 @@ class App {
   }
 
   // 500
-  private errorHandler(err, req: Request, res: Response, next: NextFunction): void {
+  private errorHandler(err: any, req: Request, res: Response, next: NextFunction): void {
+    // TODO: Handle errors instead of pushing all of them out to client
     if (err.name === 'UnauthorizedError') {
       return res.redirect('/node/auth/google');
     }

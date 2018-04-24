@@ -3,35 +3,38 @@
  */
 
 // Imports.
-import IMAPConnection from './IMAPConnection';
+import Connection from './IMAPConnection';
+import { IMAPConnection } from './IMAPConnection';
 import IMAPHandler from './IMAPHandler';
+import { IMAPConnectionHandler } from './IMAPHandler';
 import MailSender from './MailSender';
+import { GmailSender } from './MailSender';
 
 /**
  * Wraps incomping and outgoing email handlers.
  */
 class EmailHandler {
   private IMAPConnection: IMAPConnection;
-  private IMAPHandler: IMAPHandler;
-  private MailSender: MailSender;
+  private IMAPHandler: IMAPConnectionHandler;
+  private MailSender: GmailSender;
 
   /**
    * Returns a handler of incoming mails.
    */
-  get Incoming(): IMAPHandler {
+  get Incoming(): IMAPConnectionHandler {
     return this.IMAPHandler;
   }
 
   /**
    * Returns a handler to send mails.
    */
-  get Outgoing(): MailSender {
+  get Outgoing(): GmailSender {
     return this.MailSender;
   }
 
   constructor() {
     this.IMAPHandler = IMAPHandler;
-    this.IMAPConnection = IMAPConnection;
+    this.IMAPConnection = Connection;
     this.MailSender = MailSender;
   }
 
@@ -46,3 +49,4 @@ class EmailHandler {
 
 // Exports.
 export default new EmailHandler();
+export type MailWrapper = EmailHandler;

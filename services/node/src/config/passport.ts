@@ -5,11 +5,15 @@
 // Imports
 import * as passport from 'passport';
 import * as Google from 'passport-google-oauth20';
+import { DelegationDisallowedError, UnauthorizedEmailError } from './errors';
 
 class PassportStrategies {
 
-  private static accessTokenEnv = 'IMAP_ACCESS_TOKEN';
-  private static refreshTokenEnv = 'IMAP_REFRESH_TOKEN';
+  private accessTokenEnv = 'IMAP_ACCESS_TOKEN';
+  private refreshTokenEnv = 'IMAP_REFRESH_TOKEN';
+
+  private delegationDisallowedMessage = 'You have to allow delegation to the account for the app to work.';
+  private unauthorizedEmailMessage = 'You are not authorized to use this app with this email.';
 
   /**
    * Initiates the passport strategies.
@@ -27,7 +31,7 @@ class PassportStrategies {
         let authorized;
 
         if (!profile) {
-          return done({message: 'You have to allow delegation to the account for the app to work.'});
+          return done(new DelegationDisallowedError(this.delegationDisallowedMessage));
         } else {
           authorized = profile.emails.find((email) => {
             return email.value === process.env.IMAP_USER;
@@ -35,13 +39,13 @@ class PassportStrategies {
         }
 
         if (authorized) {
-          process.env[PassportStrategies.accessTokenEnv] = process.env[PassportStrategies.accessTokenEnv] || accessToken;
-          process.env[PassportStrategies.refreshTokenEnv] = process.env[PassportStrategies.refreshTokenEnv] || refreshToken;
+          process.env[this.accessTokenEnv] = process.env[this.accessTokenEnv] || accessToken;
+          process.env[this.refreshTokenEnv] = process.env[this.refreshTokenEnv] || refreshToken;
 
           return done(null, profile);
 
         } else {
-          return done({message: 'You are not authorized to use this app with this email.'});
+          return done(new UnauthorizedEmailError(this.unauthorizedEmailMessage));
         }
       }
     ));

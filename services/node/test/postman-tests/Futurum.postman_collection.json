@@ -1,0 +1,248 @@
+{
+	"info": {
+		"name": "Futurum",
+		"_postman_id": "d1abbf17-cee3-b2be-aa4b-498c405c304d",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET / - No Cookie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "47a28fa7-bb50-496c-95da-6bcf70ae9af9",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Contains @id\", function () {",
+							"    var html = cheerio(responseBody);",
+							"    var title = html.find('title').text();",
+							"    console.log(title);",
+							"    pm.expect(title).to.eql('Sign in - Google Accounts');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{ROOT_URL}}",
+					"host": [
+						"{{ROOT_URL}}"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET /non-existant-url - No Cookie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "47a28fa7-bb50-496c-95da-6bcf70ae9af9",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Contains @id\", function () {",
+							"    var html = cheerio(responseBody);",
+							"    var title = html.find('title').text();",
+							"    console.log(title);",
+							"    pm.expect(title).to.eql('Sign in - Google Accounts');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{ROOT_URL}}/non-existant-url",
+					"host": [
+						"{{ROOT_URL}}"
+					],
+					"path": [
+						"non-existant-url"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET /node - No Cookie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "47a28fa7-bb50-496c-95da-6bcf70ae9af9",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Contains @id\", function () {",
+							"    var html = cheerio(responseBody);",
+							"    var title = html.find('title').text();",
+							"    console.log(title);",
+							"    pm.expect(title).to.eql('Sign in - Google Accounts');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{SERVER_URL}}",
+					"host": [
+						"{{SERVER_URL}}"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET /node/auth/google - No Cookie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "47a28fa7-bb50-496c-95da-6bcf70ae9af9",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Contains @id\", function () {",
+							"    var html = cheerio(responseBody);",
+							"    var title = html.find('title').text();",
+							"    console.log(title);",
+							"    pm.expect(title).to.eql('Sign in - Google Accounts');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{SERVER_URL}}/auth/google",
+					"host": [
+						"{{SERVER_URL}}"
+					],
+					"path": [
+						"auth",
+						"google"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET /node/auth/google/callback/redirect - No Cookie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "47a28fa7-bb50-496c-95da-6bcf70ae9af9",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Contains @id\", function () {",
+							"    var html = cheerio(responseBody);",
+							"    var title = html.find('title').text();",
+							"    console.log(title);",
+							"    pm.expect(title).to.eql('Sign in - Google Accounts');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{SERVER_URL}}/auth/google/callback/redirect",
+					"host": [
+						"{{SERVER_URL}}"
+					],
+					"path": [
+						"auth",
+						"google",
+						"callback",
+						"redirect"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET /node/non-existant-url - No Cookie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "47a28fa7-bb50-496c-95da-6bcf70ae9af9",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Contains @id\", function () {",
+							"    var html = cheerio(responseBody);",
+							"    var title = html.find('title').text();",
+							"    console.log(title);",
+							"    pm.expect(title).to.eql('Sign in - Google Accounts');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{SERVER_URL}}/idonotexist",
+					"host": [
+						"{{SERVER_URL}}"
+					],
+					"path": [
+						"idonotexist"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
