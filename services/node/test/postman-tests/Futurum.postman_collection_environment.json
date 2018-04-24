@@ -1,0 +1,22 @@
+{
+  "id": "1369dd67-6289-942d-62c5-2644e299afc6",
+  "name": "FuturumEnvironment",
+  "values": [
+    {
+      "enabled": true,
+      "key": "ROOT_URL",
+      "value": "http://127.0.0.1:8080/",
+      "type": "text"
+    },
+    {
+      "enabled": true,
+      "key": "SERVER_URL",
+      "value": "http://127.0.0.1:8080/node",
+      "type": "text"
+    }
+  ],
+  "timestamp": 1524575969371,
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2018-04-24T13:57:03.705Z",
+  "_postman_exported_using": "Postman/5.5.3"
+}
