@@ -4,8 +4,15 @@
 
 // Exports.
 export default interface IReceivedEmail {
-  from?: string;
-  to?: string;
+  from: ICustomer[];
+  references: string;
+  messageId: string;
+  receivedDate: string;
   subject: string;
-  body: string;
+  text: string;
+}
+
+interface ICustomer {
+  name: string;
+  address: string;
 }
