@@ -12,7 +12,7 @@ import SettingsChannel from './channels/SettingsChannel';
  */
 export default class SocketFactory {
 
-	private static URL: string = 'http://localhost:8080';
+	private static URL: string = 'http://127.0.0.1:8080';
 	private static PATH: string = '/socket';
 
 	private io: SocketIOClient.Socket;

@@ -34,6 +34,8 @@ export class ClientListPage extends React.Component<any, any> {
 
 		this.handleAddClientClick = this.handleAddClientClick.bind(this);
 		this.addClient = this.addClient.bind(this);
+		this.editClient = this.editClient.bind(this);
+		this.deleteClient = this.deleteClient.bind(this);
 	}
 
 	/**
@@ -75,7 +77,9 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @param {Object} client - The new client
 	 */
 	private addClient(client: any) {
-		this.props.customerAction.addCustomer(client);
+		this.setState({ showNewClient: false });
+		this.props.allCustomers.push(client);
+		this.props.customerAction.emitAddCustomer(client);
 	}
 
 	/**
@@ -84,7 +88,7 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @param {Object} client - The existing client data
 	 */
 	private editClient(client: any) {
-		this.props.customerAction.editCustomer(client);
+		this.props.customerAction.emitEditCustomer(client);
 	}
 
 	/**
@@ -93,6 +97,6 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @param {Object} client - The existing client data
 	 */
 	private deleteClient(client: any) {
-		this.props.customerAction.deleteCustomer(client);
+		this.props.customerAction.emitDeleteCustomer(client);
 	}
 }

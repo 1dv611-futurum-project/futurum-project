@@ -160,7 +160,7 @@ export class TicketPage extends React.Component<any, any> {
 			snackState: true,
 			snackMessage: `Ärendet har tilldelats ${assignee}.`
 		});
-		this.props.ticketAction.emitAssignee(status);
+		this.props.ticketAction.emitAssignee(assignee);
 	}
 
 	/**
