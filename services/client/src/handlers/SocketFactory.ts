@@ -3,7 +3,7 @@
  */
 
 import * as SocketIO from 'socket.io-client';
-import TicketsChannel from './channels/TicketsChannel';
+import TicketChannel from './channels/TicketChannel';
 import CustomerChannel from './channels/CustomerChannel';
 import SettingsChannel from './channels/SettingsChannel';
 
@@ -26,7 +26,7 @@ export default class SocketFactory {
 	}
 
 	public tickets() {
-		return new TicketsChannel(this.io);
+		return new TicketChannel(this.io);
 	}
 
 	public customers() {
