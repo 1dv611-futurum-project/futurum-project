@@ -5,7 +5,7 @@
 import * as SocketIO from 'socket.io-client';
 import TicketChannel from './channels/TicketChannel';
 import CustomerChannel from './channels/CustomerChannel';
-import SettingsChannel from './channels/SettingsChannel';
+import SettingChannel from './channels/SettingChannel';
 
 /**
  * Handles the connection.
@@ -25,15 +25,15 @@ export default class SocketFactory {
 		this.io = SocketIO(SocketFactory.URL, { path: SocketFactory.PATH });
 	}
 
-	public tickets() {
+	public ticketChannel() {
 		return new TicketChannel(this.io);
 	}
 
-	public customers() {
+	public customerChannel() {
 		return new CustomerChannel(this.io);
 	}
 
-	public settings() {
-		return new SettingsChannel(this.io);
+	public settingChannel() {
+		return new SettingChannel(this.io);
 	}
 }

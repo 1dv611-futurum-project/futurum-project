@@ -71,7 +71,7 @@ const mockData = [
       }
     ]
   }
-];
+] as object[];
 
 const customerMock = [ {
   _id: 'randomstrang1',
@@ -118,36 +118,22 @@ class WebsocketHandler {
       this.emitCustomers(customerMock);
       this.emitSettings(settingsMock);
 
-      socket.on('ticket:status', (data: any) => {
-        console.log(data);
+      // Incoming data:
+      // eventType + ticket
+      socket.on('tickets', (event: string, data: any) => {
+        console.log({ event, data });
       });
 
-      socket.on('ticket:assignee', (data: any) => {
-        console.log(data);
+      // Incoming data:
+      // eventType + customer
+      socket.on('customers', (event: string, data: any) => {
+        console.log({ event, data });
       });
 
-      socket.on('ticket:mail', (data: any) => {
-        console.log(data);
-      });
-
-      socket.on('customer:add', (data: any) => {
-        console.log(data);
-      });
-
-      socket.on('customer:edit', (data: any) => {
-        console.log(data);
-      });
-
-      socket.on('customer:delete', (data: any) => {
-        console.log(data);
-      });
-
-      socket.on('settings:color', (data: any) => {
-        console.log(data);
-      });
-
-      socket.on('settings:assignee', (data: any) => {
-        console.log(data);
+      // Incoming data:
+      // eventType + all settings
+      socket.on('settings', (event: string, data: any) => {
+        console.log({ event, data });
       });
 
       socket.on('disconnect', () => {
@@ -161,9 +147,8 @@ class WebsocketHandler {
    */
   public emitTicket(ticket: object): void {
     try {
-      const tick = JSON.stringify(ticket);
-      console.log(tick);
-      this.socket.emit('ticket', JSON.stringify(ticket));
+      mockData.push(ticket);
+      this.socket.emit('tickets', JSON.stringify(mockData));
     } catch (error) {
       console.error(error);
     }
@@ -174,7 +159,6 @@ class WebsocketHandler {
    */
   public emitTickets(tickets: object[]): void {
     try {
-      const tick = JSON.stringify(tickets);
       this.socket.emit('tickets', JSON.stringify(tickets));
     } catch (error) {
       console.error(error);
