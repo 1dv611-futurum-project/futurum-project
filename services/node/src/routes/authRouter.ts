@@ -5,6 +5,7 @@ import * as express from 'express';
 import { Application, Router, Request, Response, NextFunction, Error } from 'express';
 import * as passport from 'passport';
 import * as jwt from 'jsonwebtoken';
+import { AuthError } from './../config/errors';
 
 const authRouter: Router = express.Router();
 
@@ -30,17 +31,33 @@ class AuthRouter {
    * Mounts the routes.
    */
   private mountRoutes() {
-    this.authRouter.get('/google', passport.authenticate('gmail', {
+    this.authRouter.get('/google', this.passportAuth({
       scope: ['profile', 'email', 'https://mail.google.com/'],
       accessType: 'offline',
       prompt: 'consent'})
     );
 
     this.authRouter.get('/google/callback',
-                        passport.authenticate('gmail', { session: false }),
+                        this.passportAuth({ session: false }),
                         this.redirectToUpdateIMAP);
 
     this.authRouter.get('/google/callback/redirect', this.redirectToClient);
+  }
+
+  private passportAuth(opts: object): ((req: Request, res: Response, next: NextFunction) => void) {
+    return (req: Request, res: Response, next: NextFunction): void => {
+      passport.authenticate('gmail', opts, (err, user, info) => {
+        if (err) {
+          return next(err);
+        }
+
+        if (!user) {
+          return next(new AuthError('Failed to authorize or authenticate user.'));
+        }
+
+        return next();
+      })(req, res, next);
+    };
   }
 
   /**

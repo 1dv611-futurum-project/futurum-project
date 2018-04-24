@@ -6,6 +6,7 @@
 import * as events from 'events';
 import { google } from 'googleapis';
 import IEmail from './interfaces/IEmail';
+import { GmailError } from './../../config/errors';
 const OAuth2 = google.auth.OAuth2;
 
 class MailSender extends events.EventEmitter {
@@ -80,12 +81,12 @@ class MailSender extends events.EventEmitter {
           if (!err) {
             return resolve();
           } else {
-            return reject({message: 'Unable to send email: ' + err});
+            return reject(new GmailError('Unable to send email: ' + err));
           }
         });
       })
       .catch((error) => {
-        reject(error);
+        reject(new GmailError(error.message || 'Something went wrong while sending emails.'));
       });
     });
   }

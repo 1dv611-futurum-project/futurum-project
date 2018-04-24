@@ -5,6 +5,7 @@
 // Imports
 import * as xoauth2 from 'xoauth2';
 import IIMAPCredentials from './interfaces/IIMAPCredentials';
+import { NoIMAPCredentialsError } from './../../config/errors';
 
 /**
  * Instantiates an xoauth generator
@@ -53,7 +54,7 @@ class XOauth {
           resolve(token);
         });
       } else {
-        reject('No generator');
+        reject(new NoIMAPCredentialsError('No generator'));
       }
     });
   }

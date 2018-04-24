@@ -7,9 +7,10 @@ import * as Imap from 'imap';
 import { Box, ImapMessage } from 'imap';
 import * as events from 'events';
 import { MailParser } from 'mailparser-mit';
-import IMAPConnectionInterface from './IMAPConnectionInterface';
+import IMAPConnectionInterface from './interfaces/IMAPConnectionInterface';
 import XOauth from './Xoauth2Generator';
 import { Xoauth2Generator } from './Xoauth2Generator';
+import { IMAPError } from './../../config/errors';
 
 /**
  * Sets up a connection to the imap-server.
@@ -28,7 +29,6 @@ class Connection extends events.EventEmitter implements IMAPConnectionInterface 
   private imap: Imap;
   private xoauthGenerator: Xoauth2Generator;
   private isConnected: boolean;
-  private id = 0;
 
   constructor() {
     super();
@@ -203,14 +203,14 @@ class Connection extends events.EventEmitter implements IMAPConnectionInterface 
           fetchMessages.on('end', () => {
             this.imap.setFlags(indicesToFetch, ['\\Seen'], (error: Error) => {
               if (error) {
-                this.emitMessage('error', {message: 'Error marking messages as read in the inbox.'});
+                this.emitMessage('error', new IMAPError('Error marking messages as read in the inbox.'));
               }
             });
           });
         });
 
         fetchMessages.once('error', (error: Error) => {
-          reject({type: 'fetch', message: 'An error occured while fetching unread messages.'});
+          reject(new IMAPError('Error marking messages as read in the inbox.'));
         });
       });
     });
@@ -219,12 +219,9 @@ class Connection extends events.EventEmitter implements IMAPConnectionInterface 
   /**
    * Emits connection errors.
    */
-  private handleConnectionError(err: object): void {
+  private handleConnectionError(err: Error): void {
     this.isConnected = false;
-    const error = {};
-    error.message = err.message || 'An error with the IMAP-connection occured.';
-    error.type = err.type || 'Connection';
-    this.emitMessage('error', error);
+    this.emitMessage('error', new IMAPError(err.message || 'An error with the IMAP-connection occured.'));
   }
 
   /**

@@ -63,6 +63,9 @@ class Middleware {
     };
   }
 
+  /**
+   * Checks the user's authorization.
+   */
   public security(): () => void {
     return jwt({
       secret: 'secret',

@@ -121,6 +121,7 @@ class App {
     this.onSocketConnection();
     this.middleware();
     this.mountRoutes();
+    this.handleErrors();
     this.handleIncomingEmails();
     this.handleDB();
   }
@@ -141,7 +142,6 @@ class App {
     this.express.use(middleware.security());
     this.express.use(middleware.checkConnection());
     this.express.use(middleware.updateIMAPConnection());
-    this.express.use(this.errorHandler);
   }
 
   private mountRoutes(): void {
@@ -150,6 +150,10 @@ class App {
     this.express.use('/node/auth', this.authRouter);
     this.express.use('/auth', this.authRouter);
     this.express.all('*', this.emptyHandler);
+  }
+
+  private handleErrors(): void {
+    this.express.use(this.errorHandler);
   }
 
   private handleDB(): void {
@@ -308,7 +312,8 @@ class App {
   }
 
   // 500
-  private errorHandler(err, req: Request, res: Response, next: NextFunction): void {
+  private errorHandler(err: any, req: Request, res: Response, next: NextFunction): void {
+    // TODO: Handle errors instead of pushing all of them out to client
     if (err.name === 'UnauthorizedError') {
       return res.redirect('/node/auth/google');
     }
