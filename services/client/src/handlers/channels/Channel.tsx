@@ -18,7 +18,6 @@ export class Channel implements IChannel {
 	}
 
 	public listen(cb: any) {
-		console.log(this.channel);
 		this.io.on(this.channel, cb);
 	}
 
