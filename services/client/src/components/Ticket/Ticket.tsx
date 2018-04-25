@@ -65,7 +65,9 @@ export class Ticket extends React.Component<ITicket, any> {
 						Mottaget: {this.getDateFormat(ticket.created)}
 					</p>
 					<p className='ticket__content__information'>Tilldelat:
-						<span className='ticket__content__information--bold'> {ticket.assignee ? ticket.assignee : '—'}</span>
+						<span className='ticket__content__information--bold'>
+							{ticket.assignee ? ticket.assignee : '—'}
+						</span>
 					</p>
 				</CardContent>
 				<TicketAction

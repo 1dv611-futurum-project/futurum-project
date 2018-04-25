@@ -1,6 +1,6 @@
 /**
- * CustomSpan component
- * @module components/CustomSpan/CustomSpan
+ * CustomButton component
+ * @module components/CustomButton/CustomButton
  */
 
 import * as React from 'react';
@@ -8,7 +8,7 @@ import * as cx from 'classnames';
 import { Button } from 'material-ui';
 
 /**
- * CustomSpan class
+ * CustomButton class
  */
 class CustomButton extends React.Component<any, any> {
 

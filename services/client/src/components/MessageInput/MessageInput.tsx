@@ -44,7 +44,9 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 
 		return (
 			<Paper className={cssClasses}>
-				<label htmlFor='message' className='message-input__label'>Svara på ärendet</label>
+				<label htmlFor='message' className='message-input__label'>
+					Svara på ärendet
+				</label>
 				<TextArea
 					className='message-input__textarea'
 					name='message'

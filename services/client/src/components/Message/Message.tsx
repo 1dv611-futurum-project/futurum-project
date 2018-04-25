@@ -40,11 +40,22 @@ export class Message extends React.Component<IMessage, any> {
 				<div className='message__content'>
 					<p className='message__content__title'>
 						{fromCustomer ? customer : assignee},
-						<span className='message__content__title--regular'> {moment(received, moment.ISO_8601).format('L')}</span>
+						<span className='message__content__title--regular'>
+							{this.getDateFormat(received)}
+						</span>
 					</p>
 					<p className='message__content__text'>{body}</p>
 				</div>
 			</Paper>
 		);
+	}
+
+	/**
+	 * Formats ISO_8601 date to L format (e.g. 2018-04-17)
+	 * @private
+	 * @param {String} date - The date string
+	 */
+	private getDateFormat(date: string): string {
+		return moment(date, moment.ISO_8601).format('L');
 	}
 }

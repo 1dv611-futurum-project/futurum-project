@@ -7,11 +7,13 @@ import * as React from 'react';
 import { ModeEdit, Delete } from 'material-ui-icons';
 import { Table, TableBody, TableCell, TableHead, TableRow, IconButton, Tooltip } from 'material-ui';
 
+import { ClientRow } from './ClientRow';
+
 /**
- * Ticket Props Interface
+ * ClientList Props Interface
  */
 export interface IClientList {
-	data: any[];
+	customers: any[];
 	onEdit: any;
 	onDelete: any;
 }
@@ -26,7 +28,7 @@ export class ClientList extends React.Component<IClientList, any> {
 	 * @public
 	 */
 	public render() {
-		const { onEdit, onDelete } = this.props;
+		const { customers, onEdit, onDelete } = this.props;
 
 		return (
 			<Table className='client-list__table'>
@@ -39,31 +41,14 @@ export class ClientList extends React.Component<IClientList, any> {
 				</TableRow>
 			</TableHead>
 			<TableBody className='client-list__table__body'>
-				{this.props.data.map((client: any, i: any) => {
+				{customers.map((client: any, i: any) => {
 					return (
-					<TableRow key={i}>
-						<TableCell>{client.name}</TableCell>
-						<TableCell>{client.email}</TableCell>
-						<TableCell>{client.errands}</TableCell>
-						<TableCell className='client-list__table--icon'>
-							<Tooltip title='Redigera'>
-								<IconButton
-									className='client-list__table--btn'
-									onClick={() => onEdit(client)}
-								>
-									<ModeEdit />
-								</IconButton>
-							</Tooltip>
-							<Tooltip title='Ta bort'>
-								<IconButton
-									className='client-list__table--btn'
-									onClick={() => onDelete(client)}
-								>
-									<Delete />
-								</IconButton>
-							</Tooltip>
-					</TableCell>
-				</TableRow>
+						<ClientRow
+							key={i}
+							customer={client}
+							onEdit={onEdit}
+							onDelete={onDelete}
+						/>
 					);
 				})}
 			</TableBody>
