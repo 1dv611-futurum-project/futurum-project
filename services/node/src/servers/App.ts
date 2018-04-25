@@ -15,80 +15,11 @@ import authRouter from './../routes/authRouter';
 import DBHandler from './../handlers/db/DBHandler';
 import DBConnection from './../handlers/db/DBConnection';
 import EmailHandler from './../handlers/email/EmailHandler';
-import websocketHandler from './../handlers/WebsocketHandler';
-import SocketFactory from './../handlers/SocketFactory';
+import WebsocketHandler from './../handlers/WebsocketHandler';
 import IReceivedTicket from './../handlers/email/interfaces/IReceivedTicket';
 import { IncomingMailEvent } from './../handlers/email/events/IncomingMailEvents';
 import Ticket from './../models/Ticket';
 import Mail from './../models/Mail';
-
-const mockData = [
-  {
-    type: 'ticket',
-    id: 3,
-    status: 2,
-    assignee: 'Anton Myrberg',
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Ett test',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'Vi har mottagit ditt meddelande och återkommer inom kort. Mvh Anton Myrberg',
-        fromCustomer: false
-      },
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  },
-  {
-    type: 'ticket',
-    id: 12,
-    status: 1,
-    assignee: null,
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Vi har ett problem',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  },
-  {
-    type: 'ticket',
-    id: 6,
-    status: 2,
-    assignee: 'Sebastian Borgstedt',
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Nu har det blivit tokigt',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  }
-];
 
 /**
  * Express app.
@@ -98,20 +29,15 @@ class App {
   private mainRouter: Router;
   private authRouter: Router;
   private DBHandler: DBHandler;
-  // private websocketHandler: WebsocketHandler;
-  private socketFactory: SocketFactory;
-  private ticketChannel: any;
-  private settingChannel: any;
-  private customerChannel: any;
-  private assigneeChannel: any;
+  private websocketHandler: WebsocketHandler;
 
   constructor() {
     this.express = express();
     this.mainRouter = mainRouter;
     this.authRouter = authRouter;
     this.DBHandler = new DBHandler(new DBConnection());
-    // this.websocketHandler = WebsocketHandler;
-    this.socket();
+    this.websocketHandler = WebsocketHandler;
+    // this.onSocketConnection();
     this.middleware();
     this.mountRoutes();
     this.handleErrors();
@@ -119,55 +45,13 @@ class App {
     this.handleDB();
   }
 
-  private socket() {
-    this.socketFactory = new SocketFactory();
-    this.onSocketConnection();
-    this.ticketChannel = this.socketFactory.ticketChannel();
-    this.settingChannel = this.socketFactory.settingChannel();
-    this.customerChannel = this.socketFactory.customerChannel();
-    this.assigneeChannel = this.socketFactory.assigneeChannel();
-
-    this.ticketChannel.onStatus( (data: object) => {
-        // todo: update status on ticket with data.ID
-    });
-
-    this.ticketChannel.onAssignee( (data: object) => {
-      // todo: update assignee on ticket with data.ID
-    });
-
-    this.ticketChannel.onMail( (data: object) => {
-      // todo: send mail to emailhandler and update tickets mail array in db
-    });
-
-    this.settingChannel.onSettings( (data: object) => {
-      // todo: update settings in db
-    });
-
-    this.assigneeChannel.onAssignee( (data: object) => {
-      // todo: update assignee in db
-    });
-
-    this.customerChannel.onAddCustomer( (data: object) => {
-      // todo: add new customer to db
-    });
-
-    this.customerChannel.onEditCustomer( (data: object) => {
-      // todo: update customer in db
-    });
-
-    this.customerChannel.onDeleteCustomer( (data: object) => {
-      // todo: remove customer from db
-    });
-  }
-
-  private onSocketConnection() {
-    const tickArr = [];
-    tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
-    tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
-    tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
-    this.ticketChannel.emitTickets(tickArr);
-    // this.websocketHandler.emitTickets(tickArr);
-  }
+  // private onSocketConnection() {
+  //   const tickArr = [];
+  //   tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
+  //   tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
+  //   tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
+  //   this.websocketHandler.emitTickets(tickArr);
+  // }
 
   private middleware(): void {
     this.express.use(bodyParser.json());
@@ -249,8 +133,7 @@ class App {
       try {
         const ticket = this.createNewTicket(mail, this.createNewMails(mail));
         this.DBHandler.createNewFromType(mail.type, ticket);
-        this.ticketChannel.emitTicket(ticket);
-        // this.websocketHandler.emitTicket(ticket);
+        this.websocketHandler.emitTicket(ticket);
       } catch (error) {
         console.error(error);
       }
@@ -262,8 +145,7 @@ class App {
       console.log('Make call to database to save the answer.');
       this.DBHandler.addOrUpdate(mail.type, this.createNewMails(mail));
       const ticket = this.DBHandler.getOne(mail.type, this.createNewMails(mail));
-      this.ticketChannel.emitTicket(ticket);
-      // this.websocketHandler.emitTicket(ticket);
+      this.websocketHandler.emitTicket(ticket);
       // Emit answer to client
     });
 
