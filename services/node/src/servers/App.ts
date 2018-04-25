@@ -17,6 +17,7 @@ import DBConnection from './../handlers/db/DBConnection';
 import EmailHandler from './../handlers/email/EmailHandler';
 import WebsocketHandler from './../handlers/WebsocketHandler';
 import IReceivedTicket from './../handlers/email/interfaces/IReceivedTicket';
+import { IncomingMailEvent } from './../handlers/email/events/IncomingMailEvents';
 import Ticket from './../models/Ticket';
 import Mail from './../models/Mail';
 
@@ -236,7 +237,7 @@ class App {
   }
 
   private handleIncomingEmails(): void {
-    EmailHandler.Incoming.on('mail', (mail) => {
+    EmailHandler.Incoming.on(IncomingMailEvent.TICKET, (mail) => {
       console.log('Got new ticket:');
       console.log(mail);
 
@@ -249,7 +250,7 @@ class App {
       }
     });
 
-    EmailHandler.Incoming.on('answer', (mail) => {
+    EmailHandler.Incoming.on(IncomingMailEvent.ANSWER, (mail) => {
       console.log('Got answer on existing ticket:');
       console.log(mail);
       console.log('Make call to database to save the answer.');
@@ -259,7 +260,7 @@ class App {
       // Emit answer to client
     });
 
-    EmailHandler.Incoming.on('forward', (mail) => {
+    EmailHandler.Incoming.on(IncomingMailEvent.FORWARD, (mail) => {
       console.log('Got mail not in whitelist:');
       console.log(mail);
       console.log('forwarding the mail');
@@ -275,25 +276,25 @@ class App {
       console.log('emit forward to client?');
     });
 
-    EmailHandler.Incoming.on('unauth', (payload) => {
+    EmailHandler.Incoming.on(IncomingMailEvent.UNAUTH, (payload) => {
       console.log('Got unauth:');
       console.log(payload);
       console.log('We are missing authorization details for the email, should direct user to auth-route?.');
     });
 
-    EmailHandler.Incoming.on('message', (message) => {
+    EmailHandler.Incoming.on(IncomingMailEvent.MESSAGE, (message) => {
       console.log('imap connection is probably going to go down in a calculated way. Action?:');
       console.log(message);
       console.log('Make call to ws to send notification of message.');
     });
 
-    EmailHandler.Incoming.on('tamper', (message) => {
+    EmailHandler.Incoming.on(IncomingMailEvent.TAMPER, (message) => {
       console.log('Got tamper message, means emails are being accesses externally and possible reload should happen:');
       console.log(message);
       console.log('Make call to ws to send notification of tamper.');
     });
 
-    EmailHandler.Incoming.on('error', (error) => {
+    EmailHandler.Incoming.on(IncomingMailEvent.ERROR, (error) => {
       console.log('Got error:');
       console.log(error);
       console.log('Make call to ws to send notification of error.');

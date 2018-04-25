@@ -8,6 +8,8 @@ import IMAPConnectionInterface from './interfaces/IMAPConnectionInterface';
 import IReceivedEmail from './interfaces/IReceivedEmail';
 import IReceivedTicket from './interfaces/IReceivedTicket';
 import IReceivedAnswer from './interfaces/IReceivedAnswer';
+import { IMAPConnectionEvent } from './events/IMAPConnectionEvents';
+import { IncomingMailEvent } from './events/IncomingMailEvents';
 
 // This should be a database, only array for development
 const whitelist = ['mopooy@gmail.com', 'js223zs@student.lnu.se'];
@@ -17,10 +19,6 @@ const whitelist = ['mopooy@gmail.com', 'js223zs@student.lnu.se'];
  * listens for incoming messages.
  */
 class IMAPHandler extends events.EventEmitter {
-
-  private static TICKET = 'mail';
-  private static ANSWER = 'answer';
-  private static FORWARD = 'forward';
 
   private interval: number;
   private imapConnection: IMAPConnectionInterface;
@@ -33,12 +31,12 @@ class IMAPHandler extends events.EventEmitter {
     this.imapConnection = imapConnection;
     this.interval = interval || 60000;
 
-    this.imapConnection.on('ready', this.handleInitialConnect.bind(this));
-    this.imapConnection.on('error', this.handleConnectionError.bind(this));
-    this.imapConnection.on('unauth', this.handleConnectionAuth.bind(this));
-    this.imapConnection.on('mail', this.handleNewMailEvent.bind(this));
-    this.imapConnection.on('change', this.handleServerChange.bind(this));
-    this.imapConnection.on('server', this.handleServerMessage.bind(this));
+    this.imapConnection.on(IMAPConnectionEvent.READY, this.handleInitialConnect.bind(this));
+    this.imapConnection.on(IMAPConnectionEvent.ERROR, this.handleConnectionError.bind(this));
+    this.imapConnection.on(IMAPConnectionEvent.UNAUTH, this.handleConnectionAuth.bind(this));
+    this.imapConnection.on(IMAPConnectionEvent.MAIL, this.handleNewMailEvent.bind(this));
+    this.imapConnection.on(IMAPConnectionEvent.CHANGE, this.handleServerChange.bind(this));
+    this.imapConnection.on(IMAPConnectionEvent.SERVER, this.handleServerMessage.bind(this));
     process.on('exit', this.handleCleanup.bind(this));
 
     this.imapConnection.updateCredentials();
@@ -74,7 +72,7 @@ class IMAPHandler extends events.EventEmitter {
     const mailType = this.getType(mail);
     let formattedMessage;
 
-    if (mailType === IMAPHandler.TICKET || mailType === IMAPHandler.FORWARD) {
+    if (mailType === IncomingMailEvent.TICKET || mailType === IncomingMailEvent.FORWARD) {
       formattedMessage = this.formatAsNewTicket(mail);
     } else {
       formattedMessage = this.formatAsAnswer(mail);
@@ -106,12 +104,12 @@ class IMAPHandler extends events.EventEmitter {
     let type;
 
     if (this.isNewTicket(mail)) {
-      type = IMAPHandler.TICKET;
+      type = IncomingMailEvent.TICKET;
       if (!this.isInWhitelist(mail.from[0].address)) {
-        type = IMAPHandler.FORWARD;
+        type = IncomingMailEvent.FORWARD;
       }
     } else {
-      type = IMAPHandler.ANSWER;
+      type = IncomingMailEvent.ANSWER;
     }
 
     return type;
@@ -197,28 +195,28 @@ class IMAPHandler extends events.EventEmitter {
    * Emits connection errors.
    */
   private handleConnectionError(err: Error): void {
-    this.emit('error', err);
+    this.emit(IncomingMailEvent.ERROR, err);
   }
 
   /**
    * Emits unauth errors.
    */
   private handleConnectionAuth(): void {
-    this.emit('unauth', {message: 'User credentails are missing.'});
+    this.emit(IncomingMailEvent.UNAUTH, {message: 'User credentails are missing.'});
   }
 
   /**
    * Emits that the server has sent a message.
    */
   private handleServerMessage(payload: object): void {
-    this.emit('message', payload);
+    this.emit(IncomingMailEvent.MESSAGE, payload);
   }
 
   /**
    * Emits that the server has changed.
    */
   private handleServerChange(payload: object): void {
-    this.emit('tamper', payload);
+    this.emit(IncomingMailEvent.TAMPER, payload);
   }
 
   /**

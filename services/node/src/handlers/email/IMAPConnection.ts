@@ -11,6 +11,7 @@ import IMAPConnectionInterface from './interfaces/IMAPConnectionInterface';
 import XOauth from './Xoauth2Generator';
 import { Xoauth2Generator } from './Xoauth2Generator';
 import { IMAPError } from './../../config/errors';
+import { IMAPConnectionEvent } from './events/IMAPConnectionEvents';
 
 /**
  * Sets up a connection to the imap-server.
@@ -58,7 +59,7 @@ class Connection extends events.EventEmitter implements IMAPConnectionInterface 
         resolve();
       })
       .catch((err) => {
-        this.handleConnectionError({message: err.message});
+        this.handleConnectionError(new IMAPError(err));
       });
     });
   }
@@ -85,7 +86,7 @@ class Connection extends events.EventEmitter implements IMAPConnectionInterface 
    */
   private connect(): void {
     if (!this.xoauthGenerator) {
-      this.emitMessage('unauth');
+      this.emitMessage(IMAPConnectionEvent.UNAUTH);
     } else {
       this.xoauthGenerator.getToken()
       .then((token) => {
@@ -121,10 +122,10 @@ class Connection extends events.EventEmitter implements IMAPConnectionInterface 
     this.openInbox()
     .then(() => {
       this.isConnected = true;
-      this.emitMessage('ready');
+      this.emitMessage(IMAPConnectionEvent.READY);
     })
     .catch((err: Error) => {
-      this.handleConnectionError({message: err.message});
+      this.handleConnectionError(new IMAPError(err));
     });
   }
 
@@ -154,7 +155,7 @@ class Connection extends events.EventEmitter implements IMAPConnectionInterface 
       .then((emails: object[]) => {
         if (emails) {
           emails.forEach((message: object) => {
-            this.emitMessage('mail', message);
+            this.emitMessage(IMAPConnectionEvent.READY, message);
           });
         }
         return resolve();
@@ -203,7 +204,7 @@ class Connection extends events.EventEmitter implements IMAPConnectionInterface 
           fetchMessages.on('end', () => {
             this.imap.setFlags(indicesToFetch, ['\\Seen'], (error: Error) => {
               if (error) {
-                this.emitMessage('error', new IMAPError('Error marking messages as read in the inbox.'));
+                this.emitMessage(IMAPConnectionEvent.ERROR, new IMAPError('Error marking messages as read.'));
               }
             });
           });
@@ -221,7 +222,7 @@ class Connection extends events.EventEmitter implements IMAPConnectionInterface 
    */
   private handleConnectionError(err: Error): void {
     this.isConnected = false;
-    this.emitMessage('error', new IMAPError(err.message || 'An error with the IMAP-connection occured.'));
+    this.emitMessage(IMAPConnectionEvent.ERROR, new IMAPError(err || 'An error with the IMAP Connection occured.'));
   }
 
   /**
@@ -229,14 +230,14 @@ class Connection extends events.EventEmitter implements IMAPConnectionInterface 
    */
   private handleConnectionEnd(): void {
     this.isConnected = false;
-    this.emitMessage('server', {message: 'Connection to the IMAP-server has ended.'});
+    this.emitMessage(IMAPConnectionEvent.SERVER, {message: 'Connection to the IMAP-server has ended.'});
   }
 
   /**
    * Emits connection-end events.
    */
   private handleServerMessage(message: string): void {
-    this.emitMessage('server', {message});
+    this.emitMessage(IMAPConnectionEvent.SERVER, {message});
   }
 
   /**
@@ -244,7 +245,7 @@ class Connection extends events.EventEmitter implements IMAPConnectionInterface 
    */
   private handleServerChange(seqno, info): void {
     if ((info && info.flags && info.flags.indexOf('\\Seen') === -1) || !info) {
-      this.emitMessage('change', {
+      this.emitMessage(IMAPConnectionEvent.CHANGE, {
         message: 'Someone or something is accessing the emails externally, ' +
         'server should probably be restarted to ensure continued validity.'
       });
