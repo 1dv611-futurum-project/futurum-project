@@ -6,6 +6,7 @@
 import { expect } from 'chai';
 import { it, describe, before, after } from 'mocha';
 import XOauthGen from './../../src/handlers/email/Xoauth2Generator';
+import { NoIMAPCredentialsError } from './../../src/config/errors';
 
 /**
  * Run the tests.
@@ -26,7 +27,8 @@ export function run() {
       return new Promise((resolve) => {
         XOauthGen.getToken()
         .catch((err) => {
-          expect(err).to.equal('No generator');
+          expect(err instanceof NoIMAPCredentialsError).to.equal(true);
+          expect(err.message).to.equal('No generator');
           resolve();
         });
       });

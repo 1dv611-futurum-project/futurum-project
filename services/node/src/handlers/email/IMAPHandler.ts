@@ -10,6 +10,8 @@ import IReceivedTicket from './interfaces/IReceivedTicket';
 import IReceivedAnswer from './interfaces/IReceivedAnswer';
 import { IMAPConnectionEvent } from './events/IMAPConnectionEvents';
 import { IncomingMailEvent } from './events/IncomingMailEvents';
+import { IMAPError } from './../../config/errors';
+import MailSender from './MailSender';
 
 // This should be a database, only array for development
 const whitelist = ['mopooy@gmail.com', 'js223zs@student.lnu.se'];
@@ -40,6 +42,13 @@ class IMAPHandler extends events.EventEmitter {
     process.on('exit', this.handleCleanup.bind(this));
 
     this.imapConnection.updateCredentials();
+  }
+
+  /**
+   * Disconnects.
+   */
+  public disconnect() {
+    this.handleCleanup();
   }
 
   /**
@@ -105,7 +114,7 @@ class IMAPHandler extends events.EventEmitter {
 
     if (this.isNewTicket(mail)) {
       type = IncomingMailEvent.TICKET;
-      if (!this.isInWhitelist(mail.from[0].address)) {
+      if (!this.isInWhitelist(Array.isArray(mail.from) ? mail.from[0].address : mail.from.address)) {
         type = IncomingMailEvent.FORWARD;
       }
     } else {
@@ -136,8 +145,8 @@ class IMAPHandler extends events.EventEmitter {
     message.created = mail.receivedDate;
     message.title = mail.subject;
     message.from = {
-      name: mail.from[0].name,
-      email: mail.from[0].address
+      name: Array.isArray(mail.from) ? mail.from[0].name : mail.from.name,
+      email: Array.isArray(mail.from) ? mail.from[0].address : mail.from.address
     };
     message.messages = [
       {
@@ -157,7 +166,7 @@ class IMAPHandler extends events.EventEmitter {
     const message = ({} as IReceivedAnswer);
 
     message.mailID = mail.messageId;
-    message.inAnswerTo = mail.references[0];
+    message.inAnswerTo = Array.isArray(mail.references) ? mail.references[0] : mail.references;
     message.received = mail.receivedDate;
     message.body = mail.text;
     message.fromCustomer = true;
@@ -195,7 +204,7 @@ class IMAPHandler extends events.EventEmitter {
    * Emits connection errors.
    */
   private handleConnectionError(err: Error): void {
-    this.emit(IncomingMailEvent.ERROR, err);
+    this.emit(IncomingMailEvent.ERROR, new IMAPError(err) || new IMAPError('Something wrong with the connection.'));
   }
 
   /**

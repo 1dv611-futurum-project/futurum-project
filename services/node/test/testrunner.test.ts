@@ -22,6 +22,7 @@ import emailHandlerTests = require('./email-tests/email-handler-test-suite');
 import xoauthTests = require('./email-tests/xoauth-generator-test-suite');
 import ImapConnectionTests = require('./email-tests/imap-connection-test-suite');
 import ImapHandlerTests = require('./email-tests/imap-handler-test-suite');
+import mailSenderTests = require('./email-tests/mail-sender-test-suite');
 
 // Runs
 mongooseTests.run();
@@ -30,4 +31,5 @@ dbHandlerTests.run();
 xoauthTests.run();
 ImapHandlerTests.run();
 ImapConnectionTests.run();
+mailSenderTests.run();
 emailHandlerTests.run();
