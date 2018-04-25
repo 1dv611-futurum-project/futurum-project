@@ -1,7 +1,6 @@
 /**
  * Handles the websocket connection against the client.
  */
-
 import { Channel } from './Channel';
 import { CustomerEvent } from '../events/CustomerEvent';
 
@@ -22,10 +21,6 @@ export default class CustomerChannel extends Channel {
 
   public onDeleteCustomer(cb: any) {
     this.listen(cb);
-  }
-
-  public emitCustomer(customer: object) {
-    this.emit(CustomerEvent.CUSTOMER, customer);
   }
 
   public emitCustomers(customers: object[]) {

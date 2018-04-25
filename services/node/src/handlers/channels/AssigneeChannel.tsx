@@ -1,9 +1,6 @@
 /**
  * Handles the websocket connection against the client.
  */
-
-import * as SocketIO from 'socket.io-client';
-
 import { Channel } from './Channel';
 import { AssigneeEvent } from '../events/AssigneeEvent';
 

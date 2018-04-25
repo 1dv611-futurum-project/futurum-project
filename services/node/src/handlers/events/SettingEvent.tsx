@@ -3,5 +3,5 @@
  */
 export enum SettingEvent {
 	CHANNEL= 'settings',
-	UPDATE = 'setting_update',
+	SETTINGS = 'settings',
 }

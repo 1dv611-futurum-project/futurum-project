@@ -15,7 +15,8 @@ import authRouter from './../routes/authRouter';
 import DBHandler from './../handlers/db/DBHandler';
 import DBConnection from './../handlers/db/DBConnection';
 import EmailHandler from './../handlers/email/EmailHandler';
-import WebsocketHandler from './../handlers/WebsocketHandler';
+import websocketHandler from './../handlers/WebsocketHandler';
+import SocketFactory from './../handlers/SocketFactory';
 import IReceivedTicket from './../handlers/email/interfaces/IReceivedTicket';
 import { IncomingMailEvent } from './../handlers/email/events/IncomingMailEvents';
 import Ticket from './../models/Ticket';
@@ -97,14 +98,19 @@ class App {
   private mainRouter: Router;
   private authRouter: Router;
   private DBHandler: DBHandler;
-  private websocketHandler: WebsocketHandler;
+  // private websocketHandler: WebsocketHandler;
+  private socketFactory: SocketFactory;
+  private ticketChannel: any;
+  private settingChannel: any;
+  private customerChannel: any;
+  private assigneeChannel: any;
 
   constructor() {
     this.express = express();
     this.mainRouter = mainRouter;
     this.authRouter = authRouter;
     this.DBHandler = new DBHandler(new DBConnection());
-    this.websocketHandler = WebsocketHandler;
+    // this.websocketHandler = WebsocketHandler;
     this.socket();
     this.middleware();
     this.mountRoutes();
@@ -114,7 +120,44 @@ class App {
   }
 
   private socket() {
+    this.socketFactory = new SocketFactory();
     this.onSocketConnection();
+    this.ticketChannel = this.socketFactory.ticketChannel();
+    this.settingChannel = this.socketFactory.settingChannel();
+    this.customerChannel = this.socketFactory.customerChannel();
+    this.assigneeChannel = this.socketFactory.assigneeChannel();
+
+    this.ticketChannel.onStatus( (data: object) => {
+        // todo: update status on ticket with data.ID
+    });
+
+    this.ticketChannel.onAssignee( (data: object) => {
+      // todo: update assignee on ticket with data.ID
+    });
+
+    this.ticketChannel.onMail( (data: object) => {
+      // todo: send mail to emailhandler and update tickets mail array in db
+    });
+
+    this.settingChannel.onSettings( (data: object) => {
+      // todo: update settings in db
+    });
+
+    this.assigneeChannel.onAssignee( (data: object) => {
+      // todo: update assignee in db
+    });
+
+    this.customerChannel.onAddCustomer( (data: object) => {
+      // todo: add new customer to db
+    });
+
+    this.customerChannel.onEditCustomer( (data: object) => {
+      // todo: update customer in db
+    });
+
+    this.customerChannel.onDeleteCustomer( (data: object) => {
+      // todo: remove customer from db
+    });
   }
 
   private onSocketConnection() {
@@ -122,7 +165,8 @@ class App {
     tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
     tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
     tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
-    this.websocketHandler.emitTickets(tickArr);
+    this.ticketChannel.emitTickets(tickArr);
+    // this.websocketHandler.emitTickets(tickArr);
   }
 
   private middleware(): void {
@@ -164,35 +208,6 @@ class App {
     this.DBHandler.connect('mongodb://futurum-db:27017');
   }
 
-/*
- * Example email to map to db objects
-{ type: 'ticket',
-  id: 0,
-  status: 0,
-  assignee: null,
-  mailID: 'CAHm9NZDiA=EYN9N7_r66TFr49ws0JYoEEjXbMU9Y2i4W9w8fug@mail.gmail.com',
-  created: 2018-04-21T13:48:01.000Z,
-  title: 'master',
-  from: { name: 'Johan Söderlund', email: 'js223zs@student.lnu.se' },
-  messages:
-    [ { received: 2018-04-21T13:48:01.000Z,
-        body: 'are you?\n',
-        fromCustomer: true } ] }
-*/
-
-/*
-      status: {type: Number, default: 0},
-  assignee: {type: String, required: false},
-  title: {type: String, required: false},
-  from: {type: String, required: true},
-  customerName: {type: String, required: false},
-  body: {type: [], required: true}
-
-  this.received = message.received;
-    this.fromCustomer = message.fromCustomer;
-    this.body = message.body;
-  */
-
   private createNewMails(mail: IReceivedTicket): Mail[] {
     try {
       const mailBodies = [];
@@ -233,8 +248,9 @@ class App {
 
       try {
         const ticket = this.createNewTicket(mail, this.createNewMails(mail));
-        // this.DBHandler.createNewFromType(mail.type, ticket);
-        this.websocketHandler.emitTicket(ticket);
+        this.DBHandler.createNewFromType(mail.type, ticket);
+        this.ticketChannel.emitTicket(ticket);
+        // this.websocketHandler.emitTicket(ticket);
       } catch (error) {
         console.error(error);
       }
@@ -246,7 +262,8 @@ class App {
       console.log('Make call to database to save the answer.');
       this.DBHandler.addOrUpdate(mail.type, this.createNewMails(mail));
       const ticket = this.DBHandler.getOne(mail.type, this.createNewMails(mail));
-      this.websocketHandler.emitTicket(ticket);
+      this.ticketChannel.emitTicket(ticket);
+      // this.websocketHandler.emitTicket(ticket);
       // Emit answer to client
     });
 
