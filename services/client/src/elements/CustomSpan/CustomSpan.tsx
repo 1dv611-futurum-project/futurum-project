@@ -27,6 +27,14 @@ export class CustomSpan extends React.Component<ICustomSpan, any> {
 		};
 	}
 
+	public componentDidUpdate(prevProps: any) {
+		if (prevProps !== this.props) {
+			this.setState({
+				color: this.getStatusColor(this.props.status)
+			});
+		}
+	}
+
 	/**
 	 * The render method
 	 * @public
@@ -35,8 +43,8 @@ export class CustomSpan extends React.Component<ICustomSpan, any> {
 		const { status, wide, small } = this.props;
 
 		const spanClasses = cx({
-			'ticket__color ticket__color--': wide,
-			'ticket-overview__color ticket-overview__color--': small,
+			'ticket-overview__color ticket-overview__color--': wide,
+			'ticket__color ticket__color--': small,
 		});
 
 		return (
