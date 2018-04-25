@@ -4,8 +4,9 @@
  */
 
 import * as React from 'react';
-import { Button } from 'material-ui';
 import { Add } from 'material-ui-icons';
+
+import Button from '../../elements/CustomButton/CustomButton';
 
 /**
  * AddButton Props Interface
@@ -29,7 +30,7 @@ export class AddButton extends React.Component<IAddButton, any> {
 
 		return (
 			<div className='add-btn'>
-				<Button variant='fab' color='primary' aria-label='add' mini={true} onClick={onClick} className='add-btn__icon'>
+				<Button variant='fab' theme={true} round={true} mini={true} onClick={onClick}>
 					<Add />
 				</Button>
 				<p className='add-btn__text'>{text}</p>

@@ -12,7 +12,7 @@ import 'moment/locale/sv';
 import { StatusSelect } from '../StatusSelect/StatusSelect';
 import { DropDownSelect } from '../DropDownSelect/DropDownSelect';
 import { AddButton } from '../AddButton/AddButton';
-import { CustomSpan } from '../../elements/CustomSpan/CustomSpan';
+import Span from '../../elements/CustomSpan/CustomSpan';
 
 /**
  * TicketOverview Props Interface
@@ -68,7 +68,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 
 		return (
 			<Paper className='ticket-overview'>
-				<CustomSpan status={this.state.status} wide={true} />
+				<Span status={this.state.status} wide={true} />
 				<div className='ticket-overview__header'>
 					<PlayArrow className='ticket-overview__header__icon'/>
 					<h1 className='ticket-overview__header__title'>

@@ -7,18 +7,9 @@ import * as React from 'react';
 import * as cx from 'classnames';
 
 /**
- * CustomSpan Props Interface
- */
-export interface ICustomSpan {
-	status: number;
-	wide?: boolean;
-	small?: boolean;
-}
-
-/**
  * CustomSpan class
  */
-export class CustomSpan extends React.Component<ICustomSpan, any> {
+class CustomSpan extends React.Component<any, any> {
 
 	constructor(props: any) {
 		super(props);
@@ -40,7 +31,7 @@ export class CustomSpan extends React.Component<ICustomSpan, any> {
 	 * @public
 	 */
 	public render() {
-		const { status, wide, small } = this.props;
+		const { wide, small } = this.props;
 
 		const spanClasses = cx({
 			'ticket-overview__color ticket-overview__color--': wide,
@@ -69,3 +60,5 @@ export class CustomSpan extends React.Component<ICustomSpan, any> {
 		}
 	}
 }
+
+export default CustomSpan;

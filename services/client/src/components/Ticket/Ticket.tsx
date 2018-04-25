@@ -10,7 +10,7 @@ import * as moment from 'moment';
 import 'moment/locale/sv';
 
 import { TicketAction } from './TicketAction';
-import { CustomSpan } from '../../elements/CustomSpan/CustomSpan';
+import Span from '../../elements/CustomSpan/CustomSpan';
 
 /**
  * Ticket Props Interface
@@ -34,11 +34,13 @@ export class Ticket extends React.Component<ITicket, any> {
 		this.handleStatusChange = this.handleStatusChange.bind(this);
 	}
 
-	public componentDidUpdate(prevProps: any) {
-		if (prevProps !== this.props) {
-			this.setState({ status: this.props.ticket.status});
-		}
-	}
+	// TODO: Add componentDidUpdate when database is running on server
+	//
+	// public componentDidUpdate(prevProps: any) {
+	// 	if (prevProps !== this.props) {
+	// 		this.setState({ status: this.props.ticket.status});
+	// 	}
+	// }
 
 	/**
 	 * The render method
@@ -49,7 +51,7 @@ export class Ticket extends React.Component<ITicket, any> {
 
 		return (
 			<Card className='ticket'>
-				<CustomSpan status={this.state.status} small={true} />
+				<Span status={this.state.status} small={true} />
 				<p className='ticket__id'>#{ticket.id}</p>
 				<Link to={`ticket-${ticket.id}`} className='ticket__header'>
 					<CardHeader

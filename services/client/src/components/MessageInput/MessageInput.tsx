@@ -4,8 +4,10 @@
  */
 
 import * as React from 'react';
-import { Button, Paper } from 'material-ui';
+import { Paper } from 'material-ui';
 import TextArea from 'react-textarea-autosize';
+
+import Button from '../../elements/CustomButton/CustomButton';
 
 /**
  * MessageInput Props Interface
@@ -50,7 +52,7 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 					onChange={this.handleChange}
 				/>
 				<div className='message-input__footer'>
-					<Button variant='raised' size='small' className='message-input__footer__btn' onClick={this.handleClick}>
+					<Button theme={true} block={true} onClick={this.handleClick}>
 						Skicka
 					</Button>
 				</div>
