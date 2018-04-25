@@ -145,6 +145,8 @@ class WebsocketHandler {
     });
   }
 
+  public 
+
   /**
    * Emits data to the server on ticket channels.
    */

@@ -105,26 +105,16 @@ class App {
     this.authRouter = authRouter;
     this.DBHandler = new DBHandler(new DBConnection());
     this.websocketHandler = WebsocketHandler;
-/*
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    async function demo() {
-      console.log('Taking a break...');
-      await sleep(2000);
-      console.log('Two second later');
-    }
-
-    demo();
-    */
-
-    this.onSocketConnection();
+    this.socket();
     this.middleware();
     this.mountRoutes();
     this.handleErrors();
     this.handleIncomingEmails();
     this.handleDB();
+  }
+
+  private socket() {
+    this.onSocketConnection();
   }
 
   private onSocketConnection() {
