@@ -3,7 +3,7 @@
  */
 
 import * as SocketIO from 'socket.io-client';
-import { IChannel } from './IChannel';
+import { IChannel } from './interfaces/IChannel';
 
 /**
  * Handles the connection.

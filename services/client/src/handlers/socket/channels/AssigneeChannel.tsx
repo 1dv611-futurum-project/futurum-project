@@ -5,7 +5,7 @@
 import * as SocketIO from 'socket.io-client';
 
 import { Channel } from './Channel';
-import { AssigneeEvent } from '../events/AssigneeEvent';
+import { AssigneeEvent } from '../models/AssigneeEvent';
 
 /**
  * Handles customer events
