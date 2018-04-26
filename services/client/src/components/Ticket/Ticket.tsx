@@ -4,11 +4,13 @@
  */
 
 import * as React from 'react';
-import { Link } from 'react-router';
-import { Card, CardHeader, CardContent, CardActions } from 'material-ui';
 import * as moment from 'moment';
 import 'moment/locale/sv';
+
+import { Link } from 'react-router';
+import { Card, CardHeader, CardContent, CardActions } from 'material-ui';
 import { TicketAction } from './TicketAction';
+import { CustomSpan } from '../../elements/CustomSpan/CustomSpan';
 
 /**
  * Ticket Props Interface
@@ -50,7 +52,7 @@ export class Ticket extends React.Component<ITicket, any> {
 
 		return (
 			<Card className='ticket'>
-				<span className={colorClasses} />
+				<CustomSpan status={this.props.ticket.status} wide={true} />
 				<p className='ticket__id'>#{ticket.id}</p>
 				<Link to={`ticket-${ticket.id}`} className='ticket__header'>
 					<CardHeader

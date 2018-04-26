@@ -21,74 +21,6 @@ import { IncomingMailEvent } from './../handlers/email/events/IncomingMailEvents
 import Ticket from './../models/Ticket';
 import Mail from './../models/Mail';
 
-const mockData = [
-  {
-    type: 'ticket',
-    id: 3,
-    status: 2,
-    assignee: 'Anton Myrberg',
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Ett test',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'Vi har mottagit ditt meddelande och återkommer inom kort. Mvh Anton Myrberg',
-        fromCustomer: false
-      },
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  },
-  {
-    type: 'ticket',
-    id: 12,
-    status: 1,
-    assignee: null,
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Vi har ett problem',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  },
-  {
-    type: 'ticket',
-    id: 6,
-    status: 2,
-    assignee: 'Sebastian Borgstedt',
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Nu har det blivit tokigt',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  }
-];
-
 /**
  * Express app.
  */
@@ -105,21 +37,7 @@ class App {
     this.authRouter = authRouter;
     this.DBHandler = new DBHandler(new DBConnection());
     this.websocketHandler = WebsocketHandler;
-/*
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    async function demo() {
-      console.log('Taking a break...');
-      await sleep(2000);
-      console.log('Two second later');
-    }
-
-    demo();
-    */
-
-    this.onSocketConnection();
+    // this.onSocketConnection();
     this.middleware();
     this.mountRoutes();
     this.handleErrors();
@@ -127,13 +45,13 @@ class App {
     this.handleDB();
   }
 
-  private onSocketConnection() {
-    const tickArr = [];
-    tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
-    tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
-    tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
-    this.websocketHandler.emitTickets(tickArr);
-  }
+  // private onSocketConnection() {
+  //   const tickArr = [];
+  //   tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
+  //   tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
+  //   tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
+  //   this.websocketHandler.emitTickets(tickArr);
+  // }
 
   private middleware(): void {
     this.express.use(bodyParser.json());
@@ -173,35 +91,6 @@ class App {
 
     this.DBHandler.connect('mongodb://futurum-db:27017');
   }
-
-/*
- * Example email to map to db objects
-{ type: 'ticket',
-  id: 0,
-  status: 0,
-  assignee: null,
-  mailID: 'CAHm9NZDiA=EYN9N7_r66TFr49ws0JYoEEjXbMU9Y2i4W9w8fug@mail.gmail.com',
-  created: 2018-04-21T13:48:01.000Z,
-  title: 'master',
-  from: { name: 'Johan Söderlund', email: 'js223zs@student.lnu.se' },
-  messages:
-    [ { received: 2018-04-21T13:48:01.000Z,
-        body: 'are you?\n',
-        fromCustomer: true } ] }
-*/
-
-/*
-      status: {type: Number, default: 0},
-  assignee: {type: String, required: false},
-  title: {type: String, required: false},
-  from: {type: String, required: true},
-  customerName: {type: String, required: false},
-  body: {type: [], required: true}
-
-  this.received = message.received;
-    this.fromCustomer = message.fromCustomer;
-    this.body = message.body;
-  */
 
   private createNewMails(mail: IReceivedTicket): Mail[] {
     try {
@@ -243,7 +132,7 @@ class App {
 
       try {
         const ticket = this.createNewTicket(mail, this.createNewMails(mail));
-        // this.DBHandler.createNewFromType(mail.type, ticket);
+        this.DBHandler.createNewFromType(mail.type, ticket);
         this.websocketHandler.emitTicket(ticket);
       } catch (error) {
         console.error(error);

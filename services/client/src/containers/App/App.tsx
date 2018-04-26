@@ -4,7 +4,7 @@
  */
 
 import * as React from 'react';
-import SocketFactory from '../../handlers/SocketFactory';
+import SocketFactory from '../../handlers/socket/SocketFactory';
 import { Header } from '../../components/Header/Header';
 
 /**
