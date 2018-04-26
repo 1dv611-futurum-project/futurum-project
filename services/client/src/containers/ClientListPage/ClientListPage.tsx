@@ -8,19 +8,6 @@ import { AddButton } from '../../components/AddButton/AddButton';
 import { ClientList } from '../../components/ClientList/ClientList';
 import { ClientInput } from '../../components/ClientInput/ClientInput';
 
-const clients = [
-	{
-		name: 'Företaget AB',
-		email: 'foretaget@foretaget.com',
-		errands: 2
-	},
-	{
-		name: 'Microsoft Inc',
-		email: 'microsoft@support.com',
-		errands: 5
-	}
-];
-
 /**
  * ClientListPage class
  */
@@ -55,7 +42,7 @@ export class ClientListPage extends React.Component<any, any> {
 					<ClientInput onClick={this.addClient} open={this.state.showNewClient} />
 				</div>
 				<ClientList
-					data={this.props.allCustomers}
+					customers={this.props.allCustomers}
 					onEdit={this.editClient}
 					onDelete={this.deleteClient}
 				/>

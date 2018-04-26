@@ -22,9 +22,7 @@ export class TicketPage extends React.Component<any, any> {
 
 		this.state = {
 			ticket: false,
-			messages: [],
 			showNewMessage: false,
-			snackMessage: '',
 			snackState: false
 		};
 
@@ -32,30 +30,17 @@ export class TicketPage extends React.Component<any, any> {
 		this.onStatusChange = this.onStatusChange.bind(this);
 		this.onAssigneeChange = this.onAssigneeChange.bind(this);
 		this.handleMessage = this.handleMessage.bind(this);
-		this.getMessage = this.getMessage.bind(this);
 	}
 
 	public componentDidMount() {
-		const { pathname } = this.props.location;
-		const ticketId = pathname[0] === '/' ? pathname.slice(8) : pathname.slice(7);
-
-		this.props.allTickets.forEach((ticket: any) => {
-			if (ticket.id === Number(ticketId)) {
-				this.setState({ ticket });
-			}
-		});
+		const ticketId = this.getCurrentTicketId(this.props.location.pathname);
+		this.setTicket(this.props.allTickets, ticketId);
 	}
 
 	public componentDidUpdate(prevProps: any) {
 		if (prevProps !== this.props) {
-			const { pathname } = this.props.location;
-			const ticketId = pathname[0] === '/' ? pathname.slice(8) : pathname.slice(7);
-
-			this.props.allTickets.forEach((ticket: any) => {
-				if (ticket.id === Number(ticketId)) {
-					this.setState({ ticket });
-				}
-			});
+			const ticketId = this.getCurrentTicketId(this.props.location.pathname);
+			this.setTicket(this.props.allTickets, ticketId);
 		}
 	}
 
@@ -64,8 +49,6 @@ export class TicketPage extends React.Component<any, any> {
 	 * @public
 	 */
 	public render() {
-		const messages = this.state.messages.map(this.getMessage);
-
 		return (
 			<div className='ticket__wrapper'>
 				<TicketOverview
@@ -81,7 +64,18 @@ export class TicketPage extends React.Component<any, any> {
 						ticket={this.state.ticket}
 						onClick={this.handleMessage}
 					/>
-					{messages}
+					{this.state.ticket.messages ?
+						this.state.ticket.messages.map((message: any, i: number) => {
+							return (
+								<Message
+									key={i}
+									data={message}
+									customer={this.state.ticket.from.name}
+									assignee={this.state.ticket.assignee}
+								/>
+							);
+						}) : null
+					}
 				</div>
 				<SnackbarNotice
 					message={this.state.snackMessage}
@@ -93,21 +87,47 @@ export class TicketPage extends React.Component<any, any> {
 	}
 
 	/**
-	 * Returns a Message component
+	 * Gets the current ticket ID
 	 * @private
-	 * @param {Object} message - The message data
-	 * @param {Number} i - Index in messages array
-	 * @returns {Message} - A Message component
+	 * @param pathname - the current path
 	 */
-	private getMessage(message: any, i: number) {
-		return (
-			<Message
-				key={i}
-				data={message}
-				customer={this.state.ticket.from.name}
-				assignee={this.state.ticket.assignee}
-			/>
-		);
+	private getCurrentTicketId(pathname: string): any {
+		return pathname[0] === '/' ? pathname.slice(8) : pathname.slice(7);
+	}
+
+	/**
+	 * Sets the current ticket to state
+	 * @private
+	 * @param tickets - all tickets
+	 */
+	private setTicket(tickets: any[], id: string): any {
+		tickets.forEach((ticket: any) => {
+			if (ticket.id === Number(id)) {
+				this.setState({ ticket });
+			}
+		});
+	}
+
+	/**
+	 * Handles status change of ticket
+	 * @private
+	 * @param {Number} status - The new status
+	 */
+	private onStatusChange(ticket: any, send: boolean) {
+		this.setState({ ticket });
+		this.handleSnackbar('Status för ärendet har uppdaterats.');
+		this.props.ticketAction.emitStatus({ticket, send});
+	}
+
+	/**
+	 * Handles assignee change of ticket
+	 * @private
+	 * @param {Number} assignee - The new assignee
+	 */
+	private onAssigneeChange(ticket: any) {
+		this.setState({ ticket });
+		this.handleSnackbar(`Ärendet har tilldelats ${ticket.assignee}.`);
+		this.props.ticketAction.emitAssignee(ticket);
 	}
 
 	/**
@@ -124,39 +144,17 @@ export class TicketPage extends React.Component<any, any> {
 	 * @param {String} message - The written message
 	 */
 	private handleMessage(ticket: any) {
-		const messages = ticket.messages;
-		console.log(messages);
-		this.setState({ showNewMessage: false, messages });
-
+		this.setState({ ticket, showNewMessage: false });
 		this.props.ticketAction.emitMessage({ ticket });
 	}
 
 	/**
-	 * Handles status change of ticket
+	 * Activates and sets snackbar
 	 * @private
-	 * @param {Number} status - The new status
+	 * @param {String} snackMessage - The message
 	 */
-	private onStatusChange(ticket: any, send: boolean) {
-		this.setState({
-			status: ticket.status,
-			snackState: true,
-			snackMessage: 'Status för ärendet har uppdaterats.'
-		});
-		this.props.ticketAction.emitStatus({ticket, send});
-	}
-
-	/**
-	 * Handles assignee change of ticket
-	 * @private
-	 * @param {Number} assignee - The new assignee
-	 */
-	private onAssigneeChange(ticket: any) {
-		this.setState({
-			assignee: ticket.assignee,
-			snackState: true,
-			snackMessage: `Ärendet har tilldelats ${ticket.assignee}.`
-		});
-		this.props.ticketAction.emitAssignee(ticket);
+	private handleSnackbar(snackMessage: string) {
+		this.setState({ snackState: true, snackMessage });
 	}
 
 	/**

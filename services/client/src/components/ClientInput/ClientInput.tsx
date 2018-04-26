@@ -4,8 +4,10 @@
  */
 
 import * as React from 'react';
-import { Paper, Button, Input } from 'material-ui';
+import { Paper, Input } from 'material-ui';
 import TextArea from 'react-textarea-autosize';
+
+import Button from '../../elements/CustomButton/CustomButton';
 
 /**
  * ClientInput Props Interface
@@ -60,7 +62,7 @@ export class ClientInput extends React.Component<IClientInput, any> {
 						}}
 						onChange={this.handleInput}
 					/>
-					<Button variant='raised' type='submit' size='small' className='client-input__field__btn'>
+					<Button theme={true} formBlock={true} type='submit'>
 						Lägg till
 					</Button>
 				</form>

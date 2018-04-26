@@ -5,7 +5,9 @@
 
 import * as React from 'react';
 import SocketFactory from '../../handlers/socket/SocketFactory';
+
 import { Header } from '../../components/Header/Header';
+import { Modal } from '../../components/Modal/Modal';
 
 /**
  * App class
@@ -17,6 +19,7 @@ export class App extends React.Component<any, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
+			isLoggedIn: null,
 			tickets: [],
 			assignees: [],
 			customers: [],
@@ -24,34 +27,41 @@ export class App extends React.Component<any, any> {
 		};
 
 		this.socket = new SocketFactory();
+		this.authListener();
 		this.ticketsListener();
 		this.assigneesListener();
 		this.customersListener();
 		this.settingsListener();
 	}
 
-	public ticketsListener() {
+	private authListener() {
+		this.socket.isValidToken((isLoggedIn: boolean) => {
+			this.setState({ isLoggedIn });
+		});
+	}
+
+	private ticketsListener() {
 		this.socket.ticketChannel().onTickets((tickets: any) => {
 			tickets = JSON.parse(tickets);
 			this.setState({ tickets });
 		});
 	}
 
-	public assigneesListener() {
+	private assigneesListener() {
 		this.socket.assigneeChannel().onAssignees((assignees: any) => {
 			assignees = JSON.parse(assignees);
 			this.setState({ assignees });
 		});
 	}
 
-	public customersListener() {
+	private customersListener() {
 		this.socket.customerChannel().onCustomers((customers: any) => {
 			customers = JSON.parse(customers);
 			this.setState({ customers });
 		});
 	}
 
-	public settingsListener() {
+	private settingsListener() {
 		this.socket.settingChannel().onSettings((settings: any) => {
 			settings = JSON.parse(settings);
 			this.setState({ settings });
@@ -83,6 +93,16 @@ export class App extends React.Component<any, any> {
 						React.cloneElement(child, childProps)
 					)}
 				</div>
+				{!this.state.isLoggedIn ?
+					<Modal
+						title='Du är inte inloggad'
+						message='Logga in igen för att hämta ärenden'
+						agree='Logga in'
+						onChange={(doLogin: boolean) => {
+							window.location.href = '/node/auth/gmail';
+						}}
+					/>
+					: null}
 			</div>
 		);
 	}

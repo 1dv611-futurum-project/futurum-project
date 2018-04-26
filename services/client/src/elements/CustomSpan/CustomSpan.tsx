@@ -7,18 +7,9 @@ import * as React from 'react';
 import * as cx from 'classnames';
 
 /**
- * CustomSpan Props Interface
- */
-export interface ICustomSpan {
-	status: number;
-	wide?: boolean;
-	small?: boolean;
-}
-
-/**
  * CustomSpan class
  */
-export class CustomSpan extends React.Component<ICustomSpan, any> {
+class CustomSpan extends React.Component<any, any> {
 
 	constructor(props: any) {
 		super(props);
@@ -27,16 +18,24 @@ export class CustomSpan extends React.Component<ICustomSpan, any> {
 		};
 	}
 
+	public componentDidUpdate(prevProps: any) {
+		if (prevProps !== this.props) {
+			this.setState({
+				color: this.getStatusColor(this.props.status)
+			});
+		}
+	}
+
 	/**
 	 * The render method
 	 * @public
 	 */
 	public render() {
-		const { status, wide, small } = this.props;
+		const { wide, small } = this.props;
 
 		const spanClasses = cx({
-			'ticket__color ticket__color--': wide,
-			'ticket-overview__color ticket-overview__color--': small,
+			'ticket-overview__color ticket-overview__color--': wide,
+			'ticket__color ticket__color--': small,
 		});
 
 		return (
@@ -61,3 +60,5 @@ export class CustomSpan extends React.Component<ICustomSpan, any> {
 		}
 	}
 }
+
+export default CustomSpan;

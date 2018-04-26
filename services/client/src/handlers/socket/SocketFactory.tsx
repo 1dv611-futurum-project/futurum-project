@@ -3,6 +3,7 @@
  */
 
 import * as SocketIO from 'socket.io-client';
+import * as Cookies from 'js-cookie';
 import TicketChannel from './channels/TicketChannel';
 import AssigneeChannel from './channels/AssigneeChannel';
 import CustomerChannel from './channels/CustomerChannel';
@@ -23,7 +24,20 @@ export default class SocketFactory {
 	}
 
 	private config() {
-		this.io = SocketIO(SocketFactory.URL, { path: SocketFactory.PATH });
+		this.io = SocketIO(SocketFactory.URL, {
+			path: SocketFactory.PATH,
+			query: 'token=' + Cookies.get('jwt')
+		});
+	}
+
+	public isValidToken(cb: any) {
+		this.io.on('connect', () => {
+			cb(true);
+		});
+
+		this.io.on('error', (error: any) => {
+			cb(false);
+		});
 	}
 
 	public ticketChannel() {

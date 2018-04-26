@@ -12,6 +12,7 @@ import 'moment/locale/sv';
 import { StatusSelect } from '../StatusSelect/StatusSelect';
 import { DropDownSelect } from '../DropDownSelect/DropDownSelect';
 import { AddButton } from '../AddButton/AddButton';
+import Span from '../../elements/CustomSpan/CustomSpan';
 
 /**
  * TicketOverview Props Interface
@@ -33,7 +34,6 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 		super(props);
 
 		this.state = {
-			color: this.getStatusColor(this.props.ticket.status),
 			status: this.props.ticket.status,
 			assignee: this.props.ticket.assignee
 		};
@@ -52,7 +52,6 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 			const ticket = this.props.ticket;
 
 			this.setState({
-				color: this.getStatusColor(ticket.status),
 				status: ticket.status,
 				assignee: ticket.assignee
 			});
@@ -69,7 +68,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 
 		return (
 			<Paper className='ticket-overview'>
-				<span className={`ticket-overview__color ticket-overview__color--${this.state.color}`}/>
+				<Span status={this.state.status} wide={true} />
 				<div className='ticket-overview__header'>
 					<PlayArrow className='ticket-overview__header__icon'/>
 					<h1 className='ticket-overview__header__title'>
@@ -104,23 +103,6 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	}
 
 	/**
-	 * Gets the status color
-	 * @private
-	 * @param {number} status - The status number (0-3)
-	 */
-	private getStatusColor(status: number): string {
-		switch (status) {
-			case 0:
-				return'red';
-			case 1:
-				return 'blue';
-			case 2:
-			case 3:
-				return 'green';
-		}
-	}
-
-	/**
 	 * Handles status change for ticket
 	 * @private
 	 * @param {number} status - The status number (0-3)
@@ -130,9 +112,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 		this.props.ticket.status = status;
 		// TODO: Add modal for send ticket change or not
 		this.props.handleStatusChange(this.props.ticket, false);
-
-		const color = this.getStatusColor(status);
-		this.setState({ color, status });
+		this.setState({ status });
 	}
 
 	/**

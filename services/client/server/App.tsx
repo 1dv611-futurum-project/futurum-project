@@ -26,11 +26,12 @@ class App {
 		this.express.use('/scripts', express.static(path.resolve(__dirname + App.RESOURCE_DIR)));
 		this.express.use(cookieParser());
 		this.express.use(this.authorize);
+		this.express.use(this.checkServerStatus);
 		this.express.use(this.errorHandler);
 	}
 
 	private mountRoutes(): void {
-		this.express.all('*', this.route);
+		this.express.use('*', this.route);
 	}
 
 	private route(req: Request, res: Response): void {
@@ -38,40 +39,31 @@ class App {
 	}
 
 	private authorize(req: Request, res: Response, next: NextFunction): void {
-		if (req.cookies.jwt) {
-			jwt.verify(req.cookies.jwt, 'secret', (err, decoded) => {
-				if (err) {
-					return res.redirect(App.SERVER_URL);
-				}
-
-				axios({
-					url: 'http://node:3000/node/connection',
-					headers: {
-						Cookie: req.headers.cookie
-					}
-				})
-				.then((response) => {
-					if (response.headers['connection-status'] === 'up') {
-						return next();
-					} else {
-						return res.redirect(App.SERVER_URL);
-					}
-				})
-				.catch((err) => {
-					return next(err);
-				});
-			});
-		} else {
-			return res.redirect(App.SERVER_URL);
-		}
+		jwt.verify(req.cookies.jwt, 'secret', (err, decoded) => {
+			if (err) {
+				return res.redirect(App.SERVER_URL);
+			}
+			next();
+		});
 	}
 
-	private emptyHandler(req: Request, res: Response, next: NextFunction): void {
-		res.status(404).send({
-			cess: false,
-			sage: 'Not found'
+	private checkServerStatus(req: Request, res: Response, next: NextFunction): void {
+		axios({
+			url: 'http://node:3000/node/connection',
+			headers: {
+				Cookie: req.headers.cookie
+			}
+		})
+		.then((response) => {
+			if (response.headers['connection-status'] === 'up') {
+				return next();
+			} else {
+				return res.redirect(App.SERVER_URL);
+			}
+		})
+		.catch((err) => {
+			return next(err);
 		});
-		return next();
 	}
 
 	private errorHandler(err: Error, req: Request, res: Response, next: NextFunction): void {

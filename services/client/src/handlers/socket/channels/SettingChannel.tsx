@@ -5,7 +5,7 @@
 import * as SocketIO from 'socket.io-client';
 
 import { Channel } from './Channel';
-import { SettingEvent } from '../events/SettingEvent';
+import { SettingEvent } from '../models/SettingEvent';
 
 /**
  * Handles the connection.

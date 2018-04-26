@@ -4,6 +4,7 @@
 
 // Imports.
 import * as SocketIo from 'socket.io';
+import * as SocketIoJwt from 'socketio-jwt';
 
 const mockData = [
   {
@@ -102,12 +103,20 @@ class WebsocketHandler {
 
   constructor() {
     this.config();
+    this.authorize();
     this.listen();
     this.onConnect();
   }
 
   private config(): void {
     this.socket = SocketIo({ path: WebsocketHandler.PATH });
+  }
+
+  private authorize(): void {
+    this.socket.use(SocketIoJwt.authorize({
+      secret: 'secret',
+      handshake: true
+    }));
   }
 
   private listen(): void {

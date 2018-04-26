@@ -4,13 +4,13 @@
  */
 
 import * as React from 'react';
+import { Link } from 'react-router';
+import { Card, CardHeader, CardContent, CardActions } from 'material-ui';
 import * as moment from 'moment';
 import 'moment/locale/sv';
 
-import { Link } from 'react-router';
-import { Card, CardHeader, CardContent, CardActions } from 'material-ui';
 import { TicketAction } from './TicketAction';
-import { CustomSpan } from '../../elements/CustomSpan/CustomSpan';
+import Span from '../../elements/CustomSpan/CustomSpan';
 
 /**
  * Ticket Props Interface
@@ -28,31 +28,30 @@ export class Ticket extends React.Component<ITicket, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			color: 'red'
+			status: this.props.ticket.status
 		};
 
-		this.handleStatusColor = this.handleStatusColor.bind(this);
+		this.handleStatusChange = this.handleStatusChange.bind(this);
 	}
 
-	/**
-	 * componentDidMount
-	 * Initiates status color from ticket data
-	 */
-	public componentDidMount() {
-		this.handleStatusColor(this.props.ticket.status);
-	}
+	// TODO: Add componentDidUpdate when database is running on server
+	//
+	// public componentDidUpdate(prevProps: any) {
+	// 	if (prevProps !== this.props) {
+	// 		this.setState({ status: this.props.ticket.status});
+	// 	}
+	// }
 
 	/**
 	 * The render method
 	 * @public
 	 */
 	public render() {
-		const ticket = this.props.ticket;
-		const colorClasses = `ticket__color ticket__color--${this.state.color}`;
+		const { ticket, onSend } = this.props;
 
 		return (
 			<Card className='ticket'>
-				<CustomSpan status={this.props.ticket.status} wide={true} />
+				<Span status={this.state.status} small={true} />
 				<p className='ticket__id'>#{ticket.id}</p>
 				<Link to={`ticket-${ticket.id}`} className='ticket__header'>
 					<CardHeader
@@ -62,18 +61,31 @@ export class Ticket extends React.Component<ITicket, any> {
 					/>
 				</Link>
 				<CardContent className='ticket__content'>
-					<p className='ticket__content__information'>Mottaget: {moment(ticket.created, moment.ISO_8601).format('LL')}</p>
+					<p className='ticket__content__information'>
+						Mottaget: {this.getDateFormat(ticket.created)}
+					</p>
 					<p className='ticket__content__information'>Tilldelat:
-						<span className='ticket__content__information--bold'> {ticket.assignee ? ticket.assignee : '—'}</span>
+						<span className='ticket__content__information--bold'>
+							{ticket.assignee ? ticket.assignee : '—'}
+						</span>
 					</p>
 				</CardContent>
 				<TicketAction
 					ticket={ticket}
-					onStatusChange={this.handleStatusColor}
-					onSend={this.props.onSend}
+					onStatusChange={this.handleStatusChange}
+					onSend={onSend}
 				/>
 			</Card>
 		);
+	}
+
+	/**
+	 * Formats ISO_8601 date to LL format (e.g. 28 April 2018)
+	 * @private
+	 * @param {String} date - The date string
+	 */
+	private getDateFormat(date: string): string {
+		return moment(date, moment.ISO_8601).format('LL');
 	}
 
 	/**
@@ -81,18 +93,7 @@ export class Ticket extends React.Component<ITicket, any> {
 	 * @private
 	 * @param {Number} status - The status number
 	 */
-	private handleStatusColor(status: number): void {
-		switch (status) {
-			case 0:
-				this.setState({ color: 'red' });
-				break;
-			case 1:
-				this.setState({ color: 'blue' });
-				break;
-			case 2:
-			case 3:
-				this.setState({ color: 'green' });
-				break;
-		}
+	private handleStatusChange(status: number): void {
+		this.setState({ status });
 	}
 }
