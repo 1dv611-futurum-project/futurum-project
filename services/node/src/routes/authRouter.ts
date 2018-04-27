@@ -73,7 +73,9 @@ class AuthRouter {
   private redirectToClient(request: express.Request, response: express.Response): void {
     const signed = jwt.sign({
       data: 'logged in'
-    }, 'secret');
+    }, 'secret', {
+      expiresIn : '1h'
+    });
     response.cookie('jwt', signed);
     response.redirect('/');
   }

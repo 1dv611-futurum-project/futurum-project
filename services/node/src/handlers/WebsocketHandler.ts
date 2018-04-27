@@ -4,7 +4,7 @@
 
 // Imports.
 import * as SocketIo from 'socket.io';
-import * as SocketIoJwt from 'socketio-jwt';
+import * as SocketIoJwt from 'socketio-jwt-decoder';
 
 const mockData = [
   {
@@ -148,9 +148,11 @@ class WebsocketHandler {
         console.log({ event, data });
       });
 
-      socket.on('disconnect', () => {
-        console.log('Client disconnected');
-      });
+      const exp = new Date(socket.decoded_token.exp * 1000).getTime() - new Date().getTime();
+      setTimeout(() => {
+        socket.emit('expired');
+        socket.disconnect();
+      }, exp);
     });
   }
 
