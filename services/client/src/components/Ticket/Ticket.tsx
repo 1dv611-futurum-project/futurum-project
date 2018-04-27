@@ -66,7 +66,7 @@ export class Ticket extends React.Component<ITicket, any> {
 					</p>
 					<p className='ticket__content__information'>Tilldelat:
 						<span className='ticket__content__information--bold'>
-							{ticket.assignee ? ticket.assignee : '—'}
+							{ticket.assignee ? ` ${ticket.assignee}` : ' —'}
 						</span>
 					</p>
 				</CardContent>

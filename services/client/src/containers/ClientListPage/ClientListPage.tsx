@@ -7,6 +7,7 @@ import * as React from 'react';
 import { AddButton } from '../../components/AddButton/AddButton';
 import { ClientList } from '../../components/ClientList/ClientList';
 import { ClientInput } from '../../components/ClientInput/ClientInput';
+import { SnackbarNotice } from '../../components/SnackbarNotice/SnackbarNotice';
 
 /**
  * ClientListPage class
@@ -17,6 +18,8 @@ export class ClientListPage extends React.Component<any, any> {
 		super(props);
 		this.state = {
 			showNewClient: false,
+			snackMessage: '',
+			snackState: false
 		};
 
 		this.handleAddClientClick = this.handleAddClientClick.bind(this);
@@ -46,6 +49,11 @@ export class ClientListPage extends React.Component<any, any> {
 					onEdit={this.editClient}
 					onDelete={this.deleteClient}
 				/>
+				<SnackbarNotice
+					message={this.state.snackMessage}
+					open={this.state.snackState}
+					onClose={this.handleSnackbarClose}
+				/>
 			</div>
 		);
 	}
@@ -64,7 +72,12 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @param {Object} client - The new client
 	 */
 	private addClient(client: any) {
-		this.setState({ showNewClient: false });
+		this.setState({
+			showNewClient: false,
+			snackState: true,
+			snackMessage: 'Den nya kunden har lagts till i listan.'
+		});
+
 		this.props.allCustomers.push(client);
 		this.props.customerAction.emitAddCustomer(client);
 	}
@@ -75,6 +88,11 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @param {Object} client - The existing client data
 	 */
 	private editClient(client: any) {
+		this.setState({
+			snackState: true,
+			snackMessage: 'Kundens uppgifter har uppdaterats.'
+		});
+
 		this.props.customerAction.emitEditCustomer(client);
 	}
 
@@ -84,6 +102,22 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @param {Object} client - The existing client data
 	 */
 	private deleteClient(client: any) {
+		const index = this.props.allCustomers.indexOf(client);
+
+		this.props.allCustomers.splice(index, 1);
+		this.setState({
+			snackState: true,
+			snackMessage: 'Kunden har tagits bort från kundlistan.'
+		});
+
 		this.props.customerAction.emitDeleteCustomer(client);
+	}
+
+	/**
+	 * Handles manual close of SnackbarNotice
+	 * @private
+	 */
+	private handleSnackbarClose = (event: any) => {
+		this.setState({ snackState: false });
 	}
 }
