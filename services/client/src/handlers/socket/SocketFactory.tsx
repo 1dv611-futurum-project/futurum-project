@@ -35,6 +35,10 @@ export default class SocketFactory {
 			cb(true);
 		});
 
+		this.io.on('expired', (error: any) => {
+			cb(false);
+		});
+
 		this.io.on('error', (error: any) => {
 			cb(false);
 		});

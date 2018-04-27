@@ -155,7 +155,7 @@ class Connection extends events.EventEmitter implements IMAPConnectionInterface 
       .then((emails: object[]) => {
         if (emails) {
           emails.forEach((message: object) => {
-            this.emitMessage(IMAPConnectionEvent.READY, message);
+            this.emitMessage(IMAPConnectionEvent.MAIL, message);
           });
         }
         return resolve();
