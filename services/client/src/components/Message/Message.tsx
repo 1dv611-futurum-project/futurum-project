@@ -41,7 +41,7 @@ export class Message extends React.Component<IMessage, any> {
 					<p className='message__content__title'>
 						{fromCustomer ? customer : assignee},
 						<span className='message__content__title--regular'>
-							{this.getDateFormat(received)}
+							{` ${this.getDateFormat(received)}`}
 						</span>
 					</p>
 					<p className='message__content__text'>{body}</p>

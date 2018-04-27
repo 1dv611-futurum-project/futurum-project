@@ -12,6 +12,7 @@ import 'moment/locale/sv';
 import { StatusSelect } from '../StatusSelect/StatusSelect';
 import { DropDownSelect } from '../DropDownSelect/DropDownSelect';
 import { AddButton } from '../AddButton/AddButton';
+import { Modal } from '../Modal/Modal';
 import Span from '../../elements/CustomSpan/CustomSpan';
 
 /**
@@ -34,12 +35,15 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 		super(props);
 
 		this.state = {
+			displayModal: false,
 			status: this.props.ticket.status,
-			assignee: this.props.ticket.assignee
+			assignee: this.props.ticket.assignee,
+			statusText: ''
 		};
 
 		this.handleStatusChange = this.handleStatusChange.bind(this);
 		this.handleAssigneeChange = this.handleAssigneeChange.bind(this);
+		this.handleModal = this.handleModal.bind(this);
 	}
 
 	/**
@@ -88,6 +92,15 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 							selected={this.state.status}
 							onChange={this.handleStatusChange}
 						/>
+						{this.state.displayModal ?
+							<Modal
+								title={`Uppdaterat status av "${title}"`}
+								message={`Skicka statusuppdateringen ${this.state.statusText} till kund?`}
+								disagree={'Nej'}
+								agree={'Ja, skicka'}
+								onChange={this.handleModal}
+							/> : null
+						}
 					</div>
 					<div className='ticket-overview__actions--assigned'>
 						<p className='ticket-overview__actions__label'>Tilldelad:</p>
@@ -107,12 +120,13 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	 * @private
 	 * @param {number} status - The status number (0-3)
 	 */
-	private handleStatusChange(status: number): void {
-		console.log(status);
+	private handleStatusChange(status: number, statusText: string): void {
 		this.props.ticket.status = status;
-		// TODO: Add modal for send ticket change or not
-		this.props.handleStatusChange(this.props.ticket, false);
-		this.setState({ status });
+		this.setState({
+			displayModal: true,
+			status,
+			statusText: statusText
+		});
 	}
 
 	/**
@@ -126,5 +140,15 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 
 		const assignee = this.props.assignees[selected];
 		this.setState({ assignee });
+	}
+
+	/**
+	 * Handles status update message change
+	 * @private
+	 * @param {Boolean} doSend - If status change should be sent or not
+	 */
+	private handleModal(doSend: boolean): void {
+		this.props.handleStatusChange(this.props.ticket, doSend);
+		this.setState({ displayModal: false });
 	}
 }

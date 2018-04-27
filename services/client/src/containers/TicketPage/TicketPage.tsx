@@ -74,7 +74,7 @@ export class TicketPage extends React.Component<any, any> {
 									assignee={this.state.ticket.assignee}
 								/>
 							);
-						}) : null
+						}).reverse() : null
 					}
 				</div>
 				<SnackbarNotice
@@ -114,8 +114,11 @@ export class TicketPage extends React.Component<any, any> {
 	 * @param {Number} status - The new status
 	 */
 	private onStatusChange(ticket: any, send: boolean) {
+		const snackMessage = send ? 'Status för ärendet har uppdaterats och skickats till kund.' :
+			'Status för ärendet har uppdaterats.';
+
 		this.setState({ ticket });
-		this.handleSnackbar('Status för ärendet har uppdaterats.');
+		this.handleSnackbar(snackMessage);
 		this.props.ticketAction.emitStatus({ticket, send});
 	}
 

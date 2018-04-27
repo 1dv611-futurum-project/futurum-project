@@ -26,8 +26,7 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 		super(props);
 		this.state = {
 			displayModal: false,
-			status: this.props.ticket.status,
-			statusText: ''
+			status: this.props.ticket.status
 		};
 
 		this.handleStatusChange = this.handleStatusChange.bind(this);
@@ -67,7 +66,7 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 		this.props.onStatusChange(status);
 		this.setState({
 			displayModal: true,
-			status: status,
+			status,
 			statusText: statusText
 		});
 	}
@@ -79,16 +78,6 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 	 */
 	private handleModal(doSend: boolean): void {
 		this.props.onSend(this.props.ticket, doSend);
-		this.closeModal();
-	}
-
-	/**
-	 * Closes modal on status change
-	 * @private
-	 */
-	private closeModal(): void {
-		const state = { ...this.state };
-		state.displayModal = false;
-		this.setState(state);
+		this.setState({ displayModal: false });
 	}
 }
