@@ -2,7 +2,6 @@
  * App container
  * @module containers/App/App
  */
-
 import * as React from 'react';
 import SocketFactory from '../../handlers/socket/SocketFactory';
 
@@ -23,7 +22,7 @@ export class App extends React.Component<any, any> {
 			tickets: [],
 			assignees: [],
 			customers: [],
-			settings: [],
+			settings: []
 		};
 
 		this.socket = new SocketFactory();
@@ -34,12 +33,20 @@ export class App extends React.Component<any, any> {
 		this.settingsListener();
 	}
 
+	/**
+	 * Listens to validity state of token received when authenticated
+	 * @private
+	 */
 	private authListener() {
 		this.socket.isValidToken((isLoggedIn: boolean) => {
 			this.setState({ isLoggedIn });
 		});
 	}
 
+	/**
+	 * Listens to the event of new incoming tickets
+	 * @private
+	 */
 	private ticketsListener() {
 		this.socket.ticketChannel().onTickets((tickets: any) => {
 			tickets = JSON.parse(tickets);
@@ -47,6 +54,10 @@ export class App extends React.Component<any, any> {
 		});
 	}
 
+	/**
+	 * Listens to the event of newly added assignees
+	 * @private
+	 */
 	private assigneesListener() {
 		this.socket.assigneeChannel().onAssignees((assignees: any) => {
 			assignees = JSON.parse(assignees);
@@ -54,6 +65,10 @@ export class App extends React.Component<any, any> {
 		});
 	}
 
+	/**
+	 * Listens to the event of newly added customers to customer list
+	 * @private
+	 */
 	private customersListener() {
 		this.socket.customerChannel().onCustomers((customers: any) => {
 			customers = JSON.parse(customers);
@@ -61,6 +76,10 @@ export class App extends React.Component<any, any> {
 		});
 	}
 
+	/**
+	 * Listens to the event of newly added/updated settings
+	 * @private
+	 */
 	private settingsListener() {
 		this.socket.settingChannel().onSettings((settings: any) => {
 			settings = JSON.parse(settings);
@@ -93,7 +112,7 @@ export class App extends React.Component<any, any> {
 						React.cloneElement(child, childProps)
 					)}
 				</div>
-				{!this.state.isLoggedIn ?
+				{ !this.state.isLoggedIn ?
 					<Modal
 						title='Du är inte inloggad'
 						message='Logga in igen för att hämta ärenden'
@@ -102,7 +121,7 @@ export class App extends React.Component<any, any> {
 							window.location.href = '/node/auth/gmail';
 						}}
 					/>
-					: null}
+					: null }
 			</div>
 		);
 	}

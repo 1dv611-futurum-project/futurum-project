@@ -2,7 +2,6 @@
  * SettingsPage container
  * @module containers/SettingsPage/SettingsPage
  */
-
 import * as React from 'react';
 import { Divider } from 'material-ui';
 import { StatusColor } from '../../components/StatusColor/StatusColor';
@@ -29,7 +28,7 @@ export class SettingsPage extends React.Component<any, any> {
 				<br />
 				<Divider />
 				<h1 className='client-list-page__header__title'>Redigera ansvariga</h1>
-				<AddButton text='Lägg till ansvariga' onClick={() => {return; }}/>
+				<AddButton text='Lägg till ansvariga' onClick={() => { return; }}/>
 			</div>
 		);
 	}

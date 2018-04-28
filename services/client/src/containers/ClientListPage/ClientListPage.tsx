@@ -2,7 +2,6 @@
  * ClientListPage container
  * @module containers/ClientListPage/ClientListPage
  */
-
 import * as React from 'react';
 import { AddButton } from '../../components/AddButton/AddButton';
 import { ClientList } from '../../components/ClientList/ClientList';
@@ -22,7 +21,6 @@ export class ClientListPage extends React.Component<any, any> {
 			snackState: false
 		};
 
-		this.handleAddClientClick = this.handleAddClientClick.bind(this);
 		this.addClient = this.addClient.bind(this);
 		this.editClient = this.editClient.bind(this);
 		this.deleteClient = this.deleteClient.bind(this);
@@ -38,7 +36,10 @@ export class ClientListPage extends React.Component<any, any> {
 				<div className='client-list-page__header'>
 					<h1 className='client-list-page__header__title'>Kundlista</h1>
 					<div className='client-list-page__header__btn'>
-						<AddButton text={'Lägg till kund'} onClick={this.handleAddClientClick}/>
+						<AddButton
+							text={'Lägg till kund'}
+							onClick={() => { this.setState({ showNewClient: true }); }}
+						/>
 					</div>
 				</div>
 				<div className='ticket__wrapper__messages'>
@@ -52,18 +53,10 @@ export class ClientListPage extends React.Component<any, any> {
 				<SnackbarNotice
 					message={this.state.snackMessage}
 					open={this.state.snackState}
-					onClose={this.handleSnackbarClose}
+					onClose={() => { this.setState({ snackState: false }); }}
 				/>
 			</div>
 		);
-	}
-
-	/**
-	 * Handles click on add client button
-	 * @private
-	 */
-	private handleAddClientClick() {
-		this.setState({ showNewClient: true });
 	}
 
 	/**
@@ -111,13 +104,5 @@ export class ClientListPage extends React.Component<any, any> {
 		});
 
 		this.props.customerAction.emitDeleteCustomer(client);
-	}
-
-	/**
-	 * Handles manual close of SnackbarNotice
-	 * @private
-	 */
-	private handleSnackbarClose = (event: any) => {
-		this.setState({ snackState: false });
 	}
 }
