@@ -38,7 +38,7 @@ export class ClientListPage extends React.Component<any, any> {
 					<div className='client-list-page__header__btn'>
 						<AddButton
 							text={'Lägg till kund'}
-							onClick={() => { this.setState({ showNewClient: true }); }}
+							onClick={() => this.setState({ showNewClient: true })}
 						/>
 					</div>
 				</div>
@@ -53,7 +53,7 @@ export class ClientListPage extends React.Component<any, any> {
 				<SnackbarNotice
 					message={this.state.snackMessage}
 					open={this.state.snackState}
-					onClose={() => { this.setState({ snackState: false }); }}
+					onClose={() => this.setState({ snackState: false })}
 				/>
 			</div>
 		);

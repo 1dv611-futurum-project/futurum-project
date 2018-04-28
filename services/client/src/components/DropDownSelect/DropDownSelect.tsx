@@ -2,7 +2,6 @@
  * DropDownSelect component
  * @module components/DropDownSelect/DropDownSelect
  */
-
 import * as React from 'react';
 import { Select, MenuItem } from 'material-ui';
 
@@ -25,14 +24,13 @@ export class DropDownSelect extends React.Component<IDropDownSelect, any> {
 		this.state = {
 			selected: this.props.selected || 0
 		};
-
-		this.handleChange = this.handleChange.bind(this);
 	}
 
 	/**
-	 * componentDidUpdate - Update state to new props
+	 * componentDidUpdate
+	 * Update state to new props
 	 * @public
-	 * @param {any} prevProps
+	 * @param {Object} prevProps - The previous props
 	 */
 	public componentDidUpdate(prevProps: any) {
 		if (prevProps !== this.props) {
@@ -49,15 +47,13 @@ export class DropDownSelect extends React.Component<IDropDownSelect, any> {
 	public render() {
 		const selected = this.getSelectedIndex(this.state.selected);
 		const value = this.props.items[selected] || '';
-		const items = this.props.items.map((item: any, i: number) => {
-			return <MenuItem key={i} value={item} className='dropdown-select__item'>{item}</MenuItem>;
-		});
+		const items = this.props.items.map(this.getMenuItems);
 
 		return (
 			<Select
 				value={value}
 				onChange={this.handleChange}
-				classes={{root: 'dropdown-select', icon: 'dropdown-select__icon'}}
+				classes={{ root: 'dropdown-select', icon: 'dropdown-select__icon' }}
 			>
 				{items}
 			</Select>
@@ -65,26 +61,33 @@ export class DropDownSelect extends React.Component<IDropDownSelect, any> {
 	}
 
 	/**
+	 * Get selected value index
+	 * @private
+	 * @param {String | Number} value - The selected value
+	 */
+	private getSelectedIndex(value: string | number) {
+		return typeof value === 'string' ? this.props.items.indexOf(value) : value;
+	}
+
+	/**
+	 * Returns a MenuItem component
+	 * @private
+	 * @param {String} item - The textual item
+	 * @param {Number} i - The array index
+	 */
+	private getMenuItems(item: any, i: number) {
+		return <MenuItem key={i} value={item} className='dropdown-select__item'>{item}</MenuItem>;
+	}
+
+	/**
 	 * Handles change of selected value
 	 * @private
-	 * @param {any} event - The submitted event
+	 * @param {Object} event - The submitted event
 	 */
-	private handleChange(event: any) {
+	private handleChange = (event: any) => {
 		const selected = this.getSelectedIndex(event.target.value);
 
 		this.setState({ selected: selected });
 		this.props.onChange(selected);
-	}
-
-	/**
-	 * Get selected value index
-	 * @private
-	 * @param {string | number} value - The selected value
-	 */
-	private getSelectedIndex(value: string | number) {
-		if (typeof value === 'string') {
-			return this.props.items.indexOf(value);
-		}
-		return value;
 	}
 }

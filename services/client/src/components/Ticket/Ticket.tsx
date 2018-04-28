@@ -30,8 +30,6 @@ export class Ticket extends React.Component<ITicket, any> {
 		this.state = {
 			status: this.props.ticket.status
 		};
-
-		this.handleStatusChange = this.handleStatusChange.bind(this);
 	}
 
 	// TODO: Add componentDidUpdate when database is running on server
@@ -57,12 +55,12 @@ export class Ticket extends React.Component<ITicket, any> {
 					<CardHeader
 						title={ticket.title}
 						subheader={ticket.from.name}
-						classes={{title: 'ticket__header__title', subheader: 'ticket__header__subheader'}}
+						classes={{ title: 'ticket__header__title', subheader: 'ticket__header__subheader' }}
 					/>
 				</Link>
 				<CardContent className='ticket__content'>
 					<p className='ticket__content__information'>
-						Mottaget: {this.getDateFormat(ticket.created)}
+						Mottaget: {this.getFormattedDate(ticket.created)}
 					</p>
 					<p className='ticket__content__information'>Tilldelat:
 						<span className='ticket__content__information--bold'>
@@ -72,7 +70,7 @@ export class Ticket extends React.Component<ITicket, any> {
 				</CardContent>
 				<TicketAction
 					ticket={ticket}
-					onStatusChange={this.handleStatusChange}
+					onStatusChange={(status: number) => this.setState({ status })}
 					onSend={onSend}
 				/>
 			</Card>
@@ -83,17 +81,9 @@ export class Ticket extends React.Component<ITicket, any> {
 	 * Formats ISO_8601 date to LL format (e.g. 28 April 2018)
 	 * @private
 	 * @param {String} date - The date string
+	 * @returns {String} - The formatted date
 	 */
-	private getDateFormat(date: string): string {
+	private getFormattedDate(date: string): string {
 		return moment(date, moment.ISO_8601).format('LL');
-	}
-
-	/**
-	 * Handles status change for ticket by changing colors
-	 * @private
-	 * @param {Number} status - The status number
-	 */
-	private handleStatusChange(status: number): void {
-		this.setState({ status });
 	}
 }

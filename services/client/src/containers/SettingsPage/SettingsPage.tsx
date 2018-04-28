@@ -39,6 +39,7 @@ export class SettingsPage extends React.Component<any, any> {
 	 * @param {String} color - The new color
 	 */
 	private onColorChange(color: string) {
+		// TODO! Update with correct socket action
 		this.props.settingsAction.emitColor(color);
 	}
 

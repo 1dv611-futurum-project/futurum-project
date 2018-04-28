@@ -2,7 +2,6 @@
  * SnackbarNotice component
  * @module components/SnackbarNotice/SnackbarNotice
  */
-
 import * as React from 'react';
 import { Snackbar, IconButton } from 'material-ui';
 import { Close } from 'material-ui-icons';

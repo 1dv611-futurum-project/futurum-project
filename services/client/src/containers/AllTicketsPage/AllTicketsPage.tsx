@@ -39,7 +39,7 @@ export class AllTicketsPage extends React.Component<any, any> {
 				<SnackbarNotice
 					message={this.state.snackMessage}
 					open={this.state.snackState}
-					onClose={() => { this.setState({ snackState: false }); }}
+					onClose={() => this.setState({ snackState: false })}
 				/>
 			</div>
 		);

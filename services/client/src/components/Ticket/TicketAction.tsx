@@ -2,7 +2,6 @@
  * Ticket component
  * @module components/Ticket/TicketAction
  */
-
 import * as React from 'react';
 import { CardActions } from 'material-ui';
 import { StatusSelect } from '../StatusSelect/StatusSelect';
@@ -26,11 +25,9 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 		super(props);
 		this.state = {
 			displayModal: false,
-			status: this.props.ticket.status
+			status: this.props.ticket.status,
+			statusText: ''
 		};
-
-		this.handleStatusChange = this.handleStatusChange.bind(this);
-		this.handleModal = this.handleModal.bind(this);
 	}
 
 	/**
@@ -38,12 +35,12 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 	 * @public
 	 */
 	public render() {
-		const ticket = this.props.ticket;
+		const { ticket } = this.props;
 
 		return (
 			<CardActions className='ticket__actions'>
 				<StatusSelect selected={this.state.status} onChange={this.handleStatusChange} />
-					{this.state.displayModal ?
+					{ this.state.displayModal ?
 						<Modal
 							title={`Uppdaterat status av "${ticket.title}"`}
 							message={`Skicka statusuppdateringen ${this.state.statusText} till kund?`}
@@ -62,12 +59,12 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 	 * @param {Number} status - The status number (0-3)
 	 * @param {String} statusText - The status in text
 	 */
-	private handleStatusChange(status: number, statusText: string): void {
+	private handleStatusChange = (status: number, statusText: string): void => {
 		this.props.onStatusChange(status);
 		this.setState({
 			displayModal: true,
 			status,
-			statusText: statusText
+			statusText
 		});
 	}
 
@@ -76,7 +73,7 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 	 * @private
 	 * @param {Boolean} doSend - If status change should be sent or not
 	 */
-	private handleModal(doSend: boolean): void {
+	private handleModal = (doSend: boolean): void => {
 		this.props.onSend(this.props.ticket, doSend);
 		this.setState({ displayModal: false });
 	}

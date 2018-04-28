@@ -2,7 +2,6 @@
  * ClientInput component
  * @module components/ClientInput/ClientInput
  */
-
 import * as React from 'react';
 import { Paper, Input } from 'material-ui';
 import TextArea from 'react-textarea-autosize';
@@ -31,9 +30,6 @@ export class ClientInput extends React.Component<IClientInput, any> {
 				email: ''
 			}
 		};
-
-		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handleInput = this.handleInput.bind(this);
 	}
 
 	/**
@@ -54,11 +50,11 @@ export class ClientInput extends React.Component<IClientInput, any> {
 						onChange={this.handleInput}
 					/>
 					<Input
-						placeholder='Epost'
+						placeholder='E-post'
 						name='email'
 						className={'client-input__input'}
 						inputProps={{
-							type: 'email',
+							type: 'email'
 						}}
 						onChange={this.handleInput}
 					/>
@@ -74,7 +70,7 @@ export class ClientInput extends React.Component<IClientInput, any> {
 	 * Handles button click to add the new client
 	 * @private
 	 */
-	private handleSubmit(event: any) {
+	private handleSubmit = (event: any) => {
 		event.preventDefault();
 		this.props.onClick(this.state.client);
 	}
@@ -83,7 +79,7 @@ export class ClientInput extends React.Component<IClientInput, any> {
 	 * Handles input value
 	 * @private
 	 */
-	private handleInput(event: any) {
+	private handleInput = (event: any) => {
 		this.state.client[event.target.name] = event.target.value;
 	}
 }

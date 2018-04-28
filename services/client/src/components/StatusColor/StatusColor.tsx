@@ -2,7 +2,6 @@
  * StatusColor component
  * @module components/StatusColor/StatusColor
  */
-
 import * as React from 'react';
 import { Button } from 'material-ui';
 import { SketchPicker } from 'react-color';
@@ -24,6 +23,7 @@ export class StatusColor extends React.Component<IStatusColor, any> {
 
 	constructor(props: any) {
 		super(props);
+
 		this.state = {
 			displayColorPicker: false,
 			color: this.props.color
@@ -45,7 +45,7 @@ export class StatusColor extends React.Component<IStatusColor, any> {
 							<Button
 								variant='raised'
 								className={`status-color status-color--${color}`}
-								onClick={this.handleClose}
+								onClick={() => this.setState({ displayColorPicker: false })}
 							>
 								&nbsp;
 							</Button>
@@ -63,35 +63,24 @@ export class StatusColor extends React.Component<IStatusColor, any> {
 	 */
 	private getColor(color: string) {
 		switch (color) {
-			case 'red': {
-				this.setState({color: '#f1453d'});
+			case 'red':
+				this.setState({ color: '#f1453d' });
 				break;
-			}
-			case 'blue': {
-				this.setState({color: '#1fbcd2'});
+			case 'blue':
+				this.setState({ color: '#1fbcd2' });
 				break;
-			}
-			case 'green': {
-				this.setState({color: '#50ae55'});
+			case 'green':
+				this.setState({ color: '#50ae55' });
 				break;
-			}
 		}
 	}
 
 	/**
-	 * Handles click
+	 * Handles click on color picker
 	 * @private
 	 */
 	private handleClick = () => {
 		this.setState({ displayColorPicker: !this.state.displayColorPicker });
-	}
-
-	/**
-	 * Handles close
-	 * @private
-	 */
-	private handleClose = () => {
-		this.setState({ displayColorPicker: false });
 	}
 
 	/**
@@ -100,7 +89,7 @@ export class StatusColor extends React.Component<IStatusColor, any> {
 	 * @param {Any} color - The newly selected color
 	 */
 	private handleChange = (color: any) => {
-		this.setState({ color: color });
+		this.setState({ color });
 		this.props.onChange(color);
 	}
 }

@@ -62,7 +62,7 @@ export class TicketPage extends React.Component<any, any> {
 		return (
 			<div className='ticket__wrapper'>
 				<TicketOverview
-					handleClick={() => { this.setState({ showNewMessage: true }); }}
+					handleClick={() => this.setState({ showNewMessage: true })}
 					handleStatusChange={this.onStatusChange}
 					handleAssigneeChange={this.onAssigneeChange}
 					assignees={this.props.allAssignees}
@@ -90,7 +90,7 @@ export class TicketPage extends React.Component<any, any> {
 				<SnackbarNotice
 					message={this.state.snackMessage}
 					open={this.state.snackState}
-					onClose={() => { this.setState({ snackState: false }); }}
+					onClose={() => this.setState({ snackState: false })}
 				/>
 			</div>
 		);

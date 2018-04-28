@@ -2,7 +2,6 @@
  * TicketOverview component
  * @module components/TicketOverview/TicketOverview
  */
-
 import * as React from 'react';
 import { Paper } from 'material-ui';
 import { PlayArrow } from 'material-ui-icons';
@@ -40,25 +39,17 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 			assignee: this.props.ticket.assignee,
 			statusText: ''
 		};
-
-		this.handleStatusChange = this.handleStatusChange.bind(this);
-		this.handleAssigneeChange = this.handleAssigneeChange.bind(this);
-		this.handleModal = this.handleModal.bind(this);
 	}
 
 	/**
 	 * componentDidUpdate - Update state to new props
 	 * @public
-	 * @param {any} prevProps
+	 * @param {Object} prevProps - The previous props
 	 */
 	public componentDidUpdate(prevProps: any): void {
 		if (prevProps.ticket !== this.props.ticket) {
-			const ticket = this.props.ticket;
-
-			this.setState({
-				status: ticket.status,
-				assignee: ticket.assignee
-			});
+			const { status, assignee } = this.props.ticket;
+			this.setState({ status, assignee });
 		}
 	}
 
@@ -120,7 +111,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	 * @private
 	 * @param {number} status - The status number (0-3)
 	 */
-	private handleStatusChange(status: number, statusText: string): void {
+	private handleStatusChange = (status: number, statusText: string): void => {
 		this.props.ticket.status = status;
 		this.setState({
 			displayModal: true,
@@ -132,14 +123,15 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	/**
 	 * Handles assignee change for ticket
 	 * @private
-	 * @param {number} selected - The selected index
+	 * @param {Number} selected - The selected index
 	 */
-	private handleAssigneeChange(selected: number): void {
-		this.props.ticket.assignee = this.props.assignees[selected];
-		this.props.handleAssigneeChange(this.props.ticket);
+	private handleAssigneeChange = (selected: number): void => {
+		const { ticket, assignees, handleAssigneeChange } = this.props;
+		const newAssignee = assignees[selected];
 
-		const assignee = this.props.assignees[selected];
-		this.setState({ assignee });
+		ticket.assignee = newAssignee;
+		handleAssigneeChange(ticket);
+		this.setState({ assignee: newAssignee });
 	}
 
 	/**
@@ -147,7 +139,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	 * @private
 	 * @param {Boolean} doSend - If status change should be sent or not
 	 */
-	private handleModal(doSend: boolean): void {
+	private handleModal = (doSend: boolean): void => {
 		this.props.handleStatusChange(this.props.ticket, doSend);
 		this.setState({ displayModal: false });
 	}
