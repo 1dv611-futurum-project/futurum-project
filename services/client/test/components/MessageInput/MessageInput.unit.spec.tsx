@@ -4,7 +4,7 @@ import { mount, shallow } from 'enzyme';
 import { expect } from 'chai';
 
 import TextArea from 'react-textarea-autosize';
-import { Button } from 'material-ui';
+import Button from '../../../src/elements/CustomButton/CustomButton';
 import { MessageInput } from '../../../src/components/MessageInput/MessageInput';
 
 describe('<MessageInput />', () => {
@@ -61,7 +61,7 @@ describe('<MessageInput />', () => {
 		wrapper.setState({ message: input });
 
 		wrapper.find(Button).simulate('click');
-		expect(input).to.equal(expected);
+		expect(input).to.equal(expected.messages[expected.messages.length - 1].body);
 		expect(wrapper.find('.message-input--hidden')).to.have.length(1);
 	});
 

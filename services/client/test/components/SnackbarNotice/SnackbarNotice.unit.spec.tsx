@@ -24,7 +24,7 @@ describe('<SnackbarNotice />', () => {
 	});
 
 	it('should close on button click', () => {
-		const closeButton = wrapper.find(IconButton).at(0);
+		const closeButton = wrapper.find(IconButton);
 		closeButton.simulate('click');
 		expect(wrapper.state('open')).to.equal(false);
 	});
