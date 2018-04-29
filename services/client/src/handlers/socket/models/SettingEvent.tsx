@@ -2,6 +2,6 @@
  * Settings event types
  */
 export enum SettingEvent {
-	CHANNEL= 'settings',
+	CHANNEL = 'settings',
 	UPDATE = 'setting_update',
 }

@@ -1,16 +1,17 @@
 /**
  * Handles the websocket connection against the client.
+ * @module handlers/socket/SocketFactory
  */
-
 import * as SocketIO from 'socket.io-client';
 import * as Cookies from 'js-cookie';
+
 import TicketChannel from './channels/TicketChannel';
 import AssigneeChannel from './channels/AssigneeChannel';
 import CustomerChannel from './channels/CustomerChannel';
 import SettingChannel from './channels/SettingChannel';
 
 /**
- * Handles the connection.
+ * SocketFactory class
  */
 export default class SocketFactory {
 
@@ -23,6 +24,10 @@ export default class SocketFactory {
 		this.config();
 	}
 
+	/**
+	 * Sets up Websocket config
+	 * @private
+	 */
 	private config() {
 		this.io = SocketIO(SocketFactory.URL, {
 			path: SocketFactory.PATH,
@@ -30,6 +35,10 @@ export default class SocketFactory {
 		});
 	}
 
+	/**
+	 * Checks if token is valid or has expired
+	 * @private
+	 */
 	public isValidToken(cb: any) {
 		this.io.on('connect', () => {
 			cb(true);
@@ -44,18 +53,34 @@ export default class SocketFactory {
 		});
 	}
 
+	/**
+	 * Initiates a new TicketChannel
+	 * @public
+	 */
 	public ticketChannel() {
 		return new TicketChannel(this.io);
 	}
 
+	/**
+	 * Initiates a new AssigneeChannel
+	 * @public
+	 */
 	public assigneeChannel() {
 		return new AssigneeChannel(this.io);
 	}
 
+	/**
+	 * Initiates a new CustomerChannel
+	 * @public
+	 */
 	public customerChannel() {
 		return new CustomerChannel(this.io);
 	}
 
+	/**
+	 * Initiates a new SettingChannel
+	 * @public
+	 */
 	public settingChannel() {
 		return new SettingChannel(this.io);
 	}

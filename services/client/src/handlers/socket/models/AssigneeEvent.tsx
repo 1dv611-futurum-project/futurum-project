@@ -1,6 +1,6 @@
 /**
- * Customer event types
+ * Assignee event types
  */
 export enum AssigneeEvent {
-	CHANNEL= 'assignees',
+	CHANNEL = 'assignees',
 }
