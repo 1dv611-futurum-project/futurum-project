@@ -53,7 +53,7 @@ describe('<MessageInput />', () => {
 	});
 
 	it('should send the input message', () => {
-		let expected = '';
+		let expected: any = '';
 		const input = 'test';
 
 		props.onClick = (message: string) => { expected = message; };

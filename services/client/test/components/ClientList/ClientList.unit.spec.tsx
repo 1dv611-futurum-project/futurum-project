@@ -5,6 +5,7 @@ import { expect } from 'chai';
 
 import { TableBody, TableRow, TableCell, IconButton } from 'material-ui';
 import { ClientList } from '../../../src/components/ClientList/ClientList';
+import { ClientRow } from '../../../src/components/ClientList/ClientRow';
 
 describe('<ClientList />', () => {
 	let wrapper: any;
@@ -18,7 +19,7 @@ describe('<ClientList />', () => {
 
 	before(() => {
 		wrapper = shallow(<ClientList {...props}/>).find(TableBody);
-		tableRow = wrapper.find(TableRow).at(0);
+		tableRow = wrapper.find(ClientRow).dive();
 		clientName = '';
 	});
 
@@ -34,15 +35,15 @@ describe('<ClientList />', () => {
 		expect(tableRow.find(TableCell).at(2).props().children).to.equal(props.customers[0].errands);
 	});
 
-	it('should get client name from edit-button', () => {
-		const expected = props.customers[0].name;
+	it('should get client from edit-button', () => {
+		const expected = props.customers[0];
 
 		tableRow.find(IconButton).at(0).simulate('click');
 		expect(clientName).to.equal(expected);
 	});
 
-	it('should get client name from delete-button', () => {
-		const expected = props.customers[0].name;
+	it('should get client from delete-button', () => {
+		const expected = props.customers[0];
 
 		tableRow.find(IconButton).at(1).simulate('click');
 		expect(clientName).to.equal(expected);
