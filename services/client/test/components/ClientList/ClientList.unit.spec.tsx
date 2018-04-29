@@ -11,7 +11,7 @@ describe('<ClientList />', () => {
 	let tableRow: any;
 	let clientName: string;
 	const props = {
-		data: [{name: 'test', email: 'test', errands: 0}],
+		customers: [{name: 'test', email: 'test', errands: 0}],
 		onEdit: (name: string) => { clientName = name; },
 		onDelete: (name: string) => { clientName = name; }
 	};
@@ -23,26 +23,26 @@ describe('<ClientList />', () => {
 	});
 
 	it('should have client name in a TableCell', () => {
-		expect(tableRow.find(TableCell).at(0).props().children).to.equal(props.data[0].name);
+		expect(tableRow.find(TableCell).at(0).props().children).to.equal(props.customers[0].name);
 	});
 
 	it('should have client email in a TableCell', () => {
-		expect(tableRow.find(TableCell).at(1).props().children).to.equal(props.data[0].email);
+		expect(tableRow.find(TableCell).at(1).props().children).to.equal(props.customers[0].email);
 	});
 
 	it('should have client errands in a TableCell', () => {
-		expect(tableRow.find(TableCell).at(2).props().children).to.equal(props.data[0].errands);
+		expect(tableRow.find(TableCell).at(2).props().children).to.equal(props.customers[0].errands);
 	});
 
 	it('should get client name from edit-button', () => {
-		const expected = props.data[0].name;
+		const expected = props.customers[0].name;
 
 		tableRow.find(IconButton).at(0).simulate('click');
 		expect(clientName).to.equal(expected);
 	});
 
 	it('should get client name from delete-button', () => {
-		const expected = props.data[0].name;
+		const expected = props.customers[0].name;
 
 		tableRow.find(IconButton).at(1).simulate('click');
 		expect(clientName).to.equal(expected);

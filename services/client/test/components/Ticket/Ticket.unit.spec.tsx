@@ -13,7 +13,7 @@ import { StatusSelect } from '../../../src/components/StatusSelect/StatusSelect'
 describe('<Ticket />', () => {
 	let wrapper: any;
 	const props = {
-		data: {
+		ticket: {
 			id: '0',
 			title: 'title',
 			from: {
@@ -32,19 +32,19 @@ describe('<Ticket />', () => {
 	});
 
 	it('should have a Link to the ticket', () => {
-		expect(wrapper.find(`Link[to="ticket-${props.data.id}"]`)).to.have.length(1);
+		expect(wrapper.find(`Link[to="ticket-${props.ticket.id}"]`)).to.have.length(1);
 	});
 
 	it('should have a title', () => {
-		expect(wrapper.find(CardHeader).props()).to.have.property('title', props.data.title);
+		expect(wrapper.find(CardHeader).props()).to.have.property('title', props.ticket.title);
 	});
 
 	it('should have an author', () => {
-		expect(wrapper.find(CardHeader).props()).to.have.property('subheader', props.data.from.name);
+		expect(wrapper.find(CardHeader).props()).to.have.property('subheader', props.ticket.from.name);
 	});
 
 	it('should have a ticket ID', () => {
-		expect(wrapper.find('.ticket__id').text()).to.equal('#' + props.data.id);
+		expect(wrapper.find('.ticket__id').text()).to.equal('#' + props.ticket.id);
 	});
 
 	it('should have a ticket created date in core format', () => {
@@ -55,6 +55,6 @@ describe('<Ticket />', () => {
 
 	it('should have a ticket assignee', () => {
 		expect(wrapper.find('.ticket__content__information').at(1).text())
-			.to.equal('Tilldelat: ' + props.data.assignee);
+			.to.equal('Tilldelat: ' + props.ticket.assignee);
 	});
 });

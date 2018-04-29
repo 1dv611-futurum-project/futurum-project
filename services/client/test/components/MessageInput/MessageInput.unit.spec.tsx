@@ -11,7 +11,25 @@ describe('<MessageInput />', () => {
 	let wrapper: any;
 	const props = {
 		onClick: (message: string) => {return; },
-		open: true
+		open: true,
+		ticket: {
+			id: '0',
+			title: 'title',
+			from: {
+				name: 'name',
+				email: 'email'
+			},
+			created: '2018-04-27T23:25:05.000Z',
+			assignee: 'assignee',
+			status: 0,
+			messages: [
+				{
+					fromCustomer: true,
+					received: '2018-04-27T23:25:05.000Z',
+					body: 'body'
+				}
+			]
+		}
 	};
 
 	before(() => {

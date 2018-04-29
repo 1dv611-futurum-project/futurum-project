@@ -16,7 +16,7 @@ describe('<TicketOverview />', () => {
 		handleStatusChange: (fn: number) => fn,
 		handleAssigneeChange: (fn: string) => fn,
 		assignees: ['assignee'],
-		data: {
+		ticket: {
 			id: 'id',
 			status: 0,
 			assignee: 'assignee',
@@ -57,15 +57,15 @@ describe('<TicketOverview />', () => {
 		for (const status in statusCodes) {
 			const statusInt = JSON.parse(status);
 			wrapper = newWrapperProps(statusInt);
-			const color = wrapper.state('color');
+			const spanElem = wrapper.find('.ticket-overview__color');
 
-			expect(color).to.equal(colors[statusInt]);
+			expect(spanElem.hasClass(`ticket-overview__color--${colors[statusInt]}`)).to.equal(true);
 		}
 	});
 
 	function newWrapperProps(status: number): any {
-		props.data.status = status;
-		return shallow(<TicketOverview {...props}/>);
+		props.ticket.status = status;
+		return shallow(<TicketOverview {...props}/>).dive();
 	}
 
 	it('should have a list of statuses to choose from', () => {
