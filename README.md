@@ -8,7 +8,7 @@ Projektet bygger på en utvecklingsmiljö med Docker och kräver med andra ord a
 
 #### Starta projektet med Docker
 
-1. Om det är första gången du kör upp projektet med Docker, börja med att bygga upp alla containers genom att köra kommandot `docker-compose up -d --build` i din terminal. _(Observera att det här kan ta en stund beroende på dator och internetuppkoppling, framför allt att bygga klienten)_
+1. Om det är första gången du kör upp projektet med Docker, börja med att bygga upp alla containers genom att stå i projektets rot-folder och köra kommandot `docker-compose up -d --build` i din terminal. _(Observera att det här kan ta en stund beroende på dator och internetuppkoppling, framför allt att bygga klienten. 'En stund' kan här betyda allt mellan femton minuter och två timmar.)_
 2. Om du däremot redan har kört projektet tidigare, kör istället `docker-compose up -d` i terminalen.
 3. Klientapplikationen körs nu på `localhost:8080` och servern körs på `localhost:8080/node` (om du får fram en sida med 'Bad Gateway', så kan det bero på att containern ännu inte har hunnit starta upp - ha tålamod!).
 4. När du är klar med all utveckling, stoppa alla containers genom att köra kommandot `docker-compose stop`.
