@@ -42,8 +42,8 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 				<StatusSelect selected={this.state.status} onChange={this.handleStatusChange} />
 					{ this.state.displayModal ?
 						<Modal
-							title={`Uppdaterat status av "${ticket.title}"`}
-							message={`Skicka statusuppdateringen ${this.state.statusText} till kund?`}
+							title={`Uppdatering av status för ärendet "${ticket.title}"`}
+							message={`Vill du skicka statusuppdateringen ${this.state.statusText} till kund?`}
 							disagree={'Nej'}
 							agree={'Ja, skicka'}
 							onChange={this.handleModal}

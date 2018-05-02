@@ -85,8 +85,8 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 						/>
 						{this.state.displayModal ?
 							<Modal
-								title={`Uppdaterat status av "${title}"`}
-								message={`Skicka statusuppdateringen ${this.state.statusText} till kund?`}
+								title={`Uppdatering av status för ärendet "${title}"`}
+								message={`Vill du skicka statusuppdateringen ${this.state.statusText} till kund?`}
 								disagree={'Nej'}
 								agree={'Ja, skicka'}
 								onChange={this.handleModal}

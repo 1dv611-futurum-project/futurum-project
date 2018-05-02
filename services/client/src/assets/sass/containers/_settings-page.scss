@@ -1,7 +1,7 @@
 /**
- * Clientlist page container
+ * Settings page container
  */
-.client-list-page {
+.settings {
 	&__wrapper {
 		overflow: visible;
 	}
@@ -10,15 +10,14 @@
 		margin: 0 0 20px 10px;
 
 		&__title {
-			margin-top: 0;
 			font-size: 20px;
 			font-family: 'Source Sans Pro', sans-serif;
 			font-weight: bold;
 			display: inline-block;
-		}
 
-		&__btn {
-			float: right;
+			&:first-of-type {
+				margin-top: 0;
+			}
 		}
 	}
 }

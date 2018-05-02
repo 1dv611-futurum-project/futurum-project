@@ -20,14 +20,14 @@ export class SettingsPage extends React.Component<any, any> {
 	public render() {
 		return (
 			<div className='settings__wrapper'>
-				<h1 className='client-list-page__header__title'>Redigera statusfärger</h1>
+				<h1 className='settings__header__title'>Redigera statusfärger</h1>
 				<StatusColor color={'red'} status={'Ej påbörjad'} onChange={this.onColorChange} />
 				<StatusColor color={'blue'} status={'Påbörjad'} onChange={this.onColorChange} />
 				<StatusColor color={'green'} status={'Genomförd'} onChange={this.onColorChange} />
 				<StatusColor color={'green'} status={'Stängd'} onChange={this.onColorChange} />
 				<br />
 				<Divider />
-				<h1 className='client-list-page__header__title'>Redigera ansvariga</h1>
+				<h1 className='settings__header__title'>Redigera ansvariga</h1>
 				<AddButton text='Lägg till ansvariga' onClick={() => { return; }}/>
 			</div>
 		);
