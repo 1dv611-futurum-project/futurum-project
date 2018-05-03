@@ -8,6 +8,7 @@ export interface ITicketModel extends ITicket, Document {}
 
  // Todo: change Date to DateTime type
 const TicketSchema: Schema = new Schema({
+  ticketId: {type: Number, required: true},
   status: {type: Number, default: 0},
   assignee: {type: String, required: false},
   title: {type: String, required: false},

@@ -100,13 +100,30 @@ class DBHandler extends events.EventEmitter {
   }
 
   /**
+   * Removes one document that matches the given attributes.
+   * Todo: cb pattern för exec and deprecated rejection problem on search errors
+   */
+  public removeOne(type: string, removeOn: object): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.getOneFromType(type, removeOn)
+      .then((result) => {
+        result.remove().exec();
+        resolve();
+      })
+      .catch((err) => {
+        reject(err);
+      });
+    });
+  }
+
+  /**
    * Removes all documents of the given type that matches the given attributes.
    */
   public removeAll(type: string, removeOn: object): Promise<void> {
     return new Promise((resolve, reject) => {
       this.getAllFromType(type, removeOn)
       .then((result) => {
-        result.forEach((found) => found.remove());
+        result.forEach((found) => found.remove().exec());
         resolve();
       })
       .catch((err) => {

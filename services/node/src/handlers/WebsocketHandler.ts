@@ -105,7 +105,7 @@ class WebsocketHandler {
     this.config();
     this.authorize();
     this.listen();
-    this.onConnect();
+    // this.onConnect();
   }
 
   private config(): void {
@@ -153,6 +153,16 @@ class WebsocketHandler {
         socket.emit('expired');
         socket.disconnect();
       }, exp);
+    });
+  }
+
+  public onSocket(callback: any) {
+    this.socket.on('connection', (socket: any) => {
+      // this.emitTickets(mockData);
+      this.emitAssignees(assigneesMock);
+      this.emitCustomers(customerMock);
+      this.emitSettings(settingsMock);
+      callback(socket);
     });
   }
 

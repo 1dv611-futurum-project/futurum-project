@@ -16,7 +16,7 @@ import { GmailSender } from './MailSender';
 class EmailHandler {
   private IMAPConnection: IMAPConnection;
   private IMAPHandler: IMAPConnectionHandler;
-  private MailSender: GmailSender;
+  public MailSender: GmailSender;
 
   /**
    * Returns a handler of incoming mails.

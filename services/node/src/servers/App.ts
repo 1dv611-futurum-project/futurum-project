@@ -20,6 +20,77 @@ import IReceivedTicket from './../handlers/email/interfaces/IReceivedTicket';
 import { IncomingMailEvent } from './../handlers/email/events/IncomingMailEvents';
 import Ticket from './../models/Ticket';
 import Mail from './../models/Mail';
+import Email from './../handlers/email/Email';
+
+const mockData = [
+  {
+    type: 'ticket',
+    id: 3,
+    status: 2,
+    assignee: 'Anton Myrberg',
+    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
+    created: '2018-04-17T17:56:58.000Z',
+    title: 'Ett test igen',
+    from: {
+      name: 'Dev Devsson',
+      email: 'dev@futurumdigital.se'
+    },
+    messages: [
+      {
+        received: '2018-04-17T17:56:58.000Z',
+        body: 'Vi har mottagit ditt meddelande och återkommer inom kort. Mvh Anton Myrberg',
+        fromCustomer: false
+      },
+      {
+        received: '2018-04-17T17:56:58.000Z',
+        body: 'adfafdasfa ',
+        fromCustomer: true
+      }
+    ]
+  },
+  {
+    type: 'ticket',
+    id: 12,
+    status: 1,
+    assignee: null,
+    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
+    created: '2018-04-17T17:56:58.000Z',
+    title: 'Vi har ett problem',
+    from: {
+      name: 'Dev Devsson',
+      email: 'dev@futurumdigital.se'
+    },
+    messages: [
+      {
+        received: '2018-04-17T17:56:58.000Z',
+        body: 'adfafdasfa ',
+        fromCustomer: true
+      }
+    ]
+  },
+  {
+    type: 'ticket',
+    id: 6,
+    status: 2,
+    assignee: 'Sebastian Borgstedt',
+    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
+    created: '2018-04-17T17:56:58.000Z',
+    title: 'Nu har det blivit tokigt',
+    from: {
+      name: 'Dev Devsson',
+      email: 'dev@futurumdigital.se'
+    },
+    messages: [
+      {
+        received: '2018-04-17T17:56:58.000Z',
+        body: 'adfafdasfa ',
+        fromCustomer: true
+      }
+    ]
+  }
+] as object[];
+
+const tickArr = [];
 
 /**
  * Express app.
@@ -37,21 +108,81 @@ class App {
     this.authRouter = authRouter;
     this.DBHandler = new DBHandler(new DBConnection());
     this.websocketHandler = WebsocketHandler;
-    // this.onSocketConnection();
     this.middleware();
     this.mountRoutes();
     this.handleErrors();
     this.handleIncomingEmails();
     this.handleDB();
+    this.listenSocket();
+    // this.DBActions();
   }
 
-  // private onSocketConnection() {
-  //   const tickArr = [];
-  //   tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
-  //   tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
-  //   tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
-  //   this.websocketHandler.emitTickets(tickArr);
-  // }
+  private DBActions(): void {
+    tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
+    tickArr.push(this.createNewTicket(mockData[1], this.createNewMails(mockData[1])));
+    tickArr.push(this.createNewTicket(mockData[2], this.createNewMails(mockData[2])));
+    this.DBHandler.createNewFromType('ticket', tickArr[0]);
+    this.DBHandler.createNewFromType('ticket', tickArr[1]);
+    this.DBHandler.createNewFromType('ticket', tickArr[2]);
+    // this.DBHandler.removeAll('ticket', {});
+  }
+
+  private listenSocket() {
+    this.websocketHandler.onSocket( (socket) => {
+      this.DBHandler.getAll('ticket', {}).then( (tickets) => {
+        const tick = tickets;
+        console.log(tick);
+        this.websocketHandler.emitTickets(tickets);
+      });
+
+      socket.on('tickets', (event: string, data: any) => {
+        const ticket = this.createNewTicket(data, this.createNewMails(data));
+        switch (event) {
+        case 'ticket_assignee':
+          try {
+            this.DBHandler.getOne('ticket', { ticketId: data.id } ).then((tick) => {
+              if (tick) {
+                this.DBHandler.addOrUpdate('ticket', ticket, { ticketId: data.id });
+              } else {
+                // todo: ErrorChannel
+              }
+            });
+          } catch (error) {
+            console.error(error);
+          }
+          break;
+        case 'ticket_message':
+          try {
+            this.DBHandler.getOne('ticket', { ticketId: data.id } ).then((tick) => {
+              if (tick) {
+                this.DBHandler.addOrUpdate('ticket', ticket, { ticketId: data.id });
+              } else {
+                // todo: ErrorChannel
+              }
+            });
+          } catch (error) {
+            console.error(error);
+          }
+          break;
+        case 'ticket_status':
+          try {
+            this.DBHandler.getOne('ticket', { ticketId: data.id } ).then((tick) => {
+              if (tick) {
+                this.DBHandler.addOrUpdate('ticket', ticket, { ticketId: data.id });
+              } else {
+                // todo: ErrorChannel
+              }
+            });
+          } catch (error) {
+            console.error(error);
+          }
+          break;
+        default:
+          break;
+        }
+      });
+    });
+  }
 
   private middleware(): void {
     this.express.use(bodyParser.json());
@@ -92,7 +223,7 @@ class App {
     this.DBHandler.connect('mongodb://futurum-db:27017');
   }
 
-  private createNewMails(mail: IReceivedTicket): Mail[] {
+  private createNewMails(mail: any): Mail[] {
     try {
       const mailBodies = [];
       mail.messages.forEach((element) => {
@@ -108,9 +239,10 @@ class App {
     return;
   }
 
-  private createNewTicket(mail: IReceivedTicket, mailBodies: Mail[]): object {
+  private createNewTicket(mail: any, mailBodies: Mail[]): object {
     try {
       const ticket = new Ticket({
+        ticketId: mail.id,
         status: mail.status,
         assignee: mail.assignee,
         title: mail.title,
