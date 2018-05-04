@@ -6,90 +6,7 @@
 import * as SocketIo from 'socket.io';
 import * as SocketIoJwt from 'socketio-jwt-decoder';
 
-const mockData = [
-  {
-    type: 'ticket',
-    id: 3,
-    status: 2,
-    assignee: 'Anton Myrberg',
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Ett test igen',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'Vi har mottagit ditt meddelande och återkommer inom kort. Mvh Anton Myrberg',
-        fromCustomer: false
-      },
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  },
-  {
-    type: 'ticket',
-    id: 12,
-    status: 1,
-    assignee: null,
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Vi har ett problem',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  },
-  {
-    type: 'ticket',
-    id: 6,
-    status: 2,
-    assignee: 'Sebastian Borgstedt',
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Nu har det blivit tokigt',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  }
-] as object[];
 
-const customerMock = [ {
-  _id: 'randomstrang1',
-  email: 'customer@email.com',
-  name: 'Problematic Dude',
-  numberOfErrands: 3
-},
-  {
-    _id: 'randomstrang2',
-    email: 'customer@email.com',
-    name: 'Problematic Dude',
-    numberOfErrands: 5
-  } ];
-
-const assigneesMock = ['Anton Myrberg', 'Sebastian Borgstedt', 'Dev Devsson'];
-
-const settingsMock = [];
 
 /**
  * Handles the connection.
@@ -158,10 +75,6 @@ class WebsocketHandler {
 
   public onSocket(callback: any) {
     this.socket.on('connection', (socket: any) => {
-      // this.emitTickets(mockData);
-      this.emitAssignees(assigneesMock);
-      this.emitCustomers(customerMock);
-      this.emitSettings(settingsMock);
       callback(socket);
     });
   }
@@ -170,12 +83,7 @@ class WebsocketHandler {
    * Emits data to the server on ticket channels.
    */
   public emitTicket(ticket: object): void {
-    try {
-      mockData.push(ticket);
-      this.socket.emit('tickets', JSON.stringify(mockData));
-    } catch (error) {
-      console.error(error);
-    }
+    this.socket.emit('tickets', JSON.stringify(ticket));
   }
 
   /**
@@ -192,7 +100,7 @@ class WebsocketHandler {
   /**
    * Emits data to the server on assignee channels.
    */
-  public emitAssignees(assignees: string[]): void {
+  public emitAssignees(assignees: object[]): void {
     try {
       this.socket.emit('assignees', JSON.stringify(assignees));
     } catch (error) {

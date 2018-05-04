@@ -45,16 +45,28 @@ class App {
     this.handleIncomingEmails();
     this.handleDB();
     this.listenSocket();
-    // this.DBActions();
   }
 
   private listenSocket() {
     this.websocketHandler.onSocket( (socket) => {
       this.DBHandler.getAll('ticket', {}).then( (tickets) => {
-        const tick = tickets;
         this.websocketHandler.emitTickets(tickets);
       }).catch((error) => {
-        console.log('socket could not connect');
+        console.log('Could not get tickets from DB');
+        console.log(error);
+      });
+
+      this.DBHandler.getAll('customer', {}).then( (customers) => {
+        this.websocketHandler.emitCustomers(customers);
+      }).catch((error) => {
+        console.log('Could not get tickets from DB');
+        console.log(error);
+      });
+
+      this.DBHandler.getAll('assignee', {}).then( (assignees) => {
+        this.websocketHandler.emitAssignees(assignees);
+      }).catch((error) => {
+        console.log('Could not get tickets from DB');
         console.log(error);
       });
 

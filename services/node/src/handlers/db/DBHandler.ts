@@ -10,7 +10,7 @@ import Assignee from './../../models/Assignee';
 import Ticket from './../../models/Ticket';
 import Mail from './../../models/Mail';
 
-const mockData = [
+const ticketMock = [
   {
     type: 'ticket',
     id: 3,
@@ -78,7 +78,35 @@ const mockData = [
   }
 ] as object[];
 
-const tickArr = [];
+const customerMock = [ {
+  email: ['customer@email.com', 'customer@email2.com'],
+  name: 'Problematic Dude'
+},
+  {
+    email: ['ACE@email.com'],
+    name: 'esset'
+  },
+  {
+    email: ['potatoaemail@email.com', 'potatoaemail@email2.com'],
+    name: 'Nilz'
+  } ] as object[];
+
+const assigneesMock = [ {
+  email: ['dev@futurumdigital.se'],
+  name: 'Anton Myrberg'
+},
+  {
+    email: ['dev@futurumdigital.se'],
+    name: 'Sebastian Borgstedt'
+  },
+  {
+    email: ['dev@futurumdigital.se'],
+    name: 'Dev Devsson'
+  } ] as object[];
+
+const settingsMock = [];
+
+const ticketArr = [];
 
 /**
  * Sets up and handles the database.
@@ -193,13 +221,23 @@ class DBHandler extends events.EventEmitter {
 
   /**
    * Removes one document that matches the given attributes.
+   * @todo {resolve(result)} Solve the BUG occuring because of PENDING state of Promise.resolve()
+   * is it possible that callback with pending removal can throw exception after actions in App/socket/emailhandler?
+   * @todo (node:131) UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'remove' of null
    */
-  public removeOne(type: string, removeOn: object): Promise<void> {
+  public removeOne(type: string, removeOn: object): Promise<object> {
     return new Promise((resolve, reject) => {
       this.getOneFromType(type, removeOn)
       .then((result) => {
-        result.remove().exec();
-        resolve();
+        // result.remove().exec();
+        // return Promise.call(result.remove().exec());
+        if (result !== null) {
+          console.log(result);
+          result.remove();
+          resolve(result);
+        }
+        // reject(result);
+        // resolve(result);
       })
       .catch((err) => {
         reject(err);
@@ -215,8 +253,6 @@ class DBHandler extends events.EventEmitter {
       this.getAllFromType(type, removeOn)
       .then((result) => {
         const tmp = JSON.stringify(result);
-        console.log('\n\nRESULT:\n\n');
-        console.log(tmp);
         result.forEach((found) => found.remove().exec());
         resolve();
       })
@@ -446,12 +482,20 @@ class DBHandler extends events.EventEmitter {
   }
 
   private DBMockActions(): void {
-    tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
-    tickArr.push(this.createNewTicket(mockData[1], this.createNewMails(mockData[1])));
-    tickArr.push(this.createNewTicket(mockData[2], this.createNewMails(mockData[2])));
-    this.createNewFromType('ticket', tickArr[0]);
-    this.createNewFromType('ticket', tickArr[1]);
-    this.createNewFromType('ticket', tickArr[2]);
+    ticketArr.push(this.createNewTicket(ticketMock[0], this.createNewMails(ticketMock[0])));
+    ticketArr.push(this.createNewTicket(ticketMock[1], this.createNewMails(ticketMock[1])));
+    ticketArr.push(this.createNewTicket(ticketMock[2], this.createNewMails(ticketMock[2])));
+    this.createNewFromType('ticket', ticketArr[0]);
+    this.createNewFromType('ticket', ticketArr[1]);
+    this.createNewFromType('ticket', ticketArr[2]);
+
+    this.createNewFromType('customer', customerMock[0]);
+    this.createNewFromType('customer', customerMock[1]);
+    this.createNewFromType('customer', customerMock[2]);
+
+    this.createNewFromType('assignee', assigneesMock[0]);
+    this.createNewFromType('assignee', assigneesMock[1]);
+    this.createNewFromType('assignee', assigneesMock[2]);
     // this.DBHandler.removeAll('ticket', {});
   }
 }
