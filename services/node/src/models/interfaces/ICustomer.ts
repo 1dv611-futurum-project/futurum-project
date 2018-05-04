@@ -1,4 +1,4 @@
 export interface ICustomer {
-  email?: string;
-  name?: string;
+  email?: string[];
+  name: string;
 }

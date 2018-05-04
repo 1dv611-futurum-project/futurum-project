@@ -21,6 +21,7 @@ import { IncomingMailEvent } from './../handlers/email/events/IncomingMailEvents
 import Ticket from './../models/Ticket';
 import Mail from './../models/Mail';
 import Email from './../handlers/email/Email';
+import IMAPHandler from '../handlers/email/IMAPHandler';
 
 const mockData = [
   {
@@ -131,7 +132,6 @@ class App {
     this.websocketHandler.onSocket( (socket) => {
       this.DBHandler.getAll('ticket', {}).then( (tickets) => {
         const tick = tickets;
-        console.log(tick);
         this.websocketHandler.emitTickets(tickets);
       });
 
@@ -143,6 +143,7 @@ class App {
             this.DBHandler.getOne('ticket', { ticketId: data.id } ).then((tick) => {
               if (tick) {
                 this.DBHandler.addOrUpdate('ticket', ticket, { ticketId: data.id });
+                // todo: get latest server and use Imaphandler.Mailhandler to send mail
               } else {
                 // todo: ErrorChannel
               }
@@ -156,6 +157,7 @@ class App {
             this.DBHandler.getOne('ticket', { ticketId: data.id } ).then((tick) => {
               if (tick) {
                 this.DBHandler.addOrUpdate('ticket', ticket, { ticketId: data.id });
+                // todo: get latest server and use Imaphandler.Mailhandler to send mail
               } else {
                 // todo: ErrorChannel
               }
@@ -169,6 +171,7 @@ class App {
             this.DBHandler.getOne('ticket', { ticketId: data.id } ).then((tick) => {
               if (tick) {
                 this.DBHandler.addOrUpdate('ticket', ticket, { ticketId: data.id });
+                // todo: get latest server and use Imaphandler.Mailhandler to send mail
               } else {
                 // todo: ErrorChannel
               }
@@ -179,6 +182,73 @@ class App {
           break;
         default:
           break;
+        }
+      });
+
+      socket.on('assignees', (event: string, assignee: object) => {
+        this.DBHandler.addOrUpdate('assignee', { _id: assignee._id });
+      });
+
+      socket.on('customers', (event: string, customer: object) => {
+        switch (event) {
+        case 'customer_add':
+          try {
+            this.DBHandler.getOne('customer', { _id: customer._id } ).then((c) => {
+              if (c) {
+                // todo: ErrorChannel
+              } else {
+                this.DBHandler.addOrUpdate('customer', customer);
+                // todo: get latest server and use Imaphandler.Mailhandler to send mail
+              }
+            });
+          } catch (error) {
+            console.error(error);
+          }
+          break;
+        case 'customer_edit':
+          try {
+            this.DBHandler.getOne('customer', { _id: customer._id } ).then((c) => {
+              if (c) {
+                this.DBHandler.addOrUpdate('customer', customer, { _id: customer._id });
+                // todo: get latest server and use Imaphandler.Mailhandler to send mail
+              } else {
+                // todo: ErrorChannel
+              }
+            });
+          } catch (error) {
+            console.error(error);
+          }
+          break;
+        case 'customer_delete':
+          try {
+            this.DBHandler.getOne('customer', { _id: customer._id } ).then((c) => {
+              if (c) {
+                this.DBHandler.removeOne('customer', { _id: customer._id });
+                this.DBHandler.getOne('customer', { _id: customer._id } ).then((cust) => {
+                  if (cust) {
+                    // todo: get latest server and use Imaphandler.Mailhandler to send mail
+                  } else {
+                    // todo: ErrorChannel
+                  }
+                });
+              } else {
+                // todo: ErrorChannel
+              }
+            });
+          } catch (error) {
+            console.error(error);
+          }
+          break;
+        default:
+          break;
+        }
+      });
+
+      socket.on('settings', (event: string, settings: any) => {
+        if (event === 'setting_update') {
+          this.DBHandler.addOrUpdate('settings', settings);
+        } else {
+          // todo: ErrorChannel
         }
       });
     });
@@ -227,6 +297,7 @@ class App {
     try {
       const mailBodies = [];
       mail.messages.forEach((element) => {
+        // todo: ? if not required
         mailBodies.push(new Mail({
           received: element.received,
           fromCustomer: element.fromCustomer,
@@ -241,6 +312,7 @@ class App {
 
   private createNewTicket(mail: any, mailBodies: Mail[]): object {
     try {
+      // todo: ? if not required
       const ticket = new Ticket({
         ticketId: mail.id,
         status: mail.status,
