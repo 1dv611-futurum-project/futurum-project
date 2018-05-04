@@ -417,7 +417,6 @@ class DBHandler extends events.EventEmitter {
     }
   }
 
-  // new _id or old?
   private createNewTicket(mail: any, mailBodies: Mail[]): Ticket {
     try {
       // todo: ? if not required
