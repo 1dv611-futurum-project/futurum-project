@@ -8,6 +8,77 @@ import * as events from 'events';
 import Customer from './../../models/Customer';
 import Assignee from './../../models/Assignee';
 import Ticket from './../../models/Ticket';
+import Mail from './../../models/Mail';
+
+const mockData = [
+  {
+    type: 'ticket',
+    id: 3,
+    status: 2,
+    assignee: 'Anton Myrberg',
+    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
+    created: '2018-04-17T17:56:58.000Z',
+    title: 'Ett test igen',
+    from: {
+      name: 'Dev Devsson',
+      email: 'dev@futurumdigital.se'
+    },
+    messages: [
+      {
+        received: '2018-04-17T17:56:58.000Z',
+        body: 'Vi har mottagit ditt meddelande och återkommer inom kort. Mvh Anton Myrberg',
+        fromCustomer: false
+      },
+      {
+        received: '2018-04-17T17:56:58.000Z',
+        body: 'adfafdasfa ',
+        fromCustomer: true
+      }
+    ]
+  },
+  {
+    type: 'ticket',
+    id: 12,
+    status: 1,
+    assignee: null,
+    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
+    created: '2018-04-17T17:56:58.000Z',
+    title: 'Vi har ett problem',
+    from: {
+      name: 'Dev Devsson',
+      email: 'dev@futurumdigital.se'
+    },
+    messages: [
+      {
+        received: '2018-04-17T17:56:58.000Z',
+        body: 'adfafdasfa ',
+        fromCustomer: true
+      }
+    ]
+  },
+  {
+    type: 'ticket',
+    id: 6,
+    status: 2,
+    assignee: 'Sebastian Borgstedt',
+    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
+    created: '2018-04-17T17:56:58.000Z',
+    title: 'Nu har det blivit tokigt',
+    from: {
+      name: 'Dev Devsson',
+      email: 'dev@futurumdigital.se'
+    },
+    messages: [
+      {
+        received: '2018-04-17T17:56:58.000Z',
+        body: 'adfafdasfa ',
+        fromCustomer: true
+      }
+    ]
+  }
+] as object[];
+
+const tickArr = [];
 
 /**
  * Sets up and handles the database.
@@ -25,7 +96,7 @@ class DBHandler extends events.EventEmitter {
   /**
    * Connects to the database with the connectionstring given.
    */
-  public connect(connectionString: string): void {
+  public connect(connectionString: string) {
     this.dbconnection.connect(connectionString);
   }
 
@@ -69,13 +140,33 @@ class DBHandler extends events.EventEmitter {
    */
   public addOrUpdate(type: string, info: object, replaceOn?: object): Promise<object[]> {
     return new Promise((resolve, reject) => {
+      this.getOneFromType(type, replaceOn)
+      .then((found) => {
+        if (!found) {
+          const updated = (f) => {
+            f.set(info);
+            return f.save();
+          };
+          return Promise.all([updated]);
+        } else {
+          return this.createNewFromType(type, info);
+        }
+      })
+      .then((saved) => {
+        if (!Array.isArray(saved)) {
+          resolve([saved]);
+        } else {
+          resolve(saved);
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+/*
       this.getAllFromType(type, replaceOn)
       .then((allFound) => {
         if (allFound.length > 0) {
           const updated = allFound.map((found) => {
-            /**
-             * Todo: Implement set?
-             */
             found.set(info);
             return found.save();
           });
@@ -96,12 +187,12 @@ class DBHandler extends events.EventEmitter {
       .catch((error) => {
         reject(error);
       });
+      */
     });
   }
 
   /**
    * Removes one document that matches the given attributes.
-   * Todo: cb pattern för exec and deprecated rejection problem on search errors
    */
   public removeOne(type: string, removeOn: object): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -123,6 +214,9 @@ class DBHandler extends events.EventEmitter {
     return new Promise((resolve, reject) => {
       this.getAllFromType(type, removeOn)
       .then((result) => {
+        const tmp = JSON.stringify(result);
+        console.log('\n\nRESULT:\n\n');
+        console.log(tmp);
         result.forEach((found) => found.remove().exec());
         resolve();
       })
@@ -147,13 +241,12 @@ class DBHandler extends events.EventEmitter {
     this.dbconnection.on('disconnected', () => {
       this.emit('disconnected');
     });
-
     this.dbconnection.on('close', () => {
       this.emit('disconnected');
     });
   }
 
-  private getOneFromType(type: string, info: object): Promise<object> {
+  public getOneFromType(type: string, info: object): Promise<object> {
     return new Promise((resolve, reject) => {
       type = type.toLowerCase();
       switch (type) {
@@ -191,7 +284,7 @@ class DBHandler extends events.EventEmitter {
     });
   }
 
-  private getAllFromType(type: string, info: object): Promise<object[]> {
+  public getAllFromType(type: string, info: object): Promise<object[]> {
     return new Promise((resolve, reject) => {
       type = type.toLowerCase();
       if (!info) {
@@ -242,12 +335,9 @@ class DBHandler extends events.EventEmitter {
        * }
        */
       type = type.toLowerCase();
-      // const toSave;
-
       switch (type) {
       case 'customer':
-        // toSave = new Customer(info);
-        info.save()
+        this.createNewCustomer(info).save()
           .then((saved) => {
             resolve(saved);
           })
@@ -256,8 +346,8 @@ class DBHandler extends events.EventEmitter {
           });
         break;
       case 'ticket':
-        // toSave = new Ticket(info);
-        info.save()
+        this.createNewTicket(info, this.createNewMails(info))
+          .save()
           .then((saved) => {
             resolve(saved);
           })
@@ -266,8 +356,7 @@ class DBHandler extends events.EventEmitter {
           });
         break;
       case 'assignee':
-        // toSave = new Assignee(info);
-        info.save()
+        this.createNewAssignee(info).save()
           .then((saved) => {
             resolve(saved);
           })
@@ -281,23 +370,92 @@ class DBHandler extends events.EventEmitter {
       }
     });
   }
+
+  private createNewMails(mail: any): Mail[] {
+    try {
+      const mailBodies = [];
+      mail.messages.forEach((element) => {
+        // todo: ? if not required
+        mailBodies.push(new Mail({
+          received: element.received,
+          fromCustomer: element.fromCustomer,
+          body: element.body}));
+      });
+      return mailBodies;
+    } catch (error) {
+      console.error(error);
+    }
+    return;
+  }
+
+  private createNewCustomer(customer: object): Customer {
+    try {
+      let emails = [];
+      customer.email.forEach(email => {
+        emails.push(email);
+      });
+      if ('name' in customer) {
+        customer = {email: emails, name: customer.name};
+      } else {
+        customer = {email: emails};
+      }
+      return new Customer(customer);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  private createNewAssignee(assignee: object): Assignee {
+    try {
+      let emails = [];
+      assignee.email.forEach(email => {
+        emails.push(email);
+      });
+      return new Assignee({ email: emails, name: assignee.name });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // new _id or old?
+  private createNewTicket(mail: any, mailBodies: Mail[]): Ticket {
+    try {
+      // todo: ? if not required
+      let ticket = {
+        ticketId: mail.id,
+        from: mail.from.email,
+        body: mailBodies
+      };
+      if ('assignee' in mail) {
+        ticket[assignee] = mail.assignee;
+        // ticket.assignee = mail.assignee;
+      }
+      if ('title' in mail) {
+        ticket[title] = mail.title;
+      }
+      if ('status' in mail) {
+        ticket[status] = mail.status;
+      }
+      if ('from.name' in mail) {
+        ticket[customerName] = mail.from.name;
+      }
+      return new Ticket(ticket);
+    } catch (error) {
+      console.error(error);
+    }
+    return;
+  }
+
+  private DBMockActions(): void {
+    tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
+    tickArr.push(this.createNewTicket(mockData[1], this.createNewMails(mockData[1])));
+    tickArr.push(this.createNewTicket(mockData[2], this.createNewMails(mockData[2])));
+    this.createNewFromType('ticket', tickArr[0]);
+    this.createNewFromType('ticket', tickArr[1]);
+    this.createNewFromType('ticket', tickArr[2]);
+    // this.DBHandler.removeAll('ticket', {});
+  }
 }
 
 // Exports.
 export default DBHandler;
-
-/*
- * Example email to map to db objects
-{ type: 'ticket',
-  id: 0,
-  status: 0,
-  assignee: null,
-  mailID: 'CAHm9NZDiA=EYN9N7_r66TFr49ws0JYoEEjXbMU9Y2i4W9w8fug@mail.gmail.com',
-  created: 2018-04-21T13:48:01.000Z,
-  title: 'master',
-  from: { name: 'Johan Söderlund', email: 'js223zs@student.lnu.se' },
-  messages:
-    [ { received: 2018-04-21T13:48:01.000Z,
-        body: 'are you?\n',
-        fromCustomer: true } ] }
-*/
