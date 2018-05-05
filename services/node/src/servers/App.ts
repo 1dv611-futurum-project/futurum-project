@@ -51,7 +51,6 @@ class App {
     this.websocketHandler.onSocket( (socket) => {
       this.DBHandler.getAll('ticket', {}).then( (tickets) => {
         console.log('getting tickets');
-        this.DBHandler.removeAll('Ticket', {});
         this.websocketHandler.emitTickets(tickets);
       }).catch((error) => {
         console.log('Could not get tickets from DB');
@@ -301,19 +300,15 @@ class App {
     EmailHandler.Incoming.on(IncomingMailEvent.TICKET, (mail) => {
       console.log('Got new ticket:');
       console.log(mail);
-      this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail).then((savedTicket) => {
-        console.log(savedTicket)
-        if (savedTicket &&
-          (savedTicket[0].body[savedTicket[0].body.length - 1].body ===
-          mail.messages[mail.messages.length - 1].body) ) {
-          this.websocketHandler.emitTickets(savedTicket[0]);
-        } else {
-          // Errorchannel db-client mismatch
-        }
-      }).catch((error) => {
-        console.log('could not save incoming new mail as ticket');
-        console.log(error);
-      });
+      this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail)
+        .then(() => this.DBHandler.getAll('ticket', {}))
+        .then((tickets: any) => {
+          this.websocketHandler.emitTickets(tickets);
+        })
+        .catch((error) => {
+          console.log('could not save incoming new mail as ticket');
+          console.log(error);
+        });
     });
 
     EmailHandler.Incoming.on(IncomingMailEvent.ANSWER, (mail) => {
