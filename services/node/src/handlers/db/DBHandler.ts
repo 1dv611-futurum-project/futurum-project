@@ -385,7 +385,7 @@ class DBHandler extends events.EventEmitter {
   private createNewMails(mail: any): Mail[] {
     try {
       const mailBodies = [];
-      mail.ticket.body.forEach((element) => {
+      mail.body.forEach((element) => {
         // todo: ? if not required
         mailBodies.push(new Mail({
           received: element.received,
@@ -399,10 +399,10 @@ class DBHandler extends events.EventEmitter {
     return;
   }
 
-  private createNewCustomer(customer: object): Customer {
+  private createNewCustomer(customer: any): Customer {
     try {
-      let emails = [];
-      customer.email.forEach(email => {
+      const emails = [];
+      customer.email.forEach((email: any) => {
         emails.push(email);
       });
       if ('name' in customer) {
@@ -416,10 +416,10 @@ class DBHandler extends events.EventEmitter {
     }
   }
 
-  private createNewAssignee(assignee: object): Assignee {
+  private createNewAssignee(assignee: any): Assignee {
     try {
-      let emails = [];
-      assignee.email.forEach(email => {
+      const emails = [];
+      assignee.email.forEach((email: any) => {
         emails.push(email);
       });
       return new Assignee({ email: emails, name: assignee.name });
@@ -433,14 +433,14 @@ class DBHandler extends events.EventEmitter {
       console.log('should be here creating');
       // todo: ? if not required
       const ticket = {
-        mailId: mail.ticket.mailId,
-        from: mail.ticket.from,
-        created: mail.ticket.created,
+        mailId: mail.mailId,
+        from: mail.from.email,
+        created: mail.created,
         body: mailBodies,
       };
 
       if ('assignee' in mail) {
-        ticket[assignee] = mail.assignee;
+        ticket.assignee = mail.assignee;
       }
       if ('title' in mail) {
         ticket.title = mail.title;
@@ -449,11 +449,11 @@ class DBHandler extends events.EventEmitter {
         ticket.status = mail.status;
       }
       if ('from.name' in mail) {
-        ticket.customerName = mail.from;
+        ticket.customerName = mail.from.name;
       }
 
       console.log('returning new ticket');
-      console.log(ticket)
+      console.log(ticket);
       return new Ticket(ticket);
     } catch (error) {
       console.error(error);

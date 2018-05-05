@@ -8,7 +8,7 @@ import EmailHandler from '../../email/EmailHandler';
 /**
  * Handles the email messages.
  */
-class Mailer {
+class MailSender {
 
   public sendAssigneeUpdate(payload: any) {
     const mailBody = payload[0].assignee + ' har tilldelats ärende med ärendeID: ' + payload[0].ticketId + '.';
@@ -36,4 +36,4 @@ class Mailer {
   }
 }
 
-export default new Mailer();
+export default new MailSender();

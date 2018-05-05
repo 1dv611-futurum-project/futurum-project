@@ -141,14 +141,14 @@ class IMAPHandler extends events.EventEmitter {
     message.status = 0;
     message.assignee = null;
 
-    message.mailID = mail.messageId;
+    message.mailId = mail.messageId;
     message.created = mail.receivedDate;
     message.title = mail.subject;
     message.from = {
       name: Array.isArray(mail.from) ? mail.from[0].name : mail.from.name,
       email: Array.isArray(mail.from) ? mail.from[0].address : mail.from.address
     };
-    message.messages = [
+    message.body = [
       {
         received: mail.receivedDate,
         body: mail.text,

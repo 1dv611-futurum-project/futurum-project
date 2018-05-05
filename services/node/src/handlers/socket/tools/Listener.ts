@@ -4,7 +4,7 @@
 
 // Imports.
 import * as SocketIo from 'socket.io';
-import Mailer from './Mailer';
+import MailSender from './MailSender';
 
 import { TicketEvent } from '../models/TicketEvent';
 import { AssigneeEvent } from '../models/AssigneeEvent';
@@ -30,21 +30,22 @@ export default class Listener {
   }
 
   private ticketListener() {
-    this.io.on('tickets', (event: string, ticket: any) => {
+    this.io.on('tickets', (event: string, data: any) => {
+      const ticket = data.ticket;
       switch (event) {
       case TicketEvent.ASSIGNEE:
         this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.id })
-            .then((payload: any) => Mailer.sendAssigneeUpdate(payload))
+            .then((payload: any) => MailSender.sendAssigneeUpdate(payload))
             .catch((error: any) => { console.error(error); });
         break;
       case TicketEvent.STATUS:
         this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.id })
-            .then((payload: any) => Mailer.sendStatusUpdate(payload))
+            .then((payload: any) => MailSender.sendStatusUpdate(payload))
             .catch((error: any) => { console.error(error); });
         break;
       case TicketEvent.MESSAGE:
         this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.id })
-            .then((payload: any) => Mailer.sendMessageUpdate(payload))
+            .then((payload: any) => MailSender.sendMessageUpdate(payload))
             .catch((error: any) => { console.error(error); });
         break;
       }
@@ -52,7 +53,8 @@ export default class Listener {
   }
 
   private customerListener() {
-    this.io.on('customers', (event: string, customer: any) => {
+    this.io.on('customers', (event: string, data: any) => {
+      const customer = data.customer;
       switch (event) {
       case CustomerEvent.ADD:
         this.db.addOrUpdate('customer', customer)
@@ -71,7 +73,8 @@ export default class Listener {
   }
 
   private settingsListener() {
-    this.io.on('settings', (event: string, setting: any) => {
+    this.io.on('settings', (event: string, data: any) => {
+      const setting = data.setting;
       switch (event) {
       case SettingEvent.UPDATE:
             // TODO: add settings to db
