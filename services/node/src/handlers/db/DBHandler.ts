@@ -434,9 +434,10 @@ class DBHandler extends events.EventEmitter {
       console.log('should be here creating')
       // todo: ? if not required
       const ticket = {
+        mailId: mail.mailID,
         from: mail.from.email,
+        created: mail.created,
         body: mailBodies,
-        mailId: mail.mailID
       };
 
       console.log(ticket)

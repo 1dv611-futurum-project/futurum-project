@@ -46,6 +46,7 @@ export class Ticket extends React.Component<ITicket, any> {
 	 */
 	public render() {
 		const { ticket, onSend } = this.props;
+		console.log(ticket);
 
 		return (
 			<Card className='ticket'>
@@ -84,6 +85,7 @@ export class Ticket extends React.Component<ITicket, any> {
 	 * @returns {String} - The formatted date
 	 */
 	private getFormattedDate(date: string): string {
+		console.log(date);
 		return moment(date, moment.ISO_8601).format('LL');
 	}
 }

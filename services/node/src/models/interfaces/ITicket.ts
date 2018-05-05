@@ -8,5 +8,6 @@ export interface ITicket {
   title?: string;
   from?: string;
   customerName?: string;
+  created?: Date;
   body?: Mail[];
 }

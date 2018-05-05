@@ -17,6 +17,7 @@ const TicketSchema: Schema = new Schema({
   title: {type: String, required: false},
   from: {type: String, required: true},
   customerName: {type: String, required: false},
+  created: {type: Date, required: true},
   body: {type: [], required: true}
 });
 
