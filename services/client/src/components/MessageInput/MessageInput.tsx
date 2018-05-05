@@ -65,7 +65,7 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 	 * @private
 	 */
 	private handleClick = () => {
-		this.props.ticket.messages.push({
+		this.props.ticket.body.push({
 			received: moment().format(),
 			body: this.state.message,
 			fromCustomer: false
