@@ -32,15 +32,15 @@ export default class Listener {
   private ticketListener() {
     this.io.on('tickets', (event: string, data: any) => {
       const ticket = data.ticket;
+      console.log(data.ticket);
       switch (event) {
       case TicketEvent.ASSIGNEE:
         this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.id })
-            .then((payload: any) => MailSender.sendAssigneeUpdate(payload))
             .catch((error: any) => { console.error(error); });
         break;
       case TicketEvent.STATUS:
         this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.id })
-            .then((payload: any) => MailSender.sendStatusUpdate(payload))
+            .then((payload: any) => MailSender.sendStatusUpdate(payload, data.send))
             .catch((error: any) => { console.error(error); });
         break;
       case TicketEvent.MESSAGE:

@@ -10,28 +10,24 @@ import EmailHandler from '../../email/EmailHandler';
  */
 class MailSender {
 
-  public sendAssigneeUpdate(payload: any) {
-    const mailBody = payload[0].assignee + ' har tilldelats ärende med ärendeID: ' + payload[0].ticketId + '.';
-    const mailSubject = 'Kundärende har blivit tilldelat';
-    // todo: change to: assigne.email stored in db
-    const mail = {from: 'dev@futurumdigital.se', to: 'dev@futurumdigital.se',
-      subject: mailSubject, body: mailBody};
-    EmailHandler.Outgoing.send(mail);
-  }
-
-  public sendStatusUpdate(payload: any) {
+  public sendStatusUpdate(payload: any, doSend: boolean) {
     const mailBody = 'Status för ärende med ärendeID: ' + payload[0].ticketId + ' har ändrats.';
     const mailSubject = 'Kundärende har fått uppdaterad status';
     // todo: change to: assigne.email stored in db
-    const mail = {from: 'dev@futurumdigital.se', to: 'dev@futurumdigital.se',
+    const mail = {from: 'dev@futurumdigital.se', to: payload[0].from.email,
       subject: mailSubject, body: mailBody};
-    EmailHandler.Outgoing.send(mail);
+
+    if (doSend) {
+      EmailHandler.Outgoing.send(mail);
+    } else {
+      return;
+    }
   }
 
   public sendMessageUpdate(payload: any) {
     const mailSubject = 'RE: ' + payload[0].title;
-    const mail = {from: 'dev@futurumdigital.se', to: payload[0].from,
-      subject: mailSubject, body: payload.body[payload.body.length].body};
+    const mail = {from: 'dev@futurumdigital.se', to: payload[0].from.email,
+      subject: mailSubject, body: payload[0].body.pop().body};
     EmailHandler.Outgoing.answer(mail, payload[0].ticketID);
   }
 }

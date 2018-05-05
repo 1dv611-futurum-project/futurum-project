@@ -6,8 +6,7 @@ export interface ITicket {
   status?: number;
   assignee?: string;
   title?: string;
-  from?: string;
-  customerName?: string;
+  from?: object;
   created?: Date;
   body?: Mail[];
 }

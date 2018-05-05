@@ -101,6 +101,7 @@ export class App extends React.Component<any, any> {
 			customerAction: this.socket.customerChannel(),
 			settingsAction: this.socket.settingChannel()
 		};
+		console.log(childProps.allTickets);
 
 		return (
 			<div className='app__wrapper'>

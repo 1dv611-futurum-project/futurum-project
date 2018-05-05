@@ -434,7 +434,7 @@ class DBHandler extends events.EventEmitter {
       // todo: ? if not required
       const ticket = {
         mailId: mail.mailId,
-        from: mail.from.email,
+        from: mail.from,
         created: mail.created,
         body: mailBodies,
       };
@@ -447,9 +447,6 @@ class DBHandler extends events.EventEmitter {
       }
       if ('status' in mail) {
         ticket.status = mail.status;
-      }
-      if ('from.name' in mail) {
-        ticket.customerName = mail.from.name;
       }
 
       console.log('returning new ticket');

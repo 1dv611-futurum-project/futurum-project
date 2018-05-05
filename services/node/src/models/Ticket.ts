@@ -15,7 +15,7 @@ const TicketSchema: Schema = new Schema({
   status: {type: Number, default: 0},
   assignee: {type: String, required: false},
   title: {type: String, required: false},
-  from: {type: String, required: true},
+  from: {type: Object, required: true},
   customerName: {type: String, required: false},
   created: {type: Date, required: true},
   body: {type: [], required: true}
