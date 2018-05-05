@@ -22,7 +22,7 @@ describe('<MessageInput />', () => {
 			created: '2018-04-27T23:25:05.000Z',
 			assignee: 'assignee',
 			status: 0,
-			messages: [
+			body: [
 				{
 					fromCustomer: true,
 					received: '2018-04-27T23:25:05.000Z',
@@ -53,7 +53,7 @@ describe('<MessageInput />', () => {
 	});
 
 	it('should send the input message', () => {
-		let expected: any = '';
+		let expected: any;
 		const input = 'test';
 
 		props.onClick = (message: string) => { expected = message; };
@@ -61,7 +61,7 @@ describe('<MessageInput />', () => {
 		wrapper.setState({ message: input });
 
 		wrapper.find(Button).simulate('click');
-		expect(input).to.equal(expected.messages[expected.messages.length - 1].body);
+		expect(input).to.equal(expected.body.pop().body);
 		expect(wrapper.find('.message-input--hidden')).to.have.length(1);
 	});
 

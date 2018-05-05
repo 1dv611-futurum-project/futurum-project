@@ -14,7 +14,7 @@ describe('<Ticket />', () => {
 	let wrapper: any;
 	const props = {
 		ticket: {
-			id: '0',
+			ticketId: '0',
 			title: 'title',
 			from: {
 				name: 'name',
@@ -32,7 +32,7 @@ describe('<Ticket />', () => {
 	});
 
 	it('should have a Link to the ticket', () => {
-		expect(wrapper.find(`Link[to="ticket-${props.ticket.id}"]`)).to.have.length(1);
+		expect(wrapper.find(`Link[to="ticket-${props.ticket.ticketId}"]`)).to.have.length(1);
 	});
 
 	it('should have a title', () => {
@@ -44,7 +44,7 @@ describe('<Ticket />', () => {
 	});
 
 	it('should have a ticket ID', () => {
-		expect(wrapper.find('.ticket__id').text()).to.equal('#' + props.ticket.id);
+		expect(wrapper.find('.ticket__id').text()).to.equal('#' + props.ticket.ticketId);
 	});
 
 	it('should have a ticket created date in core format', () => {
