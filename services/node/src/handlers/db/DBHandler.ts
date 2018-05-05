@@ -70,14 +70,15 @@ class DBHandler extends events.EventEmitter {
    */
   public addOrUpdate(type: string, info: object, replaceOn?: object): Promise<object[]> {
     return new Promise((resolve, reject) => {
-      this.getOneFromType(type, replaceOn)
+      const created = replaceOn ? this.getOneFromType(type, replaceOn) : this.createNewFromType(type, info);
+
+      created
       .then((found) => {
-        if (!found) {
-          const updated = (f) => {
-            f.set(info);
-            return f.save();
-          };
-          return Promise.all([updated]);
+        if (found && replaceOn) {
+          found.set(info);
+          return found.save();
+        } else if (found) {
+          return found.save();
         } else {
           return this.createNewFromType(type, info);
         }
@@ -158,7 +159,7 @@ class DBHandler extends events.EventEmitter {
     });
   }
 
-  public getOneFromType(type: string, info: object): Promise<object> {
+  private getOneFromType(type: string, info: object): Promise<object> {
     return new Promise((resolve, reject) => {
       type = type.toLowerCase();
       switch (type) {
@@ -196,7 +197,7 @@ class DBHandler extends events.EventEmitter {
     });
   }
 
-  public getAllFromType(type: string, info: object): Promise<object[]> {
+  private getAllFromType(type: string, info: object): Promise<object[]> {
     return new Promise((resolve, reject) => {
       type = type.toLowerCase();
       if (!info) {
@@ -238,7 +239,7 @@ class DBHandler extends events.EventEmitter {
     });
   }
 
-  public createNewFromType(type: string, info: object): Promise<object> {
+  private createNewFromType(type: string, info: object): Promise<object> {
     return new Promise((resolve, reject) => {
       /**
        * Check that object doesn't already exist in DB.
@@ -331,12 +332,15 @@ class DBHandler extends events.EventEmitter {
 
   private createNewTicket(mail: any, mailBodies: Mail[]): Ticket {
     try {
+      console.log('should be here creating')
       // todo: ? if not required
       const ticket = {
         from: mail.from.email,
         body: mailBodies,
         mailId: mail.mailID
       };
+
+      console.log(ticket)
       if ('assignee' in mail) {
         ticket.assignee = mail.assignee;
       }
@@ -349,6 +353,9 @@ class DBHandler extends events.EventEmitter {
       if ('from.name' in mail) {
         ticket.customerName = mail.from.name;
       }
+
+      console.log('returning new ticket')
+      console.log(ticket)
       return new Ticket(ticket);
     } catch (error) {
       console.error(error);

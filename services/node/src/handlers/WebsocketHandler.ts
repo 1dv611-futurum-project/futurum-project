@@ -6,8 +6,6 @@
 import * as SocketIo from 'socket.io';
 import * as SocketIoJwt from 'socketio-jwt-decoder';
 
-
-
 /**
  * Handles the connection.
  */
@@ -22,7 +20,7 @@ class WebsocketHandler {
     this.config();
     this.authorize();
     this.listen();
-    // this.onConnect();
+    this.onConnect();
   }
 
   private config(): void {
@@ -42,11 +40,6 @@ class WebsocketHandler {
 
   private onConnect() {
     this.socket.on('connection', (socket: any) => {
-      this.emitTickets(mockData);
-      this.emitAssignees(assigneesMock);
-      this.emitCustomers(customerMock);
-      this.emitSettings(settingsMock);
-
       // Incoming data:
       // eventType + ticket
       socket.on('tickets', (event: string, data: any) => {
@@ -91,6 +84,7 @@ class WebsocketHandler {
    */
   public emitTickets(tickets: object[]): void {
     try {
+      console.log(tickets)
       this.socket.emit('tickets', JSON.stringify(tickets));
     } catch (error) {
       console.error(error);

@@ -50,6 +50,8 @@ class App {
   private listenSocket() {
     this.websocketHandler.onSocket( (socket) => {
       this.DBHandler.getAll('ticket', {}).then( (tickets) => {
+        console.log('getting tickets');
+        this.DBHandler.removeAll('Ticket', {});
         this.websocketHandler.emitTickets(tickets);
       }).catch((error) => {
         console.log('Could not get tickets from DB');
@@ -59,14 +61,14 @@ class App {
       this.DBHandler.getAll('customer', {}).then( (customers) => {
         this.websocketHandler.emitCustomers(customers);
       }).catch((error) => {
-        console.log('Could not get tickets from DB');
+        console.log('Could not get customers from DB');
         console.log(error);
       });
 
       this.DBHandler.getAll('assignee', {}).then( (assignees) => {
         this.websocketHandler.emitAssignees(assignees);
       }).catch((error) => {
-        console.log('Could not get tickets from DB');
+        console.log('Could not get customers from DB');
         console.log(error);
       });
 
@@ -299,7 +301,8 @@ class App {
     EmailHandler.Incoming.on(IncomingMailEvent.TICKET, (mail) => {
       console.log('Got new ticket:');
       console.log(mail);
-      this.DBHandler.createNewFromType(IncomingMailEvent.TICKET, mail).then((savedTicket) => {
+      this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail).then((savedTicket) => {
+        console.log(savedTicket)
         if (savedTicket &&
           (savedTicket[0].body[savedTicket[0].body.length - 1].body ===
           mail.messages[mail.messages.length - 1].body) ) {
@@ -317,7 +320,7 @@ class App {
       console.log('Got answer on existing ticket:');
       console.log(mail);
       // todo: force mail param to contain ticketId or _id
-      this.DBHandler.addOrUpdate(IncomingMailEvent.ANSWER, mail, {ticketId: mail.id}).then((savedTicket) => {
+      this.DBHandler.addOrUpdate(IncomingMailEvent.ANSWER, mail, {mailId: mail.inReplyTo}).then((savedTicket) => {
         if (savedTicket &&
           (savedTicket.body[savedTicket.body.length].body ===
           mail.messages[mail.messages.length].body) ) {
