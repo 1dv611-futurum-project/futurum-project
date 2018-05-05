@@ -10,104 +10,6 @@ import Assignee from './../../models/Assignee';
 import Ticket from './../../models/Ticket';
 import Mail from './../../models/Mail';
 
-const ticketMock = [
-  {
-    type: 'ticket',
-    id: 3,
-    status: 2,
-    assignee: 'Anton Myrberg',
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Ett test igen',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'Vi har mottagit ditt meddelande och återkommer inom kort. Mvh Anton Myrberg',
-        fromCustomer: false
-      },
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  },
-  {
-    type: 'ticket',
-    id: 12,
-    status: 1,
-    assignee: null,
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Vi har ett problem',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  },
-  {
-    type: 'ticket',
-    id: 6,
-    status: 2,
-    assignee: 'Sebastian Borgstedt',
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Nu har det blivit tokigt',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  }
-] as object[];
-
-const customerMock = [ {
-  email: ['customer@email.com', 'customer@email2.com'],
-  name: 'Problematic Dude'
-},
-  {
-    email: ['ACE@email.com'],
-    name: 'esset'
-  },
-  {
-    email: ['potatoaemail@email.com', 'potatoaemail@email2.com'],
-    name: 'Nilz'
-  } ] as object[];
-
-const assigneesMock = [ {
-  email: ['dev@futurumdigital.se'],
-  name: 'Anton Myrberg'
-},
-  {
-    email: ['dev@futurumdigital.se'],
-    name: 'Sebastian Borgstedt'
-  },
-  {
-    email: ['dev@futurumdigital.se'],
-    name: 'Dev Devsson'
-  } ] as object[];
-
-const settingsMock = [];
-
-const ticketArr = [];
-
 /**
  * Sets up and handles the database.
  */
@@ -190,32 +92,6 @@ class DBHandler extends events.EventEmitter {
       .catch((error) => {
         reject(error);
       });
-/*
-      this.getAllFromType(type, replaceOn)
-      .then((allFound) => {
-        if (allFound.length > 0) {
-          const updated = allFound.map((found) => {
-            found.set(info);
-            return found.save();
-          });
-
-          return Promise.all(updated);
-        } else {
-          return this.createNewFromType(type, info);
-        }
-      })
-      .then((saved) => {
-        if (!Array.isArray(saved)) {
-          resolve([saved]);
-        } else {
-          resolve(saved);
-        }
-
-      })
-      .catch((error) => {
-        reject(error);
-      });
-      */
     });
   }
 
@@ -456,47 +332,28 @@ class DBHandler extends events.EventEmitter {
   private createNewTicket(mail: any, mailBodies: Mail[]): Ticket {
     try {
       // todo: ? if not required
-      let ticket = {
-        ticketId: mail.id,
+      const ticket = {
         from: mail.from.email,
-        body: mailBodies
+        body: mailBodies,
+        mailId: mail.mailID
       };
       if ('assignee' in mail) {
-        ticket[assignee] = mail.assignee;
-        // ticket.assignee = mail.assignee;
+        ticket.assignee = mail.assignee;
       }
       if ('title' in mail) {
-        ticket[title] = mail.title;
+        ticket.title = mail.title;
       }
       if ('status' in mail) {
-        ticket[status] = mail.status;
+        ticket.status = mail.status;
       }
       if ('from.name' in mail) {
-        ticket[customerName] = mail.from.name;
+        ticket.customerName = mail.from.name;
       }
       return new Ticket(ticket);
     } catch (error) {
       console.error(error);
     }
     return;
-  }
-
-  private DBMockActions(): void {
-    ticketArr.push(this.createNewTicket(ticketMock[0], this.createNewMails(ticketMock[0])));
-    ticketArr.push(this.createNewTicket(ticketMock[1], this.createNewMails(ticketMock[1])));
-    ticketArr.push(this.createNewTicket(ticketMock[2], this.createNewMails(ticketMock[2])));
-    this.createNewFromType('ticket', ticketArr[0]);
-    this.createNewFromType('ticket', ticketArr[1]);
-    this.createNewFromType('ticket', ticketArr[2]);
-
-    this.createNewFromType('customer', customerMock[0]);
-    this.createNewFromType('customer', customerMock[1]);
-    this.createNewFromType('customer', customerMock[2]);
-
-    this.createNewFromType('assignee', assigneesMock[0]);
-    this.createNewFromType('assignee', assigneesMock[1]);
-    this.createNewFromType('assignee', assigneesMock[2]);
-    // this.DBHandler.removeAll('ticket', {});
   }
 }
 

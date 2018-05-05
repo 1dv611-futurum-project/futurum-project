@@ -299,11 +299,10 @@ class App {
     EmailHandler.Incoming.on(IncomingMailEvent.TICKET, (mail) => {
       console.log('Got new ticket:');
       console.log(mail);
-      this.DBHandler.createNewFromType(mail.type, mail).then((savedTicket) => {
+      this.DBHandler.createNewFromType(IncomingMailEvent.TICKET, mail).then((savedTicket) => {
         if (savedTicket &&
-          (savedTicket[0].body[savedTicket[0].body.length].body ===
-          mail.messages[mail.messages.length].body) ) 
-        {
+          (savedTicket[0].body[savedTicket[0].body.length - 1].body ===
+          mail.messages[mail.messages.length - 1].body) ) {
           this.websocketHandler.emitTickets(savedTicket[0]);
         } else {
           // Errorchannel db-client mismatch
@@ -318,12 +317,11 @@ class App {
       console.log('Got answer on existing ticket:');
       console.log(mail);
       // todo: force mail param to contain ticketId or _id
-      this.DBHandler.addOrUpdate(mail.type, mail, {ticketId: mail.id}).then((savedTicket) => {
+      this.DBHandler.addOrUpdate(IncomingMailEvent.ANSWER, mail, {ticketId: mail.id}).then((savedTicket) => {
         if (savedTicket &&
-          (savedTicket[0].body[savedTicket[0].body.length].body ===
-          mail.messages[mail.messages.length].body) ) 
-        {
-          this.websocketHandler.emitTickets(savedTicket[0]);
+          (savedTicket.body[savedTicket.body.length].body ===
+          mail.messages[mail.messages.length].body) ) {
+          this.websocketHandler.emitTickets(savedTicket);
         } else {
           // Errorchannel
         }

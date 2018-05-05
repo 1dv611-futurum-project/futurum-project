@@ -2,13 +2,16 @@
  * Mongoose Schema Ticket Model.
  */
 import { Document, Schema, Model, model} from 'mongoose';
+import * as autoIncrement from 'mongoose-auto-increment';
+import * as mongoose from 'mongoose';
 import { ITicket } from './interfaces/ITicket';
 
 export interface ITicketModel extends ITicket, Document {}
 
- // Todo: change Date to DateTime type
+autoIncrement.initialize(mongoose.connection);
+
 const TicketSchema: Schema = new Schema({
-  ticketId: {type: Number, required: true},
+  mailId: {type: String, required: true},
   status: {type: Number, default: 0},
   assignee: {type: String, required: false},
   title: {type: String, required: false},
@@ -16,5 +19,7 @@ const TicketSchema: Schema = new Schema({
   customerName: {type: String, required: false},
   body: {type: [], required: true}
 });
+
+TicketSchema.plugin(autoIncrement.plugin, { model: 'Ticket', field: 'ticketId', startAt: 100 });
 
 export default model<ITicketModel>('Ticket', TicketSchema);

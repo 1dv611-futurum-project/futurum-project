@@ -1,7 +1,8 @@
 import Mail from '../Mail';
 
 export interface ITicket {
-  ticketId: number;
+  ticketId?: number;
+  mailId: string;
   status?: number;
   assignee?: string;
   title?: string;
