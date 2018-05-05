@@ -15,13 +15,11 @@ import authRouter from './../routes/authRouter';
 import DBHandler from './../handlers/db/DBHandler';
 import DBConnection from './../handlers/db/DBConnection';
 import EmailHandler from './../handlers/email/EmailHandler';
-import WebsocketHandler from './../handlers/WebsocketHandler';
+import SocketHandler from './../handlers/socket/SocketHandler';
 import IReceivedTicket from './../handlers/email/interfaces/IReceivedTicket';
 import { IncomingMailEvent } from './../handlers/email/events/IncomingMailEvents';
 import Email from './../handlers/email/Email';
 import IMAPHandler from '../handlers/email/IMAPHandler';
-
-
 
 /**
  * Express app.
@@ -31,231 +29,230 @@ class App {
   private mainRouter: Router;
   private authRouter: Router;
   private DBHandler: DBHandler;
-  private websocketHandler: WebsocketHandler;
+  private socketHandler: SocketHandler;
 
   constructor() {
     this.express = express();
     this.mainRouter = mainRouter;
     this.authRouter = authRouter;
     this.DBHandler = new DBHandler(new DBConnection());
-    this.websocketHandler = WebsocketHandler;
+    this.socketHandler = new SocketHandler(this.DBHandler);
     this.middleware();
     this.mountRoutes();
     this.handleErrors();
     this.handleIncomingEmails();
     this.handleDB();
-    this.listenSocket();
   }
 
-  private listenSocket() {
-    this.websocketHandler.onSocket( (socket) => {
-      this.DBHandler.getAll('ticket', {}).then( (tickets) => {
-        console.log('getting tickets');
-        this.websocketHandler.emitTickets(tickets);
-      }).catch((error) => {
-        console.log('Could not get tickets from DB');
-        console.log(error);
-      });
+  // private listenSocket() {
+  //   this.websocketHandler.onSocket( (socket) => {
+  //     this.DBHandler.getAll('ticket', {}).then( (tickets) => {
+  //       console.log('getting tickets');
+  //       this.websocketHandler.emitTickets(tickets);
+  //     }).catch((error) => {
+  //       console.log('Could not get tickets from DB');
+  //       console.log(error);
+  //     });
 
-      this.DBHandler.getAll('customer', {}).then( (customers) => {
-        this.websocketHandler.emitCustomers(customers);
-      }).catch((error) => {
-        console.log('Could not get customers from DB');
-        console.log(error);
-      });
+  //     this.DBHandler.getAll('customer', {}).then( (customers) => {
+  //       this.websocketHandler.emitCustomers(customers);
+  //     }).catch((error) => {
+  //       console.log('Could not get customers from DB');
+  //       console.log(error);
+  //     });
 
-      this.DBHandler.getAll('assignee', {}).then( (assignees) => {
-        this.websocketHandler.emitAssignees(assignees);
-      }).catch((error) => {
-        console.log('Could not get customers from DB');
-        console.log(error);
-      });
+  //     this.DBHandler.getAll('assignee', {}).then( (assignees) => {
+  //       this.websocketHandler.emitAssignees(assignees);
+  //     }).catch((error) => {
+  //       console.log('Could not get customers from DB');
+  //       console.log(error);
+  //     });
 
-      socket.on('tickets', (event: string, ticket: any) => {
-        if (!('id' in ticket)) {
-          // Errorchannel
-          return;
-        }
+  //     socket.on('tickets', (event: string, ticket: any) => {
+  //       if (!('id' in ticket)) {
+  //         // Errorchannel
+  //         return;
+  //       }
 
-        switch (event) {
-        case 'ticket_assignee':
-          this.DBHandler.addOrUpdate('ticket', ticket, { ticketId: ticket.id }).then((savedTicket) => {
-            if (savedTicket && (savedTicket[0].assignee === ticket.assignee) ) {
-              const mailBody = savedTicket[0].assignee + ' har tilldelats ärende med ärendeID: '
-              + savedTicket[0].ticketId + '.';
-              const mailSubject = 'Kundärende har blivit tilldelat';
-              // todo: change to: assigne.email stored in db
-              const mail = {from: 'dev@futurumdigital.se', to: 'dev@futurumdigital.se',
-                subject: mailSubject, body: mailBody};
-              EmailHandler.Outgoing.send(mail)
-              .then(() => {
-                // Successchannel
-              })
-              .catch((error) => {
-                console.log('could not send mail ticket_assignee');
-                console.log(error);
-              });
-            } else {
-              // Errorchannel
-            }
-          }).catch((error) => {
-            console.log('could not update/save ticket with new assignee');
-            console.log(error);
-          });
-          break;
-        case 'ticket_message':
-          this.DBHandler.addOrUpdate('ticket', ticket, { ticketId: ticket.id }).then((savedTicket) => {
-            if (savedTicket &&
-              (savedTicket[0].body[savedTicket[0].body.length].body ===
-                ticket.messages[ticket.messages.length].body) ) {
+  //       switch (event) {
+  //       case 'ticket_assignee':
+  //         this.DBHandler.addOrUpdate('ticket', ticket, { ticketId: ticket.id }).then((savedTicket) => {
+  //           if (savedTicket && (savedTicket[0].assignee === ticket.assignee) ) {
+  //             const mailBody = savedTicket[0].assignee + ' har tilldelats ärende med ärendeID: '
+  //             + savedTicket[0].ticketId + '.';
+  //             const mailSubject = 'Kundärende har blivit tilldelat';
+  //             // todo: change to: assigne.email stored in db
+  //             const mail = {from: 'dev@futurumdigital.se', to: 'dev@futurumdigital.se',
+  //               subject: mailSubject, body: mailBody};
+  //             EmailHandler.Outgoing.send(mail)
+  //             .then(() => {
+  //               // Successchannel
+  //             })
+  //             .catch((error) => {
+  //               console.log('could not send mail ticket_assignee');
+  //               console.log(error);
+  //             });
+  //           } else {
+  //             // Errorchannel
+  //           }
+  //         }).catch((error) => {
+  //           console.log('could not update/save ticket with new assignee');
+  //           console.log(error);
+  //         });
+  //         break;
+  //       case 'ticket_message':
+  //         this.DBHandler.addOrUpdate('ticket', ticket, { ticketId: ticket.id }).then((savedTicket) => {
+  //           if (savedTicket &&
+  //             (savedTicket[0].body[savedTicket[0].body.length].body ===
+  //               ticket.messages[ticket.messages.length].body) ) {
 
-              const mailSubject = 'RE: ' + savedTicket[0].title;
-              const mail = {from: 'dev@futurumdigital.se', to: savedTicket[0].from,
-                subject: mailSubject, body: ticket.messages[ticket.messages.length].body};
-              EmailHandler.Outgoing.answer(mail, savedTicket[0].ticketID)
-              .then(() => {
-                // Successchannel
-              })
-              .catch((error) => {
-                console.log('could not send mail ticket_message');
-                console.log(error);
-              });
-            } else {
-              // Errorchannel
-            }
-          }).catch((error) => {
-            console.log('could not update/save ticket with new message');
-            console.log(error);
-          });
-          break;
-        case 'ticket_status':
-          this.DBHandler.addOrUpdate('ticket', ticket, { ticketId: ticket.id }).then((savedTicket) => {
-            if (savedTicket && (savedTicket[0].status === ticket.status) ) {
-              const mailBody = 'Status för ärende med ärendeID: '+ savedTicket[0].ticketId + ' har ändrats.';
-              const mailSubject = 'Kundärende har fått uppdaterad status';
-              // todo: change to: assigne.email stored in db
-              const mail = {from: 'dev@futurumdigital.se', to: 'dev@futurumdigital.se',
-                subject: mailSubject, body: mailBody};
-              EmailHandler.Outgoing.send(mail)
-              .then(() => {
-                // Successchannel
-              })
-              .catch((error) => {
-                console.log('could not send mail ticket_status');
-                console.log(error);
-              });
-            } else {
-              // Errorchannel
-            }
-          }).catch((error) => {
-            console.log('could not update/save ticket with new status');
-            console.log(error);
-          });
-          break;
-        default:
-          break;
-        }
-      });
+  //             const mailSubject = 'RE: ' + savedTicket[0].title;
+  //             const mail = {from: 'dev@futurumdigital.se', to: savedTicket[0].from,
+  //               subject: mailSubject, body: ticket.messages[ticket.messages.length].body};
+  //             EmailHandler.Outgoing.answer(mail, savedTicket[0].ticketID)
+  //             .then(() => {
+  //               // Successchannel
+  //             })
+  //             .catch((error) => {
+  //               console.log('could not send mail ticket_message');
+  //               console.log(error);
+  //             });
+  //           } else {
+  //             // Errorchannel
+  //           }
+  //         }).catch((error) => {
+  //           console.log('could not update/save ticket with new message');
+  //           console.log(error);
+  //         });
+  //         break;
+  //       case 'ticket_status':
+  //         this.DBHandler.addOrUpdate('ticket', ticket, { ticketId: ticket.id }).then((savedTicket) => {
+  //           if (savedTicket && (savedTicket[0].status === ticket.status) ) {
+  //             const mailBody = 'Status för ärende med ärendeID: '+ savedTicket[0].ticketId + ' har ändrats.';
+  //             const mailSubject = 'Kundärende har fått uppdaterad status';
+  //             // todo: change to: assigne.email stored in db
+  //             const mail = {from: 'dev@futurumdigital.se', to: 'dev@futurumdigital.se',
+  //               subject: mailSubject, body: mailBody};
+  //             EmailHandler.Outgoing.send(mail)
+  //             .then(() => {
+  //               // Successchannel
+  //             })
+  //             .catch((error) => {
+  //               console.log('could not send mail ticket_status');
+  //               console.log(error);
+  //             });
+  //           } else {
+  //             // Errorchannel
+  //           }
+  //         }).catch((error) => {
+  //           console.log('could not update/save ticket with new status');
+  //           console.log(error);
+  //         });
+  //         break;
+  //       default:
+  //         break;
+  //       }
+  //     });
 
-      socket.on('assignees', (event: string, assignee: object) => {
-        if ('_id' in assignee) {
-          this.DBHandler.addOrUpdate('assignee', assignee, { _id: assignee._id }).then((savedAssignee) => {
-            if (savedAssignee) {
-              // Successchannel
-            } else {
-              // Errorchannel
-            }
-          }).catch((error) => {
-            console.log('could edit assignee');
-            console.log(error);
-          });
-        } else {
-          this.DBHandler.addOrUpdate('assignee', assignee).then((savedAssignee) => {
-            if (savedAssignee) {
-              // Successchannel
-            } else {
-              // Errorchannel
-            }
-          }).catch((error) => {
-            console.log('could not add new assignee');
-            console.log(error);
-          });
-        }
-      });
+  //     socket.on('assignees', (event: string, assignee: object) => {
+  //       if ('_id' in assignee) {
+  //         this.DBHandler.addOrUpdate('assignee', assignee, { _id: assignee._id }).then((savedAssignee) => {
+  //           if (savedAssignee) {
+  //             // Successchannel
+  //           } else {
+  //             // Errorchannel
+  //           }
+  //         }).catch((error) => {
+  //           console.log('could edit assignee');
+  //           console.log(error);
+  //         });
+  //       } else {
+  //         this.DBHandler.addOrUpdate('assignee', assignee).then((savedAssignee) => {
+  //           if (savedAssignee) {
+  //             // Successchannel
+  //           } else {
+  //             // Errorchannel
+  //           }
+  //         }).catch((error) => {
+  //           console.log('could not add new assignee');
+  //           console.log(error);
+  //         });
+  //       }
+  //     });
 
-      socket.on('customers', (event: string, customer: object) => {
-        switch (event) {
-        case 'customer_add':
-          if ('_id' in customer) {
-            // todo: ErrorChannel
-          } else {
-            this.DBHandler.addOrUpdate('customer', customer).then((savedCustomer) => {
-              if (savedCustomer) {
-                // Successchannel
-              } else {
-                // Errorchannel
-              }
-            }).catch((error) => {
-              console.log('could not add new customer');
-              console.log(error);
-            });
-          }
-          break;
-        case 'customer_edit':
-          if ('_id' in customer) {
-            this.DBHandler.addOrUpdate('customer', customer, { _id: customer._id }).then((savedCustomer) => {
-              if (savedCustomer) {
-                // Successchannel
-              } else {
-                // Errorchannel
-              }
-            }).catch((error) => {
-              console.log('could not edit and save customer');
-              console.log(error);
-            });
-          } else {
-            // todo: ErrorChannel
-          }
-          break;
-        case 'customer_delete':
-          if ('_id' in customer) {
-            this.DBHandler.removeOne('customer', { _id: customer._id }).then((removedCustomer) => {
-              if (removedCustomer) {
-                // Successchannel
-              } else {
-                // Errorchannel
-              }
-            }).catch((error) => {
-              console.log('could not delete customer');
-              console.log(error);
-            });
-          } else {
-            // todo: ErrorChannel wrong eventname
-          }
-          break;
-        default:
-          break;
-        }
-      });
+  //     socket.on('customers', (event: string, customer: object) => {
+  //       switch (event) {
+  //       case 'customer_add':
+  //         if ('_id' in customer) {
+  //           // todo: ErrorChannel
+  //         } else {
+  //           this.DBHandler.addOrUpdate('customer', customer).then((savedCustomer) => {
+  //             if (savedCustomer) {
+  //               // Successchannel
+  //             } else {
+  //               // Errorchannel
+  //             }
+  //           }).catch((error) => {
+  //             console.log('could not add new customer');
+  //             console.log(error);
+  //           });
+  //         }
+  //         break;
+  //       case 'customer_edit':
+  //         if ('_id' in customer) {
+  //           this.DBHandler.addOrUpdate('customer', customer, { _id: customer._id }).then((savedCustomer) => {
+  //             if (savedCustomer) {
+  //               // Successchannel
+  //             } else {
+  //               // Errorchannel
+  //             }
+  //           }).catch((error) => {
+  //             console.log('could not edit and save customer');
+  //             console.log(error);
+  //           });
+  //         } else {
+  //           // todo: ErrorChannel
+  //         }
+  //         break;
+  //       case 'customer_delete':
+  //         if ('_id' in customer) {
+  //           this.DBHandler.removeOne('customer', { _id: customer._id }).then((removedCustomer) => {
+  //             if (removedCustomer) {
+  //               // Successchannel
+  //             } else {
+  //               // Errorchannel
+  //             }
+  //           }).catch((error) => {
+  //             console.log('could not delete customer');
+  //             console.log(error);
+  //           });
+  //         } else {
+  //           // todo: ErrorChannel wrong eventname
+  //         }
+  //         break;
+  //       default:
+  //         break;
+  //       }
+  //     });
 
-      socket.on('settings', (event: string, settings: any) => {
-        if (event === 'setting_update') {
-          this.DBHandler.addOrUpdate('settings', settings).then( (savedSettings) => {
-            if (savedSettings) {
-              // Successchannel
-            } else {
-              // Errorchannel
-            }
-          }).catch((error) => {
-            console.log('could not save settings');
-            console.log(error);
-          });
-        } else {
-          // todo: ErrorChannel wrong event-name
-        }
-      });
-    });
-  }
+  //     socket.on('settings', (event: string, settings: any) => {
+  //       if (event === 'setting_update') {
+  //         this.DBHandler.addOrUpdate('settings', settings).then( (savedSettings) => {
+  //           if (savedSettings) {
+  //             // Successchannel
+  //           } else {
+  //             // Errorchannel
+  //           }
+  //         }).catch((error) => {
+  //           console.log('could not save settings');
+  //           console.log(error);
+  //         });
+  //       } else {
+  //         // todo: ErrorChannel wrong event-name
+  //       }
+  //     });
+  //   });
+  // }
 
   private middleware(): void {
     this.express.use(bodyParser.json());
@@ -301,32 +298,17 @@ class App {
       console.log('Got new ticket:');
       console.log(mail);
       this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail)
-        .then(() => this.DBHandler.getAll('ticket', {}))
-        .then((tickets: any) => {
-          this.websocketHandler.emitTickets(tickets);
-        })
-        .catch((error) => {
-          console.log('could not save incoming new mail as ticket');
-          console.log(error);
-        });
+        .then(() => this.socketHandler.emitter.emitTickets())
+        .catch((error) => { console.error(error); });
     });
 
     EmailHandler.Incoming.on(IncomingMailEvent.ANSWER, (mail) => {
       console.log('Got answer on existing ticket:');
       console.log(mail);
       // todo: force mail param to contain ticketId or _id
-      this.DBHandler.addOrUpdate(IncomingMailEvent.ANSWER, mail, {mailId: mail.inReplyTo}).then((savedTicket) => {
-        if (savedTicket &&
-          (savedTicket.body[savedTicket.body.length].body ===
-          mail.messages[mail.messages.length].body) ) {
-          this.websocketHandler.emitTickets(savedTicket);
-        } else {
-          // Errorchannel
-        }
-      }).catch((error) => {
-        console.log('could not save incoming new mail as ticket');
-        console.log(error);
-      });
+      this.DBHandler.addOrUpdate(IncomingMailEvent.ANSWER, mail, {mailId: mail.inReplyTo})
+        .then(() => this.socketHandler.emitter.emitTickets())
+        .catch((error) => { console.error(error); });
     });
 
     EmailHandler.Incoming.on(IncomingMailEvent.FORWARD, (mail) => {

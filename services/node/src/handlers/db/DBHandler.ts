@@ -10,7 +10,6 @@ import Assignee from './../../models/Assignee';
 import Ticket from './../../models/Ticket';
 import Mail from './../../models/Mail';
 
-
 const ticketMock = [
   {
     type: 'ticket',
@@ -386,7 +385,7 @@ class DBHandler extends events.EventEmitter {
   private createNewMails(mail: any): Mail[] {
     try {
       const mailBodies = [];
-      mail.messages.forEach((element) => {
+      mail.ticket.body.forEach((element) => {
         // todo: ? if not required
         mailBodies.push(new Mail({
           received: element.received,
@@ -431,18 +430,17 @@ class DBHandler extends events.EventEmitter {
 
   private createNewTicket(mail: any, mailBodies: Mail[]): Ticket {
     try {
-      console.log('should be here creating')
+      console.log('should be here creating');
       // todo: ? if not required
       const ticket = {
-        mailId: mail.mailID,
-        from: mail.from.email,
-        created: mail.created,
+        mailId: mail.ticket.mailId,
+        from: mail.ticket.from,
+        created: mail.ticket.created,
         body: mailBodies,
       };
 
-      console.log(ticket)
       if ('assignee' in mail) {
-        ticket.assignee = mail.assignee;
+        ticket[assignee] = mail.assignee;
       }
       if ('title' in mail) {
         ticket.title = mail.title;
@@ -451,10 +449,10 @@ class DBHandler extends events.EventEmitter {
         ticket.status = mail.status;
       }
       if ('from.name' in mail) {
-        ticket.customerName = mail.from.name;
+        ticket.customerName = mail.from;
       }
 
-      console.log('returning new ticket')
+      console.log('returning new ticket');
       console.log(ticket)
       return new Ticket(ticket);
     } catch (error) {
