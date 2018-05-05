@@ -132,7 +132,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 		const newAssignee = assignees[selected];
 
 		ticket.assignee = newAssignee;
-		handleAssigneeChange(ticket);
+		this.props.handleAssigneeChange(ticket);
 		this.setState({ assignee: newAssignee });
 	}
 

@@ -87,7 +87,7 @@ export class DropDownSelect extends React.Component<IDropDownSelect, any> {
 	private handleChange = (event: any) => {
 		const selected = this.getSelectedIndex(event.target.value);
 
-		this.setState({ selected: selected });
+		this.setState({ selected });
 		this.props.onChange(selected);
 	}
 }

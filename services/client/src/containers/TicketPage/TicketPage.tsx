@@ -148,7 +148,7 @@ export class TicketPage extends React.Component<any, any> {
 		this.setState({
 			ticket,
 			snackState: true,
-			snackMessage: `Ärendet har tilldelats ${ticket.assignee}.`
+			snackMessage: `Ärendet har tilldelats ${ticket.assignee.name}.`
 		});
 
 		this.props.ticketAction.emitAssignee(ticket);
