@@ -4,7 +4,7 @@ export interface ITicket {
   ticketId?: number;
   mailId: string;
   status?: number;
-  assignee?: string;
+  assignee?: object;
   title?: string;
   from?: object;
   created?: Date;

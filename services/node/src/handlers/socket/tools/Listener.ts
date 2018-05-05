@@ -35,16 +35,16 @@ export default class Listener {
       console.log(data.ticket);
       switch (event) {
       case TicketEvent.ASSIGNEE:
-        this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.id })
+        this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
             .catch((error: any) => { console.error(error); });
         break;
       case TicketEvent.STATUS:
-        this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.id })
+        this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
             .then((payload: any) => MailSender.sendStatusUpdate(payload, data.send))
             .catch((error: any) => { console.error(error); });
         break;
       case TicketEvent.MESSAGE:
-        this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.id })
+        this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
             .then((payload: any) => MailSender.sendMessageUpdate(payload))
             .catch((error: any) => { console.error(error); });
         break;

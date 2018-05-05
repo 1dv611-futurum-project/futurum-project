@@ -63,6 +63,8 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 		const assignees = this.props.assignees.map((assignee: any) => {
 			return assignee.name;
 		});
+		assignees.unshift('--');
+		const assignee = this.state.assignee ? this.state.assignee.name : '--';
 
 		return (
 			<Paper className='ticket-overview'>
@@ -99,7 +101,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 					<div className='ticket-overview__actions--assigned'>
 						<p className='ticket-overview__actions__label'>Tilldelad:</p>
 						<DropDownSelect
-							selected={this.state.assignee}
+							selected={assignee}
 							items={assignees}
 							onChange={this.handleAssigneeChange}
 						/>

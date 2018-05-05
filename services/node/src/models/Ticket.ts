@@ -13,7 +13,7 @@ autoIncrement.initialize(mongoose.connection);
 const TicketSchema: Schema = new Schema({
   mailId: {type: String, required: true},
   status: {type: Number, default: 0},
-  assignee: {type: String, required: false},
+  assignee: {type: Object, required: false},
   title: {type: String, required: false},
   from: {type: Object, required: true},
   customerName: {type: String, required: false},
