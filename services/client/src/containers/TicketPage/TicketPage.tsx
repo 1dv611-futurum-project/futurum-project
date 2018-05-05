@@ -74,8 +74,9 @@ export class TicketPage extends React.Component<any, any> {
 						ticket={this.state.ticket}
 						onClick={this.handleMessage}
 					/>
-					{ this.state.ticket.messages ?
-						this.state.ticket.messages.map((message: any, i: number) => {
+					{
+						this.state.ticket.body ?
+						this.state.ticket.body.map((message: any, i: number) => {
 							return (
 								<Message
 									key={i}
