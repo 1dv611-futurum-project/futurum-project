@@ -461,6 +461,24 @@ class DBHandler extends events.EventEmitter {
     }
     return;
   }
+
+  private DBMockActions(): void {
+    ticketArr.push(this.createNewTicket(ticketMock[0], this.createNewMails(ticketMock[0])));
+    ticketArr.push(this.createNewTicket(ticketMock[1], this.createNewMails(ticketMock[1])));
+    ticketArr.push(this.createNewTicket(ticketMock[2], this.createNewMails(ticketMock[2])));
+    this.createNewFromType('ticket', ticketArr[0]);
+    this.createNewFromType('ticket', ticketArr[1]);
+    this.createNewFromType('ticket', ticketArr[2]);
+
+    this.createNewFromType('customer', customerMock[0]);
+    this.createNewFromType('customer', customerMock[1]);
+    this.createNewFromType('customer', customerMock[2]);
+
+    this.createNewFromType('assignee', assigneesMock[0]);
+    this.createNewFromType('assignee', assigneesMock[1]);
+    this.createNewFromType('assignee', assigneesMock[2]);
+    // this.DBHandler.removeAll('ticket', {});
+  }
 }
 
 // Exports.
