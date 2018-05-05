@@ -46,13 +46,12 @@ export class Ticket extends React.Component<ITicket, any> {
 	 */
 	public render() {
 		const { ticket, onSend } = this.props;
-		console.log(ticket);
 
 		return (
 			<Card className='ticket'>
 				<Span status={this.state.status} small={true} />
-				<p className='ticket__id'>#{ticket.id}</p>
-				<Link to={`ticket-${ticket.id}`} className='ticket__header'>
+				<p className='ticket__id'>#{ticket.ticketId}</p>
+				<Link to={`ticket-${ticket.ticketId}`} className='ticket__header'>
 					<CardHeader
 						title={ticket.title}
 						subheader={ticket.from.name}
@@ -85,7 +84,6 @@ export class Ticket extends React.Component<ITicket, any> {
 	 * @returns {String} - The formatted date
 	 */
 	private getFormattedDate(date: string): string {
-		console.log(date);
 		return moment(date, moment.ISO_8601).format('LL');
 	}
 }

@@ -46,7 +46,7 @@ export class DropDownSelect extends React.Component<IDropDownSelect, any> {
 	 */
 	public render() {
 		const selected = this.getSelectedIndex(this.state.selected);
-		const value = this.props.items[selected] || '';
+		const value = this.props.items[selected] || '--';
 		const items = this.props.items.map(this.getMenuItems);
 
 		return (

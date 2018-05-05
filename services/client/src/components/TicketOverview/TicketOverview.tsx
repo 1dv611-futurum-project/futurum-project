@@ -58,8 +58,11 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	 * @public
 	 */
 	public render(): any {
-		const { id, title, assignee, created, from } = this.props.ticket;
+		const { ticketId, title, created, from } = this.props.ticket;
 		const { handleClick, handleStatusChange, handleAssigneeChange } = this.props;
+		const assignees = this.props.assignees.map((assignee: any) => {
+			return assignee.name;
+		});
 
 		return (
 			<Paper className='ticket-overview'>
@@ -67,7 +70,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 				<div className='ticket-overview__header'>
 					<PlayArrow className='ticket-overview__header__icon'/>
 					<h1 className='ticket-overview__header__title'>
-						<span className='ticket-overview__header__title--grey'>#{id} — </span>
+						<span className='ticket-overview__header__title--grey'>#{ticketId} — </span>
 						{title}
 					</h1>
 				</div>
@@ -97,7 +100,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 						<p className='ticket-overview__actions__label'>Tilldelad:</p>
 						<DropDownSelect
 							selected={this.state.assignee}
-							items={this.props.assignees}
+							items={assignees}
 							onChange={this.handleAssigneeChange}
 						/>
 					</div>
@@ -112,7 +115,6 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	 * @param {number} status - The status number (0-3)
 	 */
 	private handleStatusChange = (status: number, statusText: string): void => {
-		this.props.ticket.status = status;
 		this.setState({
 			displayModal: true,
 			status,

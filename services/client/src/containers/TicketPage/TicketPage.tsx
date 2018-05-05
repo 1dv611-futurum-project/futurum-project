@@ -113,7 +113,7 @@ export class TicketPage extends React.Component<any, any> {
 	 */
 	private setTicket(tickets: any[], id: string): any {
 		tickets.forEach((ticket: any) => {
-			if (ticket.id === Number(id)) {
+			if (ticket.ticketId === Number(id)) {
 				this.setState({ ticket });
 			}
 		});
