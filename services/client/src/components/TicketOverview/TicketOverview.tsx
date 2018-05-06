@@ -131,7 +131,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	 */
 	private handleAssigneeChange = (selected: number): void => {
 		const { ticket, assignees, handleAssigneeChange } = this.props;
-		const newAssignee = assignees[selected];
+		const newAssignee = selected === 0 ? null : assignees[selected];
 
 		ticket.assignee = newAssignee;
 		this.props.handleAssigneeChange(ticket);
