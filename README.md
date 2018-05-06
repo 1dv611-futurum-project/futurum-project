@@ -8,10 +8,11 @@ Projektet bygger på en utvecklingsmiljö med Docker och kräver med andra ord a
 
 ### Starta projektet med Docker - för demo
 1. Kopiera filen `docker-compose-test.yml` till din dator.
-2. Se till att Docker och docker-compose är installerat för ditt operativsystem enligt ovan.
+2. Se till att `Docker` och `docker-compose` är installerat för ditt operativsystem enligt ovan.
 3. Kör igång projektet med `docker-compose -f docker-compose-test.yml -d`, ståendes i foldern som inkluderar compose-filen.
 4. Avvakta någon till några minuter för containrarna att laddas ner och startas upp.
 5. Applikationen körs nu på `localhost:8080` eller `127.0.0.1:8080`.
+6. Applikationen kan användas mot mailen `dev@futurumdigital.se` och behöver godkännas mot den mailen efter uppstart.
 6. När du är klar med demon, stoppa alla containers genom att köra kommandot `docker-compose stop`.
 
 #### Starta projektet med Docker - för utveckling
