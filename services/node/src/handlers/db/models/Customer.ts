@@ -9,7 +9,8 @@ export interface ICustomerModel extends ICustomer, Document {}
 
 const CustomerSchema: Schema = new Schema({
   email: {type: Array, required: true},
-  name: {type: String, required: false}
+  name: {type: String, required: false},
+  errands: {type: Number, requires: false}
 });
 
 export default model('Customer', CustomerSchema);

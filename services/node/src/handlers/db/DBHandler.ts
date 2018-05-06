@@ -204,8 +204,17 @@ class DBHandler extends events.EventEmitter {
       switch (type) {
       case 'customer':
         Customer.find(info)
-          .then((customer) => {
-            resolve(customer);
+          .then((customers) => {
+            return Promise.all(customers.map((customer) => {
+              return Ticket.find({from: customer._id})
+              .then((tickets) => {
+                customer.errands = tickets.length;
+                return customer;
+              });
+            }));
+          })
+          .then((customers) => {
+            resolve(customers);
           })
           .catch((error) => {
             reject(error);
