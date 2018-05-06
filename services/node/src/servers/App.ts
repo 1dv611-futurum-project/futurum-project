@@ -24,7 +24,7 @@ import IMAPHandler from '../handlers/email/IMAPHandler';
  * Express app.
  */
 class App {
-  private static DB_CONNECTION = 'mongodb://molly:testpassword@ds117070.mlab.com:17070/futurum_test';
+  private static DB_CONNECTION = 'mongodb://futurum-db:27017';
 
   public express: Application;
   private mainRouter: Router;
