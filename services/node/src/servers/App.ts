@@ -84,9 +84,10 @@ class App {
     EmailHandler.Incoming.on(IncomingMailEvent.ANSWER, (mail) => {
       console.log('Got answer on existing ticket:');
       console.log(mail);
-      this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail, { mailId: mail.inAnswerTo })
+      // TODO: Lös detta med mailIDs och references
+      /*this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail, { mailId: mail.inAnswerTo })
         .then(() => this.socketHandler.emitter.emitTickets())
-        .catch((error) => { console.error(error); });
+        .catch((error) => { console.error(error); });*/
     });
 
     EmailHandler.Incoming.on(IncomingMailEvent.FORWARD, (mail) => {
