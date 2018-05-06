@@ -48,7 +48,7 @@ export default class Emitter {
           this.io.emit('assignees', JSON.stringify(assignees));
         })
         .catch((error) => {
-          console.log('Could not get tickets from DB');
+          console.log('Could not get asignees from DB');
           console.log(error);
         });
   }
@@ -62,7 +62,7 @@ export default class Emitter {
           this.io.emit('customers', JSON.stringify(customers));
         })
         .catch((error) => {
-          console.log('Could not get tickets from DB');
+          console.log('Could not get customers from DB');
           console.log(error);
         });
   }
@@ -74,6 +74,9 @@ export default class Emitter {
     this.io.emit('settings', JSON.stringify([]));
   }
 
+  /**
+   * Emit information about expired jwt.
+   */
   public emitExpired(): void {
     const exp = new Date(this.io.decoded_token.exp * 1000).getTime() - new Date().getTime();
     setTimeout(() => {

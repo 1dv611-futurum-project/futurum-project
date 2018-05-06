@@ -3,7 +3,7 @@
  */
 
 import { Document, Schema, Model, model} from 'mongoose';
-import { ICustomer } from './interfaces/ICustomer';
+import ICustomer from './../interfaces/ICustomer';
 
 export interface ICustomerModel extends ICustomer, Document {}
 

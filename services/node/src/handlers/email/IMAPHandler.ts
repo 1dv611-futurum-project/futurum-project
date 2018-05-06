@@ -137,7 +137,6 @@ class IMAPHandler extends events.EventEmitter {
   private formatAsNewTicket(mail: IReceivedEmail): IReceivedTicket {
     const message = ({} as IReceivedTicket);
 
-    // TODO: possibly remove later when database in place?
     message.status = 0;
     message.assignee = null;
 
@@ -164,6 +163,7 @@ class IMAPHandler extends events.EventEmitter {
    */
   private formatAsAnswer(mail: IReceivedEmail): IReceivedAnswer {
     const message = ({} as IReceivedAnswer);
+    console.log(mail);
 
     message.mailID = mail.messageId;
     message.inAnswerTo = Array.isArray(mail.references) ? mail.references[0] : mail.references;

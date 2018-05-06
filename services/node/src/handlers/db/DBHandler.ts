@@ -5,108 +5,18 @@
 // Imports
 import * as events from 'events';
 
-import Customer from './../../models/Customer';
-import Assignee from './../../models/Assignee';
-import Ticket from './../../models/Ticket';
-import Mail from './../../models/Mail';
-
-const ticketMock = [
-  {
-    type: 'ticket',
-    id: 3,
-    status: 2,
-    assignee: 'Anton Myrberg',
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Ett test igen',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'Vi har mottagit ditt meddelande och återkommer inom kort. Mvh Anton Myrberg',
-        fromCustomer: false
-      },
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  },
-  {
-    type: 'ticket',
-    id: 12,
-    status: 1,
-    assignee: null,
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Vi har ett problem',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  },
-  {
-    type: 'ticket',
-    id: 6,
-    status: 2,
-    assignee: 'Sebastian Borgstedt',
-    mailID: 'CACGfpvHcD9tOcJz8YT1CwiEO36VHhH1+-qXkCJhhaDQZd6-JKA@mail.gmail.com',
-    created: '2018-04-17T17:56:58.000Z',
-    title: 'Nu har det blivit tokigt',
-    from: {
-      name: 'Dev Devsson',
-      email: 'dev@futurumdigital.se'
-    },
-    messages: [
-      {
-        received: '2018-04-17T17:56:58.000Z',
-        body: 'adfafdasfa ',
-        fromCustomer: true
-      }
-    ]
-  }
-] as object[];
-
-const customerMock = [ {
-  email: ['customer@email.com', 'customer@email2.com'],
-  name: 'Problematic Dude'
-},
-  {
-    email: ['ACE@email.com'],
-    name: 'esset'
-  },
-  {
-    email: ['potatoaemail@email.com', 'potatoaemail@email2.com'],
-    name: 'Nilz'
-  } ] as object[];
-
-const assigneesMock = [ {
-  email: ['dev@futurumdigital.se'],
-  name: 'Anton Myrberg'
-},
-  {
-    email: ['dev@futurumdigital.se'],
-    name: 'Sebastian Borgstedt'
-  },
-  {
-    email: ['dev@futurumdigital.se'],
-    name: 'Dev Devsson'
-  } ] as object[];
-
-const settingsMock = [];
-
-const ticketArr = [];
+import Customer from './models/Customer';
+import Assignee from './models/Assignee';
+import Ticket from './models/Ticket';
+import IReceivedTicket from '../email/interfaces/IReceivedTicket';
+import ITicket from './interfaces/ITicket';
+import IAssignee from './interfaces/IAssignee';
+import ICustomer from './interfaces/ICustomer';
+import IMail from './interfaces/IMail';
+import { AssigneeMismatchError } from './../../config/errors';
+import { CustomerMismatchError } from './../../config/errors';
+import { DBCreationError } from './../../config/errors';
+import IReceivedEmail from '../email/interfaces/IReceivedEmail';
 
 /**
  * Sets up and handles the database.
@@ -119,6 +29,8 @@ class DBHandler extends events.EventEmitter {
     super();
     this.dbconnection = dbconnection;
     this.setUpDBListeners();
+    // TODO: Change this to handling the same way customers are handled?
+    this.seedAssignees();
   }
 
   /**
@@ -161,26 +73,14 @@ class DBHandler extends events.EventEmitter {
   /**
    * Adds the given object of the given type to the databse.
    * @param info - The info of the object to add.
-   * @param replaceOn - The property to look for in case of updating
+   * @param findBy - The property to look for in case of updating
    * a document rather than adding one. If a document with the property is found
    * that one will be updated with the new information, and no new document will be created.
    * If more than one matching result is found, all will be updated.
    */
-  public addOrUpdate(type: string, info: object, replaceOn?: object): Promise<object[]> {
+  public addOrUpdate(type: string, info: object, findBy?: object): Promise<object[]> {
     return new Promise((resolve, reject) => {
-      const created = replaceOn ? this.getOneFromType(type, replaceOn) : this.createNewFromType(type, info);
-
-      created
-      .then((found) => {
-        if (found && replaceOn) {
-          found.set(info);
-          return found.save();
-        } else if (found) {
-          return found.save();
-        } else {
-          return this.createNewFromType(type, info);
-        }
-      })
+      this.addOrUpdateFromType(type, info, findBy)
       .then((saved) => {
         if (!Array.isArray(saved)) {
           resolve([saved]);
@@ -204,10 +104,7 @@ class DBHandler extends events.EventEmitter {
     return new Promise((resolve, reject) => {
       this.getOneFromType(type, removeOn)
       .then((result) => {
-        // result.remove().exec();
-        // return Promise.call(result.remove().exec());
         if (result !== null) {
-          console.log(result);
           result.remove();
           resolve(result);
         }
@@ -272,12 +169,14 @@ class DBHandler extends events.EventEmitter {
         break;
       case 'ticket':
         Ticket.findOne(info)
-          .then((ticket) => {
-            resolve(ticket);
-          })
-          .catch((error) => {
-            reject(error);
-          });
+        .populate('from')
+        .populate('assignee')
+        .then((ticket) => {
+          resolve(ticket);
+        })
+        .catch((error) => {
+          reject(error);
+        });
         break;
       case 'assignee':
         Assignee.findOne(info)
@@ -314,8 +213,10 @@ class DBHandler extends events.EventEmitter {
         break;
       case 'ticket':
         Ticket.find(info)
-          .then((ticket) => {
-            resolve(ticket);
+          .populate('from')
+          .populate('assignee')
+          .then((tickets) => {
+            resolve(tickets);
           })
           .catch((error) => {
             reject(error);
@@ -337,28 +238,31 @@ class DBHandler extends events.EventEmitter {
     });
   }
 
-  private createNewFromType(type: string, info: object): Promise<object> {
+  private addOrUpdateFromType(type: string, info: object, findBy: object): Promise<object> {
+    const conditions = findBy || info;
+    const options = {
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true
+    };
+
     return new Promise((resolve, reject) => {
-      /**
-       * Check that object doesn't already exist in DB.
-       * if ( Customer.findOne(info) ) {
-       *  reject();
-       * }
-       */
       type = type.toLowerCase();
       switch (type) {
-      case 'customer':
-        this.createNewCustomer(info).save()
+      case 'ticket':
+        this.createNewTicket(conditions, info as IReceivedTicket, options)
           .then((saved) => {
-            resolve(saved);
+            return this.getOne('ticket', saved);
+          })
+          .then((populated) => {
+            resolve(populated);
           })
           .catch((error) => {
             reject(error);
           });
         break;
-      case 'ticket':
-        this.createNewTicket(info, this.createNewMails(info))
-          .save()
+      case 'customer':
+        this.createNewCustomer(conditions, info as ICustomer, options)
           .then((saved) => {
             resolve(saved);
           })
@@ -367,7 +271,7 @@ class DBHandler extends events.EventEmitter {
           });
         break;
       case 'assignee':
-        this.createNewAssignee(info).save()
+        this.createNewAssignee(conditions, info as IAssignee, options)
           .then((saved) => {
             resolve(saved);
           })
@@ -382,98 +286,142 @@ class DBHandler extends events.EventEmitter {
     });
   }
 
-  private createNewMails(mail: any): Mail[] {
-    try {
-      const mailBodies = [];
-      mail.body.forEach((element) => {
-        // todo: ? if not required
-        mailBodies.push(new Mail({
-          received: element.received,
-          fromCustomer: element.fromCustomer,
-          body: element.body}));
+  /**
+   * Creates a new ticket or updates an old one.
+   */
+  private createNewTicket(conditions: object, info: IReceivedTicket, options: object): Promise<ITicket> {
+    return new Promise((resolve, reject) => {
+      const ticket = {} as ITicket;
+
+      if (info.mailId) {
+        ticket.mailId = info.mailId;
+      }
+
+      if (info.created) {
+        ticket.created = new Date(info.created);
+      }
+
+      if (info.title) {
+        ticket.title = info.title;
+      }
+
+      if (info.status) {
+        ticket.status = info.status;
+      }
+
+      this.getCustomerReference(info)
+      .then((ref) => {
+        ticket.from = ref;
+        return this.getAssigneeReference(info);
+      })
+      .then((ref) => {
+        ticket.assignee = ref;
+        return Ticket.findOne(conditions);
+      })
+      .then((found) => {
+        if (found) {
+          const fieldsToUpdate = Object.keys(ticket);
+          fieldsToUpdate.forEach((attribute) => {
+            found[attribute] = ticket[attribute];
+          });
+
+          const bodies = Array.isArray(info.body) ? info.body : found.body.concat(this.createNewMails(info.body));
+          found.body = bodies;
+        } else {
+          ticket.body = this.createNewMails(info.body);
+          found = new Ticket(ticket);
+        }
+        return found.save();
+      })
+      .then((saved) => {
+        resolve(saved);
+      })
+      .catch((err) => {
+        reject(err);
       });
-      return mailBodies;
-    } catch (error) {
-      console.error(error);
-    }
-    return;
+    });
   }
 
-  private createNewCustomer(customer: any): Customer {
-    try {
-      const emails = [];
-      customer.email.forEach((email: any) => {
-        emails.push(email);
+  /**
+   * Creates an array of mail-bodies.
+   */
+  private createNewMails(emails: any): IMail[] {
+    const mailBodies = [];
+    emails = Array.isArray(emails) ? emails : [emails];
+    emails.forEach((email) => {
+      mailBodies.push({
+        received: email.received,
+        fromCustomer: email.fromCustomer,
+        body: email.body});
+    });
+    return mailBodies;
+  }
+
+  /**
+   * Creates a new customer.
+   */
+  private createNewCustomer(conditions: object, customer: ICustomer, options: object): Promise<ICustomer> {
+    return new Promise((resolve, reject) => {
+      Customer.findOneAndUpdate(conditions, customer, options, (err, saved: Customer) => {
+        if (err) {
+          reject(new DBCreationError('Customer could not be saved in the Database.'));
+        }
+
+        resolve(saved);
       });
-      if ('name' in customer) {
-        customer = {email: emails, name: customer.name};
+    });
+  }
+
+  /**
+   * Creates a new assignee.
+   */
+  private createNewAssignee(conditions: object, assignee: IAssignee, options: object): Promise<IAssignee> {
+    return new Promise((resolve, reject) => {
+      Assignee.findOneAndUpdate(conditions, assignee, options, (err, saved: IAssignee) => {
+        if (err) {
+          reject(new DBCreationError('Assignee could not be saved in the Database.'));
+        }
+
+        resolve(saved);
+      });
+    });
+  }
+
+  private getCustomerReference(info: IReceivedTicket): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (info.from) {
+        this.getOne('Customer', {email: info.from.email})
+        .then((customer) => {
+          resolve(customer._id);
+        })
+        .catch(() => {
+          reject(new CustomerMismatchError('No such customer in the database'));
+        });
       } else {
-        customer = {email: emails};
+        resolve(null);
       }
-      return new Customer(customer);
-    } catch (error) {
-      console.error(error);
-    }
+    });
   }
 
-  private createNewAssignee(assignee: any): Assignee {
-    try {
-      const emails = [];
-      assignee.email.forEach((email: any) => {
-        emails.push(email);
-      });
-      return new Assignee({ email: emails, name: assignee.name });
-    } catch (error) {
-      console.error(error);
-    }
+  private getAssigneeReference(info: IReceivedTicket): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (info.assignee) {
+        this.getOne('Assignee', {email: info.assignee.email})
+        .then((assignee) => {
+          resolve(assignee._id);
+        })
+        .catch(() => {
+          reject(new AssigneeMismatchError('No such assignee in the database'));
+        });
+      } else {
+        resolve(null);
+      }
+    });
   }
 
-  private createNewTicket(mail: any, mailBodies: Mail[]): Ticket {
-    try {
-      console.log('should be here creating');
-      // todo: ? if not required
-      const ticket = {
-        mailId: mail.mailId,
-        from: mail.from,
-        created: mail.created,
-        body: mailBodies,
-      };
-
-      if ('assignee' in mail) {
-        ticket.assignee = mail.assignee;
-      }
-      if ('title' in mail) {
-        ticket.title = mail.title;
-      }
-      if ('status' in mail) {
-        ticket.status = mail.status;
-      }
-
-      console.log('returning new ticket');
-      console.log(ticket);
-      return new Ticket(ticket);
-    } catch (error) {
-      console.error(error);
-    }
-    return;
-  }
-
-  private DBMockActions(): void {
-    ticketArr.push(this.createNewTicket(ticketMock[0], this.createNewMails(ticketMock[0])));
-    ticketArr.push(this.createNewTicket(ticketMock[1], this.createNewMails(ticketMock[1])));
-    ticketArr.push(this.createNewTicket(ticketMock[2], this.createNewMails(ticketMock[2])));
-    this.createNewFromType('ticket', ticketArr[0]);
-    this.createNewFromType('ticket', ticketArr[1]);
-    this.createNewFromType('ticket', ticketArr[2]);
-
-    this.createNewFromType('customer', customerMock[0]);
-    this.createNewFromType('customer', customerMock[1]);
-    this.createNewFromType('customer', customerMock[2]);
-
-    this.createNewFromType('assignee', assigneesMock[0]);
-    this.createNewFromType('assignee', assigneesMock[1]);
-    this.createNewFromType('assignee', assigneesMock[2]);
-    // this.DBHandler.removeAll('ticket', {});
+  private seedAssignees() {
+    this.addOrUpdate('Assignee', {name: 'Anton Myrberg', email: 'mollyarhammar@gmail.com'}, {email: 'mollyarhammar@gmail.com'});
+    this.addOrUpdate('Assignee', {name: 'Sebastian Borgfeldt', email: 'sanne.lundback@gmail.com'}, {email: 'sanne.lundback@gmail.com'});
   }
 }
 

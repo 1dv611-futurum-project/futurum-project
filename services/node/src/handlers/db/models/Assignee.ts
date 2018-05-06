@@ -3,12 +3,12 @@
  */
 
 import { Document, Schema, Model, model} from 'mongoose';
-import { IAssignee } from './interfaces/IAssignee';
+import IAssignee from './../interfaces/IAssignee';
 
 export interface IAssigneeModel extends IAssignee, Document {}
 
 const AssigneeSchema: Schema = new Schema({
-  email: {type: Array, required: true},
+  email: {type: String, required: true},
   name: {type: String, required: true}
 });
 

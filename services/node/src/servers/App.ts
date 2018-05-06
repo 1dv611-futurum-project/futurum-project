@@ -18,13 +18,14 @@ import EmailHandler from './../handlers/email/EmailHandler';
 import SocketHandler from './../handlers/socket/SocketHandler';
 import IReceivedTicket from './../handlers/email/interfaces/IReceivedTicket';
 import { IncomingMailEvent } from './../handlers/email/events/IncomingMailEvents';
-import Email from './../handlers/email/Email';
 import IMAPHandler from '../handlers/email/IMAPHandler';
 
 /**
  * Express app.
  */
 class App {
+  private static DB_CONNECTION = 'mongodb://molly:testpassword@ds117070.mlab.com:17070/futurum_test';
+
   public express: Application;
   private mainRouter: Router;
   private authRouter: Router;
@@ -58,7 +59,6 @@ class App {
     this.express.use('/', this.mainRouter);
     this.express.use('/node', this.mainRouter);
     this.express.use('/node/auth', this.authRouter);
-    this.express.use('/auth', this.authRouter);
     this.express.all('*', this.emptyHandler);
   }
 
@@ -67,27 +67,16 @@ class App {
   }
 
   private handleDB(): void {
-    this.DBHandler.on('ready', () => {
-      console.log('Connected to db');
-    });
-
     this.DBHandler.on('error', (error) => {
-      console.log('Error in db');
+      // TODO: Send out email on database error
       console.log(error);
     });
-
-    this.DBHandler.on('disconnected', () => {
-      console.log('db disconnected');
-    });
-
-    this.DBHandler.connect('mongodb://futurum-db:27017');
+    this.DBHandler.connect(App.DB_CONNECTION);
   }
 
   private handleIncomingEmails(): void {
-    EmailHandler.Incoming.on(IncomingMailEvent.TICKET, (mail) => {
-      console.log('Got new ticket:');
-      console.log(mail);
-      this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail)
+    EmailHandler.Incoming.on(IncomingMailEvent.TICKET, (mail: IReceivedTicket) => {
+      this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail, { mailId: mail.mailId })
         .then(() => this.socketHandler.emitter.emitTickets())
         .catch((error) => { console.error(error); });
     });
@@ -95,8 +84,7 @@ class App {
     EmailHandler.Incoming.on(IncomingMailEvent.ANSWER, (mail) => {
       console.log('Got answer on existing ticket:');
       console.log(mail);
-      // todo: force mail param to contain ticketId or _id
-      this.DBHandler.addOrUpdate(IncomingMailEvent.ANSWER, mail, {mailId: mail.inReplyTo})
+      this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail, { mailId: mail.inAnswerTo })
         .then(() => this.socketHandler.emitter.emitTickets())
         .catch((error) => { console.error(error); });
     });
@@ -140,6 +128,7 @@ class App {
       console.log(error);
       console.log('Make call to ws to send notification of error.');
       console.log('Possibly make call to email module to email the error to different email address:');
+      // TODO: send error to email:
       // EmailHandler.Outgoing.send({to: 'dev@futurumdigital.se', subject: 'error', body: 'Error'})
     });
   }

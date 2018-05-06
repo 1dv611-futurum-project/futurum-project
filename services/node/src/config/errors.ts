@@ -64,3 +64,27 @@ export function DBError(message) {
 }
 
 util.inherits(DBError, Error);
+
+export function DBCreationError(message) {
+  Error.captureStackTrace(this, this.constructor);
+  this.name = this.constructor.name;
+  this.message = message;
+}
+
+util.inherits(DBCreationError, DBError);
+
+export function AssigneeMismatchError(message) {
+  Error.captureStackTrace(this, this.constructor);
+  this.name = this.constructor.name;
+  this.message = message;
+}
+
+util.inherits(AssigneeMismatchError, DBError);
+
+export function CustomerMismatchError(message) {
+  Error.captureStackTrace(this, this.constructor);
+  this.name = this.constructor.name;
+  this.message = message;
+}
+
+util.inherits(CustomerMismatchError, DBError);

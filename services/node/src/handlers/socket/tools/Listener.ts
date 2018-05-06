@@ -32,7 +32,6 @@ export default class Listener {
   private ticketListener() {
     this.io.on('tickets', (event: string, data: any) => {
       const ticket = data.ticket;
-      console.log(data.ticket);
       switch (event) {
       case TicketEvent.ASSIGNEE:
         this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
@@ -52,16 +51,21 @@ export default class Listener {
     });
   }
 
+  /**
+   * Listens for customer-events.
+   */
   private customerListener() {
-    this.io.on('customers', (event: string, data: any) => {
-      const customer = data.customer;
+    this.io.on('customers', (event: string, customer: any) => {
+      const email = Array.isArray(customer.email) ? customer.email : [customer.email];
+      customer.email = email;
+
       switch (event) {
       case CustomerEvent.ADD:
         this.db.addOrUpdate('customer', customer)
             .catch((error: any) => { console.error(error); });
         break;
       case CustomerEvent.EDIT:
-        this.db.addOrUpdate('customer', customer)
+        this.db.addOrUpdate('customer', customer, { email })
             .catch((error: any) => { console.error(error); });
         break;
       case CustomerEvent.DELETE:

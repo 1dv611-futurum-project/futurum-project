@@ -33,7 +33,6 @@ class MailSender extends events.EventEmitter {
    * @param params {IEmail} an IEmail object with the params to populate the email with.
    */
   public send(params: IEmail): Promise<void> {
-    console.log(params);
     const headers = this.getNewEmailHeaders(params);
     return this.sendMail(headers);
   }
