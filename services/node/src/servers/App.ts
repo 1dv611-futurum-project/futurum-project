@@ -19,6 +19,7 @@ import SocketHandler from './../handlers/socket/SocketHandler';
 import IReceivedTicket from './../handlers/email/interfaces/IReceivedTicket';
 import { IncomingMailEvent } from './../handlers/email/events/IncomingMailEvents';
 import IMAPHandler from '../handlers/email/IMAPHandler';
+import Message from '../handlers/socket/models/Message';
 
 /**
  * Express app.
@@ -76,9 +77,14 @@ class App {
 
   private handleIncomingEmails(): void {
     EmailHandler.Incoming.on(IncomingMailEvent.TICKET, (mail: IReceivedTicket) => {
+      console.log('\nIncoming new Ticket\n');
+      console.log(mail);
       this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail, { mailId: mail.mailId })
         .then(() => this.socketHandler.emitter.emitTickets())
-        .catch((error) => { console.error(error); });
+        .catch((error) => {
+          this.socketHandler.emitter.emitErrorMessage(new Message('error', 'Could not update database.', mail));
+          console.error(error);
+        });
     });
 
     EmailHandler.Incoming.on(IncomingMailEvent.ANSWER, (mail) => {
@@ -87,7 +93,10 @@ class App {
       // TODO: Lös detta med mailIDs och references
       /*this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail, { mailId: mail.inAnswerTo })
         .then(() => this.socketHandler.emitter.emitTickets())
-        .catch((error) => { console.error(error); });*/
+        .catch((error) => {
+          console.error(error);
+          this.socketHandler.emitter.emitErrorMessage(new Message('error', 'Could not update database.', mail));
+        });*/
     });
 
     EmailHandler.Incoming.on(IncomingMailEvent.FORWARD, (mail) => {
@@ -100,7 +109,7 @@ class App {
         console.log('mail is forwarded');
       })
       .catch((error) => {
-        console.log('could not forward');
+        this.socketHandler.emitter.emitErrorMessage(new Message('error', 'Could not forward.', mail));
         console.log(error);
       });
       console.log('emit forward to client?');
@@ -121,13 +130,13 @@ class App {
     EmailHandler.Incoming.on(IncomingMailEvent.TAMPER, (message) => {
       console.log('Got tamper message, means emails are being accesses externally and possible reload should happen:');
       console.log(message);
-      console.log('Make call to ws to send notification of tamper.');
+      this.socketHandler.emitter.emitErrorMessage(new Message('error', 'Got tamper message, means emails are being accesses externally and possible reload should happen:'));
     });
 
     EmailHandler.Incoming.on(IncomingMailEvent.ERROR, (error) => {
       console.log('Got error:');
       console.log(error);
-      console.log('Make call to ws to send notification of error.');
+      this.socketHandler.emitter.emitErrorMessage(new Message('error', 'Email error.'));
       console.log('Possibly make call to email module to email the error to different email address:');
       // TODO: send error to email:
       // EmailHandler.Outgoing.send({to: 'dev@futurumdigital.se', subject: 'error', body: 'Error'})

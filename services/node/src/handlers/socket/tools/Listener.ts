@@ -10,6 +10,7 @@ import { TicketEvent } from '../models/TicketEvent';
 import { AssigneeEvent } from '../models/AssigneeEvent';
 import { CustomerEvent } from '../models/CustomerEvent';
 import { SettingEvent } from '../models/SettingEvent';
+import { MessageEvent } from '../models/MessageEvent';
 
 /**
  * Handles the connection.
@@ -71,6 +72,25 @@ export default class Listener {
       case CustomerEvent.DELETE:
         this.db.removeOne('customer', { _id: customer._id })
             .catch((error: any) => { console.error(error); });
+        break;
+      }
+    });
+  }
+
+  /**
+   * Listens for message-events.
+   */
+  private messageListener() {
+    this.io.on('messages', (event: string, message: any) => {
+      switch (event) {
+      case MessageEvent.SUCCESS:
+        console.log(message);
+        break;
+      case MessageEvent.ERROR:
+        console.log(message);
+        break;
+      default:
+        console.error('Wrong eventname from client-socket');
         break;
       }
     });

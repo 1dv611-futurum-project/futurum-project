@@ -30,7 +30,20 @@ class DBHandler extends events.EventEmitter {
     this.dbconnection = dbconnection;
     this.setUpDBListeners();
     // TODO: Change this to handling the same way customers are handled?
-    this.seedAssignees();
+    // this.seedAssignees();
+    // this.seedCustomers();
+  }
+
+  private seedAssignees() {
+    this.addOrUpdate('Assignee',
+    {name: 'Anton Myrberg', email: 'js223zs@student.lnu.se'}, {name: 'Anton Myrberg'});
+    this.addOrUpdate('Assignee',
+    {   name: 'Sebastian Borgfeldt', email: 'js223zs@student.lnu.se'}, {name: 'Sebastian Borgfeldt'});
+  }
+
+  private seedCustomers() {
+    this.addOrUpdate('Customer',
+    {name: 'Johan Söderlund', email: 'js223zs@student.lnu.se'}, {email: 'js223zs@student.lnu.se'});
   }
 
   /**
@@ -426,11 +439,6 @@ class DBHandler extends events.EventEmitter {
         resolve(null);
       }
     });
-  }
-
-  private seedAssignees() {
-    this.addOrUpdate('Assignee', {name: 'Anton Myrberg', email: 'mollyarhammar@gmail.com'}, {email: 'mollyarhammar@gmail.com'});
-    this.addOrUpdate('Assignee', {name: 'Sebastian Borgfeldt', email: 'sanne.lundback@gmail.com'}, {email: 'sanne.lundback@gmail.com'});
   }
 }
 
