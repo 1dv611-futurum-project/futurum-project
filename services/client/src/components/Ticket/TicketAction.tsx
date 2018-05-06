@@ -74,6 +74,7 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 	 * @param {Boolean} doSend - If status change should be sent or not
 	 */
 	private handleModal = (doSend: boolean): void => {
+		this.props.ticket.status = this.state.status;
 		this.props.onSend(this.props.ticket, doSend);
 		this.setState({ displayModal: false });
 	}

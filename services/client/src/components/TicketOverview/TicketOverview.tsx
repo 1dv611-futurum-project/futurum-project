@@ -144,6 +144,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 	 * @param {Boolean} doSend - If status change should be sent or not
 	 */
 	private handleModal = (doSend: boolean): void => {
+		this.props.ticket.status = this.state.status;
 		this.props.handleStatusChange(this.props.ticket, doSend);
 		this.setState({ displayModal: false });
 	}
