@@ -1,0 +1,48 @@
+version: '3'
+services:
+
+    # Reverse proxy (Nginx)
+    reverse-proxy:
+        image: futurumtest/reverse-proxy:test
+        restart: on-failure:10
+        depends_on:
+            - node
+        networks:
+            - futurum-network
+        ports:
+            - '8080:80'
+
+    # Node (NodeJS/Express)
+    node:
+        image: futurumtest/node:test
+        restart: on-failure:10
+        depends_on:
+            - futurum-db
+        networks:
+            - futurum-network
+
+    # Client (NodeJS)
+    client:
+        image: futurumtest/client:test
+        restart: on-failure:10
+        networks:
+            - futurum-network
+        ports:
+            - '3000:3000'
+
+    # Database (MongoDB)
+    futurum-db:
+        image: mongo:3.6.2
+        restart: on-failure:10
+        networks:
+            - futurum-network
+        ports:
+            - '27017:27017'
+
+networks:
+  futurum-network:
+    driver: bridge
+
+volumes:
+    data-db-futurum:
+        driver: local
