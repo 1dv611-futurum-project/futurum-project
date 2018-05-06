@@ -3,7 +3,7 @@ import * as React from 'react';
 import { mount, shallow } from 'enzyme';
 import { expect } from 'chai';
 
-import { Button } from 'material-ui';
+import CustomButton from '../../../src/elements/CustomButton/CustomButton';
 import { AddButton } from '../../../src/components/AddButton/AddButton';
 
 describe('<AddButton />', () => {
@@ -22,8 +22,7 @@ describe('<AddButton />', () => {
 
 	it('should execute function on button click', () => {
 		const expected = 1;
-
-		wrapper.find(Button).simulate('click');
+		wrapper.find(CustomButton).simulate('click');
 		expect(count).to.equal(expected);
 	});
 });

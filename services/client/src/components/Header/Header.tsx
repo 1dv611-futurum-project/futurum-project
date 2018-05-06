@@ -2,7 +2,6 @@
  * Header component
  * @module components/Header/Header
  */
-
 import * as React from 'react';
 import { Paper, Menu, MenuItem, Divider } from 'material-ui';
 import { RemoveRedEye, AccountCircle, Settings } from 'material-ui-icons';
@@ -25,7 +24,7 @@ export class Header extends React.Component<any, any> {
 				</Link>
 				<span className='header__color header__color--red' />
 				<Link to='/open' className='header__link'>
-					<MenuItem>Ej påbörjad ärenden</MenuItem>
+					<MenuItem>Ej påbörjade ärenden</MenuItem>
 				</Link>
 				<span className='header__color header__color--blue' />
 				<Link to='/in-progress' className='header__link'>

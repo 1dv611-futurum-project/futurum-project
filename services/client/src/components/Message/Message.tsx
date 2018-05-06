@@ -2,7 +2,6 @@
  * Message component
  * @module components/Message/Message
  */
-
 import * as React from 'react';
 import { Avatar, Paper } from 'material-ui';
 import { Person } from 'material-ui-icons';
@@ -30,7 +29,7 @@ export class Message extends React.Component<IMessage, any> {
 	public render() {
 		const { body, fromCustomer, received } = this.props.data;
 		const { customer } = this.props;
-		const assignee = this.props.assignee === null ? 'Futurum Digital' : this.props.assignee;
+		const assignee = this.props.assignee ? this.props.assignee.name : 'Futurum Digital';
 
 		return (
 			<Paper className='message'>
@@ -41,7 +40,7 @@ export class Message extends React.Component<IMessage, any> {
 					<p className='message__content__title'>
 						{fromCustomer ? customer : assignee},
 						<span className='message__content__title--regular'>
-							{this.getDateFormat(received)}
+							{` ${this.getFormattedDate(received)}`}
 						</span>
 					</p>
 					<p className='message__content__text'>{body}</p>
@@ -54,8 +53,9 @@ export class Message extends React.Component<IMessage, any> {
 	 * Formats ISO_8601 date to L format (e.g. 2018-04-17)
 	 * @private
 	 * @param {String} date - The date string
+	 * @returns {String} - The formatted date
 	 */
-	private getDateFormat(date: string): string {
+	private getFormattedDate(date: string): string {
 		return moment(date, moment.ISO_8601).format('L');
 	}
 }

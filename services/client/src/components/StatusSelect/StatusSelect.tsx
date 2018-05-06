@@ -2,7 +2,6 @@
  * StatusSelect component
  * @module components/StatusSelect/StatusSelect
  */
-
 import * as React from 'react';
 import { Select, MenuItem } from 'material-ui';
 import { DropDownSelect } from '../DropDownSelect/DropDownSelect';
@@ -28,14 +27,13 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 			statuses: StatusSelect.STATUSES,
 			selected: this.props.selected || 0
 		};
-
-		this.handleChange = this.handleChange.bind(this);
 	}
 
 	/**
-	 * componentDidUpdate - Update state to new props
+	 * componentDidUpdate
+	 * Update state to new props
 	 * @public
-	 * @param {any} prevProps
+	 * @param {Object} prevProps - The previous props
 	 */
 	public componentDidUpdate(prevProps: any) {
 		if (prevProps !== this.props) {
@@ -65,9 +63,9 @@ export class StatusSelect extends React.Component<IStatusSelect, any> {
 	/**
 	 * Handles change when a new status is selected
 	 * @private
-	 * @param {String} selected - The newly selected status
+	 * @param {Number} selected - The newly selected status (0-3)
 	 */
-	private handleChange(selected: number): void {
+	private handleChange = (selected: number): void => {
 		this.setState({ selected });
 		this.props.onChange(selected, this.state.statuses[selected]);
 	}

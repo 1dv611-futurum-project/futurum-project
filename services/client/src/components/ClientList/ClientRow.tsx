@@ -2,7 +2,6 @@
  * ClientRow component
  * @module components/ClientRow/ClientRow
  */
-
 import * as React from 'react';
 import { ModeEdit, Delete } from 'material-ui-icons';
 import { TableRow, TableCell, IconButton, Tooltip } from 'material-ui';
@@ -51,8 +50,8 @@ export class ClientRow extends React.Component<IClientRow, any> {
 							<Delete />
 						</IconButton>
 					</Tooltip>
-			</TableCell>
-		</TableRow>
+				</TableCell>
+			</TableRow>
 		);
 	}
 }

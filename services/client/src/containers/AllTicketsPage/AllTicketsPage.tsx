@@ -2,7 +2,6 @@
  * AllTicketsPage container
  * @module containers/AllTicketsPage/AllTicketsPage
  */
-
 import * as React from 'react';
 import { Ticket } from '../../components/Ticket/Ticket';
 import { SnackbarNotice } from '../../components/SnackbarNotice/SnackbarNotice';
@@ -40,7 +39,7 @@ export class AllTicketsPage extends React.Component<any, any> {
 				<SnackbarNotice
 					message={this.state.snackMessage}
 					open={this.state.snackState}
-					onClose={this.handleSnackbarClose}
+					onClose={() => this.setState({ snackState: false })}
 				/>
 			</div>
 		);
@@ -91,25 +90,18 @@ export class AllTicketsPage extends React.Component<any, any> {
 	/**
 	 * Handles status change on tickets
 	 * @private
-	 * @param {String} status - The new status
-	 * @param {Boolean} mailCustomer - If customer should get an email about the status change
+	 * @param {String} ticket - The full ticket data
+	 * @param {Boolean} send - If customer should get an email about the status change
 	 */
 	private onStatusChange(ticket: any, send: boolean) {
 		const snackMessage = send ? 'Status för ärendet har uppdaterats och skickats till kund.' :
 			'Status för ärendet har uppdaterats.';
+
 		this.setState({
 			snackState: true,
 			snackMessage
 		});
 
 		this.props.ticketAction.emitStatus({ ticket, send });
-	}
-
-	/**
-	 * Handles manual close of SnackbarNotice
-	 * @private
-	 */
-	private handleSnackbarClose = (event: any) => {
-		this.setState({ snackState: false });
 	}
 }

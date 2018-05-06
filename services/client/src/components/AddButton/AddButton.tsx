@@ -2,10 +2,8 @@
  * AddButton component
  * @module components/AddButton/AddButton
  */
-
 import * as React from 'react';
 import { Add } from 'material-ui-icons';
-
 import Button from '../../elements/CustomButton/CustomButton';
 
 /**

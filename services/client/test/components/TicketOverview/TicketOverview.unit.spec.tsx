@@ -8,6 +8,7 @@ import { TicketOverview } from '../../../src/components/TicketOverview/TicketOve
 import { AddButton } from '../../../src/components/AddButton/AddButton';
 import { StatusSelect } from '../../../src/components/StatusSelect/StatusSelect';
 import { DropDownSelect } from '../../../src/components/DropDownSelect/DropDownSelect';
+import Span from '../../../src/elements/CustomSpan/CustomSpan';
 
 describe('<TicketOverview />', () => {
 	let wrapper: any;
@@ -16,7 +17,7 @@ describe('<TicketOverview />', () => {
 		handleStatusChange: (fn: number) => fn,
 		handleAssigneeChange: (fn: string) => fn,
 		assignees: ['assignee'],
-		data: {
+		ticket: {
 			id: 'id',
 			status: 0,
 			assignee: 'assignee',
@@ -57,15 +58,13 @@ describe('<TicketOverview />', () => {
 		for (const status in statusCodes) {
 			const statusInt = JSON.parse(status);
 			wrapper = newWrapperProps(statusInt);
-			const color = wrapper.state('color');
-
-			expect(color).to.equal(colors[statusInt]);
+			expect(wrapper.find(Span).dive().state('color')).to.equal(colors[statusInt]);
 		}
 	});
 
 	function newWrapperProps(status: number): any {
-		props.data.status = status;
-		return shallow(<TicketOverview {...props}/>);
+		props.ticket.status = status;
+		return shallow(<TicketOverview {...props}/>).dive();
 	}
 
 	it('should have a list of statuses to choose from', () => {

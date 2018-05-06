@@ -2,7 +2,6 @@
  * TicketPage container
  * @module containers/TicketPage/TicketPage
  */
-
 import * as React from 'react';
 import * as moment from 'moment';
 import 'moment/locale/sv';
@@ -23,20 +22,31 @@ export class TicketPage extends React.Component<any, any> {
 		this.state = {
 			ticket: false,
 			showNewMessage: false,
-			snackState: false
+			snackState: false,
+			snackMessage: ''
 		};
 
-		this.handleNewMessageClick = this.handleNewMessageClick.bind(this);
 		this.onStatusChange = this.onStatusChange.bind(this);
 		this.onAssigneeChange = this.onAssigneeChange.bind(this);
 		this.handleMessage = this.handleMessage.bind(this);
 	}
 
+	/**
+	 * componentDidMount
+	 * Sets the correct ticket based on path
+	 * @public
+	 */
 	public componentDidMount() {
 		const ticketId = this.getCurrentTicketId(this.props.location.pathname);
 		this.setTicket(this.props.allTickets, ticketId);
 	}
 
+	/**
+	 * componentDidUpdate
+	 * Sets the correct ticket based on path on props update
+	 * @public
+	 * @param {Object} prevProps - Previous props
+	 */
 	public componentDidUpdate(prevProps: any) {
 		if (prevProps !== this.props) {
 			const ticketId = this.getCurrentTicketId(this.props.location.pathname);
@@ -52,7 +62,7 @@ export class TicketPage extends React.Component<any, any> {
 		return (
 			<div className='ticket__wrapper'>
 				<TicketOverview
-					handleClick={this.handleNewMessageClick}
+					handleClick={() => this.setState({ showNewMessage: true })}
 					handleStatusChange={this.onStatusChange}
 					handleAssigneeChange={this.onAssigneeChange}
 					assignees={this.props.allAssignees}
@@ -64,8 +74,9 @@ export class TicketPage extends React.Component<any, any> {
 						ticket={this.state.ticket}
 						onClick={this.handleMessage}
 					/>
-					{this.state.ticket.messages ?
-						this.state.ticket.messages.map((message: any, i: number) => {
+					{
+						this.state.ticket.body ?
+						this.state.ticket.body.map((message: any, i: number) => {
 							return (
 								<Message
 									key={i}
@@ -74,13 +85,13 @@ export class TicketPage extends React.Component<any, any> {
 									assignee={this.state.ticket.assignee}
 								/>
 							);
-						}) : null
+						}).reverse() : null
 					}
 				</div>
 				<SnackbarNotice
 					message={this.state.snackMessage}
 					open={this.state.snackState}
-					onClose={this.handleSnackbarClose}
+					onClose={() => this.setState({ snackState: false })}
 				/>
 			</div>
 		);
@@ -89,7 +100,7 @@ export class TicketPage extends React.Component<any, any> {
 	/**
 	 * Gets the current ticket ID
 	 * @private
-	 * @param pathname - the current path
+	 * @param {String} pathname - The current path
 	 */
 	private getCurrentTicketId(pathname: string): any {
 		return pathname[0] === '/' ? pathname.slice(8) : pathname.slice(7);
@@ -98,11 +109,12 @@ export class TicketPage extends React.Component<any, any> {
 	/**
 	 * Sets the current ticket to state
 	 * @private
-	 * @param tickets - all tickets
+	 * @param {Object} tickets - All tickets
+	 * @param {String} id - The current ticket ID
 	 */
 	private setTicket(tickets: any[], id: string): any {
 		tickets.forEach((ticket: any) => {
-			if (ticket.id === Number(id)) {
+			if (ticket.ticketId === Number(id)) {
 				this.setState({ ticket });
 			}
 		});
@@ -111,11 +123,19 @@ export class TicketPage extends React.Component<any, any> {
 	/**
 	 * Handles status change of ticket
 	 * @private
-	 * @param {Number} status - The new status
+	 * @param {Object} ticket - The full ticket data
+	 * @param {Boolean} send - If an email should be sent to client about status update
 	 */
 	private onStatusChange(ticket: any, send: boolean) {
-		this.setState({ ticket });
-		this.handleSnackbar('Status för ärendet har uppdaterats.');
+		const snackMessage = send ? 'Status för ärendet har uppdaterats och skickats till kund.' :
+			'Status för ärendet har uppdaterats.';
+
+		this.setState({
+			ticket,
+			snackState: true,
+			snackMessage
+		});
+
 		this.props.ticketAction.emitStatus({ticket, send});
 	}
 
@@ -125,17 +145,13 @@ export class TicketPage extends React.Component<any, any> {
 	 * @param {Number} assignee - The new assignee
 	 */
 	private onAssigneeChange(ticket: any) {
-		this.setState({ ticket });
-		this.handleSnackbar(`Ärendet har tilldelats ${ticket.assignee}.`);
-		this.props.ticketAction.emitAssignee(ticket);
-	}
+		this.setState({
+			ticket,
+			snackState: true,
+			snackMessage: `Ärendet har tilldelats ${ticket.assignee ? ticket.assignee.name : 'ingen'}.`
+		});
 
-	/**
-	 * Handles click on New message button
-	 * @private
-	 */
-	private handleNewMessageClick() {
-		this.setState({ showNewMessage: true });
+		this.props.ticketAction.emitAssignee({ ticket });
 	}
 
 	/**
@@ -146,22 +162,5 @@ export class TicketPage extends React.Component<any, any> {
 	private handleMessage(ticket: any) {
 		this.setState({ ticket, showNewMessage: false });
 		this.props.ticketAction.emitMessage({ ticket });
-	}
-
-	/**
-	 * Activates and sets snackbar
-	 * @private
-	 * @param {String} snackMessage - The message
-	 */
-	private handleSnackbar(snackMessage: string) {
-		this.setState({ snackState: true, snackMessage });
-	}
-
-	/**
-	 * Handles manual close of SnackbarNotice
-	 * @private
-	 */
-	private handleSnackbarClose = (event: any) => {
-		this.setState({ snackState: false });
 	}
 }

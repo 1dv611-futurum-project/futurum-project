@@ -15,43 +15,35 @@ import authRouter from './../routes/authRouter';
 import DBHandler from './../handlers/db/DBHandler';
 import DBConnection from './../handlers/db/DBConnection';
 import EmailHandler from './../handlers/email/EmailHandler';
-import WebsocketHandler from './../handlers/WebsocketHandler';
+import SocketHandler from './../handlers/socket/SocketHandler';
 import IReceivedTicket from './../handlers/email/interfaces/IReceivedTicket';
 import { IncomingMailEvent } from './../handlers/email/events/IncomingMailEvents';
-import Ticket from './../models/Ticket';
-import Mail from './../models/Mail';
+import IMAPHandler from '../handlers/email/IMAPHandler';
 
 /**
  * Express app.
  */
 class App {
+  private static DB_CONNECTION = 'mongodb://futurum-db:27017';
+
   public express: Application;
   private mainRouter: Router;
   private authRouter: Router;
   private DBHandler: DBHandler;
-  private websocketHandler: WebsocketHandler;
+  private socketHandler: SocketHandler;
 
   constructor() {
     this.express = express();
     this.mainRouter = mainRouter;
     this.authRouter = authRouter;
     this.DBHandler = new DBHandler(new DBConnection());
-    this.websocketHandler = WebsocketHandler;
-    // this.onSocketConnection();
+    this.socketHandler = new SocketHandler(this.DBHandler);
     this.middleware();
     this.mountRoutes();
     this.handleErrors();
     this.handleIncomingEmails();
     this.handleDB();
   }
-
-  // private onSocketConnection() {
-  //   const tickArr = [];
-  //   tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
-  //   tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
-  //   tickArr.push(this.createNewTicket(mockData[0], this.createNewMails(mockData[0])));
-  //   this.websocketHandler.emitTickets(tickArr);
-  // }
 
   private middleware(): void {
     this.express.use(bodyParser.json());
@@ -67,7 +59,6 @@ class App {
     this.express.use('/', this.mainRouter);
     this.express.use('/node', this.mainRouter);
     this.express.use('/node/auth', this.authRouter);
-    this.express.use('/auth', this.authRouter);
     this.express.all('*', this.emptyHandler);
   }
 
@@ -76,77 +67,27 @@ class App {
   }
 
   private handleDB(): void {
-    this.DBHandler.on('ready', () => {
-      console.log('Connected to db');
-    });
-
     this.DBHandler.on('error', (error) => {
-      console.log('Error in db');
+      // TODO: Send out email on database error
       console.log(error);
     });
-
-    this.DBHandler.on('disconnected', () => {
-      console.log('db disconnected');
-    });
-
-    this.DBHandler.connect('mongodb://futurum-db:27017');
-  }
-
-  private createNewMails(mail: IReceivedTicket): Mail[] {
-    try {
-      const mailBodies = [];
-      mail.messages.forEach((element) => {
-        mailBodies.push(new Mail({
-          received: element.received,
-          fromCustomer: element.fromCustomer,
-          body: element.body}));
-      });
-      return mailBodies;
-    } catch (error) {
-      console.error(error);
-    }
-    return;
-  }
-
-  private createNewTicket(mail: IReceivedTicket, mailBodies: Mail[]): object {
-    try {
-      const ticket = new Ticket({
-        status: mail.status,
-        assignee: mail.assignee,
-        title: mail.title,
-        from: mail.from.email,
-        customerName: mail.from.name,
-        body: mailBodies
-      });
-      return ticket;
-    } catch (error) {
-      console.error(error);
-    }
-    return;
+    this.DBHandler.connect(App.DB_CONNECTION);
   }
 
   private handleIncomingEmails(): void {
-    EmailHandler.Incoming.on(IncomingMailEvent.TICKET, (mail) => {
-      console.log('Got new ticket:');
-      console.log(mail);
-
-      try {
-        const ticket = this.createNewTicket(mail, this.createNewMails(mail));
-        this.DBHandler.createNewFromType(mail.type, ticket);
-        this.websocketHandler.emitTicket(ticket);
-      } catch (error) {
-        console.error(error);
-      }
+    EmailHandler.Incoming.on(IncomingMailEvent.TICKET, (mail: IReceivedTicket) => {
+      this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail, { mailId: mail.mailId })
+        .then(() => this.socketHandler.emitter.emitTickets())
+        .catch((error) => { console.error(error); });
     });
 
     EmailHandler.Incoming.on(IncomingMailEvent.ANSWER, (mail) => {
       console.log('Got answer on existing ticket:');
       console.log(mail);
-      console.log('Make call to database to save the answer.');
-      this.DBHandler.addOrUpdate(mail.type, this.createNewMails(mail));
-      const ticket = this.DBHandler.getOne(mail.type, this.createNewMails(mail));
-      this.websocketHandler.emitTicket(ticket);
-      // Emit answer to client
+      // TODO: Lös detta med mailIDs och references
+      /*this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail, { mailId: mail.inAnswerTo })
+        .then(() => this.socketHandler.emitter.emitTickets())
+        .catch((error) => { console.error(error); });*/
     });
 
     EmailHandler.Incoming.on(IncomingMailEvent.FORWARD, (mail) => {
@@ -188,6 +129,7 @@ class App {
       console.log(error);
       console.log('Make call to ws to send notification of error.');
       console.log('Possibly make call to email module to email the error to different email address:');
+      // TODO: send error to email:
       // EmailHandler.Outgoing.send({to: 'dev@futurumdigital.se', subject: 'error', body: 'Error'})
     });
   }

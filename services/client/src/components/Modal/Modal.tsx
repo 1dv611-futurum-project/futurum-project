@@ -2,7 +2,6 @@
  * Modal component
  * @module components/Modal/Modal
  */
-
 import * as React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from 'material-ui';
 
@@ -38,11 +37,11 @@ export class Modal extends React.Component<IModal, any> {
 						</DialogContentText>
 					</DialogContent>
 					<DialogActions>
-						{disagree ?
-						<Button onClick={() => this.handleClose(false)} color='primary'>
-							{disagree}
-						</Button>
-						: null
+						{ disagree ?
+							<Button onClick={() => this.handleClose(false)} color='primary'>
+								{disagree}
+							</Button>
+							: null
 						}
 						<Button onClick={() => this.handleClose(true)} color='primary' autoFocus={true}>
 							{agree}
@@ -54,14 +53,10 @@ export class Modal extends React.Component<IModal, any> {
 
 	/**
 	 * Handles closing of Modal
-	 * @public
+	 * @private
 	 * @param {Any} agree - Whether or not to close the Modal
 	 */
 	private handleClose = (agree: any) => {
-		if (typeof agree !== 'boolean') {
-			this.props.onChange(false);
-		} else {
-			this.props.onChange(agree);
-		}
+		typeof agree !== 'boolean' ? this.props.onChange(false) : this.props.onChange(agree);
 	}
 }

@@ -2,7 +2,6 @@
  * Ticket component
  * @module components/Ticket/TicketAction
  */
-
 import * as React from 'react';
 import { CardActions } from 'material-ui';
 import { StatusSelect } from '../StatusSelect/StatusSelect';
@@ -29,9 +28,6 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 			status: this.props.ticket.status,
 			statusText: ''
 		};
-
-		this.handleStatusChange = this.handleStatusChange.bind(this);
-		this.handleModal = this.handleModal.bind(this);
 	}
 
 	/**
@@ -39,15 +35,15 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 	 * @public
 	 */
 	public render() {
-		const ticket = this.props.ticket;
+		const { ticket } = this.props;
 
 		return (
 			<CardActions className='ticket__actions'>
 				<StatusSelect selected={this.state.status} onChange={this.handleStatusChange} />
-					{this.state.displayModal ?
+					{ this.state.displayModal ?
 						<Modal
-							title={`Uppdaterat status av "${ticket.title}"`}
-							message={`Skicka statusuppdateringen ${this.state.statusText} till kund?`}
+							title={`Uppdatering av status för ärendet "${ticket.title}"`}
+							message={`Vill du skicka statusuppdateringen ${this.state.statusText} till kund?`}
 							disagree={'Nej'}
 							agree={'Ja, skicka'}
 							onChange={this.handleModal}
@@ -63,12 +59,12 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 	 * @param {Number} status - The status number (0-3)
 	 * @param {String} statusText - The status in text
 	 */
-	private handleStatusChange(status: number, statusText: string): void {
+	private handleStatusChange = (status: number, statusText: string): void => {
 		this.props.onStatusChange(status);
 		this.setState({
 			displayModal: true,
-			status: status,
-			statusText: statusText
+			status,
+			statusText
 		});
 	}
 
@@ -77,18 +73,9 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 	 * @private
 	 * @param {Boolean} doSend - If status change should be sent or not
 	 */
-	private handleModal(doSend: boolean): void {
+	private handleModal = (doSend: boolean): void => {
+		this.props.ticket.status = this.state.status;
 		this.props.onSend(this.props.ticket, doSend);
-		this.closeModal();
-	}
-
-	/**
-	 * Closes modal on status change
-	 * @private
-	 */
-	private closeModal(): void {
-		const state = { ...this.state };
-		state.displayModal = false;
-		this.setState(state);
+		this.setState({ displayModal: false });
 	}
 }

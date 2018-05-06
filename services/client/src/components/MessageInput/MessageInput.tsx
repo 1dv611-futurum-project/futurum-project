@@ -2,10 +2,11 @@
  * MessageInput component
  * @module components/MessageInput/MessageInput
  */
-
 import * as React from 'react';
 import { Paper } from 'material-ui';
 import TextArea from 'react-textarea-autosize';
+import * as moment from 'moment';
+import 'moment/locale/sv';
 
 import Button from '../../elements/CustomButton/CustomButton';
 
@@ -29,9 +30,6 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 		this.state = {
 			message: ''
 		};
-
-		this.handleChange = this.handleChange.bind(this);
-		this.handleClick = this.handleClick.bind(this);
 	}
 
 	/**
@@ -51,7 +49,7 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 					className='message-input__textarea'
 					name='message'
 					value={this.state.message}
-					onChange={this.handleChange}
+					onChange={(e) => this.setState({ message: e.target.value})}
 				/>
 				<div className='message-input__footer'>
 					<Button theme={true} block={true} onClick={this.handleClick}>
@@ -63,20 +61,12 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 	}
 
 	/**
-	 * Handles change in textarea
-	 * @private
-	 */
-	private handleChange(e: any) {
-		this.setState({ message: e.target.value});
-	}
-
-	/**
 	 * Handles button click to send the new message
 	 * @private
 	 */
-	private handleClick() {
-		this.props.ticket.messages.push({
-			received: new Date().toString(),
+	private handleClick = () => {
+		this.props.ticket.body.push({
+			received: moment().format(),
 			body: this.state.message,
 			fromCustomer: false
 		});

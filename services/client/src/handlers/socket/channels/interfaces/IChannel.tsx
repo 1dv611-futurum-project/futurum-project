@@ -1,11 +1,10 @@
 /**
- * Handles the websocket connection against the client.
+ * Defines the interface for Websocket channels
  */
-
 import * as SocketIO from 'socket.io-client';
 
 /**
- * Handles the connection.
+ * IChannel Interface props
  */
 export interface IChannel {
 	channel: string;

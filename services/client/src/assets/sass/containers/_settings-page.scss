@@ -1,0 +1,23 @@
+/**
+ * Settings page container
+ */
+.settings {
+	&__wrapper {
+		overflow: visible;
+	}
+
+	&__header {
+		margin: 0 0 20px 10px;
+
+		&__title {
+			font-size: 20px;
+			font-family: 'Source Sans Pro', sans-serif;
+			font-weight: bold;
+			display: inline-block;
+
+			&:first-of-type {
+				margin-top: 0;
+			}
+		}
+	}
+}

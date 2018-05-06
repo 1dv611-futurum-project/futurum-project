@@ -1,0 +1,57 @@
+/**
+ * Handles the websocket connection against the client.
+ */
+
+// Imports.
+import * as SocketIo from 'socket.io';
+import * as SocketIoJwt from 'socketio-jwt-decoder';
+
+import Listener from './tools/Listener';
+import Emitter from './tools/Emitter';
+
+/**
+ * Handles the connection.
+ */
+export default class SocketHandler {
+  private static readonly PORT: number = 3001;
+  private static readonly PATH: string = '/socket';
+  private port: string | number;
+  private io: SocketIo.Server;
+  private db: any;
+  private listener: Listener;
+
+  public emitter: Emitter;
+
+  constructor(db: any) {
+    this.db = db;
+
+    this.config();
+    this.authorize();
+    this.listen();
+    this.onConnect();
+  }
+
+  private config(): void {
+    this.io = SocketIo({ path: SocketHandler.PATH });
+  }
+
+  private authorize(): void {
+    this.io.use(SocketIoJwt.authorize({
+      secret: 'secret',
+      handshake: true
+    }));
+  }
+
+  private listen(): void {
+    this.io.listen(SocketHandler.PORT);
+  }
+
+  private onConnect(): void {
+    this.io.on('connection', (socket: any) => {
+      this.listener = new Listener(socket, this.db);
+      this.emitter = new Emitter(socket, this.db);
+      this.emitter.emitAll();
+      this.listener.startListeners();
+    });
+  }
+}

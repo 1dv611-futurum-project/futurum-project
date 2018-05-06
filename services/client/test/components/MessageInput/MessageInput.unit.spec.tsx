@@ -4,14 +4,32 @@ import { mount, shallow } from 'enzyme';
 import { expect } from 'chai';
 
 import TextArea from 'react-textarea-autosize';
-import { Button } from 'material-ui';
+import Button from '../../../src/elements/CustomButton/CustomButton';
 import { MessageInput } from '../../../src/components/MessageInput/MessageInput';
 
 describe('<MessageInput />', () => {
 	let wrapper: any;
 	const props = {
 		onClick: (message: string) => {return; },
-		open: true
+		open: true,
+		ticket: {
+			id: '0',
+			title: 'title',
+			from: {
+				name: 'name',
+				email: 'email'
+			},
+			created: '2018-04-27T23:25:05.000Z',
+			assignee: 'assignee',
+			status: 0,
+			body: [
+				{
+					fromCustomer: true,
+					received: '2018-04-27T23:25:05.000Z',
+					body: 'body'
+				}
+			]
+		}
 	};
 
 	before(() => {
@@ -35,7 +53,7 @@ describe('<MessageInput />', () => {
 	});
 
 	it('should send the input message', () => {
-		let expected = '';
+		let expected: any;
 		const input = 'test';
 
 		props.onClick = (message: string) => { expected = message; };
@@ -43,7 +61,7 @@ describe('<MessageInput />', () => {
 		wrapper.setState({ message: input });
 
 		wrapper.find(Button).simulate('click');
-		expect(input).to.equal(expected);
+		expect(input).to.equal(expected.body.pop().body);
 		expect(wrapper.find('.message-input--hidden')).to.have.length(1);
 	});
 

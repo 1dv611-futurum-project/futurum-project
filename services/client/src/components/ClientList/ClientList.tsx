@@ -41,7 +41,7 @@ export class ClientList extends React.Component<IClientList, any> {
 				</TableRow>
 			</TableHead>
 			<TableBody className='client-list__table__body'>
-				{customers.map((client: any, i: any) => {
+				{ customers.map((client: any, i: any) => {
 					return (
 						<ClientRow
 							key={i}
@@ -50,7 +50,7 @@ export class ClientList extends React.Component<IClientList, any> {
 							onDelete={onDelete}
 						/>
 					);
-				})}
+				}) }
 			</TableBody>
 			</Table>
 		);

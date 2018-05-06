@@ -6,11 +6,11 @@
 export default interface IReceivedTicket {
   assignee: any;
   status: number;
-  mailID: string;
+  mailId: string;
   created: string;
   title: string;
   from: ICustomer;
-  messages: IMessage[];
+  body: IMessage[];
 }
 
 interface ICustomer {
