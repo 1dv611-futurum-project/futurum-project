@@ -31,6 +31,7 @@ export class App extends React.Component<any, any> {
 		this.assigneesListener();
 		this.customersListener();
 		this.settingsListener();
+		this.messageListener();
 	}
 
 	/**
@@ -88,6 +89,18 @@ export class App extends React.Component<any, any> {
 	}
 
 	/**
+	 * Listens to the event of newly added/updated settings
+	 * @private
+	 */
+	private messageListener() {
+		console.log('messageListener');
+		this.socket.messageChannel().onMessage((message: any) => {
+			message = JSON.parse(message);
+			console.log(message);
+		});
+	}
+
+	/**
 	 * The render method
 	 * @public
 	 */
@@ -99,7 +112,8 @@ export class App extends React.Component<any, any> {
 			allSettings: this.state.settings,
 			ticketAction: this.socket.ticketChannel(),
 			customerAction: this.socket.customerChannel(),
-			settingsAction: this.socket.settingChannel()
+			settingsAction: this.socket.settingChannel(),
+			messageAction: this.socket.messageChannel()
 		};
 
 		return (

@@ -9,6 +9,7 @@ import * as SocketIoJwt from 'socketio-jwt-decoder';
 import Listener from './tools/Listener';
 import Emitter from './tools/Emitter';
 import MailSender from './tools/MailSender';
+import Message from './models/Message';
 
 /**
  * Handles the connection.

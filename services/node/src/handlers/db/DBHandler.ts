@@ -32,6 +32,17 @@ class DBHandler extends events.EventEmitter {
     this.setUpDBListeners();
     // TODO: Change this to handling the same way customers are handled?
     this.seedAssignees();
+    // this.seedCustomers();
+  }
+
+  private seedAssignees() {
+    this.addOrUpdate('Assignee', {name: 'Anton Myrberg', email: 'anton@anton.com'}, {email: 'sebbe@sebbe.com'});
+    this.addOrUpdate('Assignee', {name: 'Sebastian Borgfeldt', email: 'sebbe@sebbe.com'}, {email: 'sebbe@sebbe.com'});
+  }
+
+  private seedCustomers() {
+    this.addOrUpdate('Customer',
+    {name: 'Johan Söderlund', email: 'js223zs@student.lnu.se'}, {email: 'js223zs@student.lnu.se'});
   }
 
   /**
@@ -330,10 +341,6 @@ class DBHandler extends events.EventEmitter {
       }
 
       if (info.replyId) {
-        console.log('had')
-        console.log(ticket.replyId)
-        console.log('setting reply id to')
-        console.log(info.replyId)
         ticket.replyId = info.replyId;
       }
 
@@ -477,11 +484,6 @@ class DBHandler extends events.EventEmitter {
         resolve(null);
       }
     });
-  }
-
-  private seedAssignees() {
-    this.addOrUpdate('Assignee', {name: 'Anton Myrberg', email: 'anton@anton.com'}, {email: 'sebbe@sebbe.com'});
-    this.addOrUpdate('Assignee', {name: 'Sebastian Borgfeldt', email: 'sebbe@sebbe.com'}, {email: 'sebbe@sebbe.com'});
   }
 }
 
