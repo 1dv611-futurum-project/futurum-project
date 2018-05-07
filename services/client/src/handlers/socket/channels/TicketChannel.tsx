@@ -42,14 +42,4 @@ export default class TicketChannel extends Channel {
 		console.log(ticket);
 		this.emit(TicketEvent.ASSIGNEE, ticket);
 	}
-
-	/**
-	 * Emits a new message event to channel
-	 * @public
-	 * @param {Object} ticket - A ticket object
-	 */
-	public emitMessage(ticket: object) {
-		console.log(ticket);
-		this.emit(TicketEvent.MESSAGE, ticket);
-	}
 }

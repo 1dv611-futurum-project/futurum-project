@@ -5,8 +5,8 @@
 // Imports
 import * as events from 'events';
 import { google } from 'googleapis';
-import IEmail from './interfaces/IEmail';
-import { GmailError } from './../../config/errors';
+import IEmail from './../interfaces/IEmail';
+import { GmailError } from './../../../config/errors';
 const OAuth2 = google.auth.OAuth2;
 
 class MailSender extends events.EventEmitter {
@@ -53,7 +53,7 @@ class MailSender extends events.EventEmitter {
    * @param messageID {string} the messageID of the forwarded message.
    * @param forwardingAddress {string} the address to forward to.
    */
-  public forward(params: IEmail, messageID: string, forwardingAddress: string): Promise<void> {
+  public forward(params: IEmail, messageID: string, forwardingAddress: string): Promise<string> {
     const headers = this.getForwardingHeaders(params, messageID, forwardingAddress);
     return this.sendMail(headers);
   }
@@ -62,7 +62,7 @@ class MailSender extends events.EventEmitter {
    * Sends an email through the gmail api.
    * @param headers {string[]} The headers to send.
    */
-  private sendMail(headers: string[]): Promise<void> {
+  private sendMail(headers: string[]): Promise<string> {
     return new Promise((resolve, reject) => {
       this.updateCredentials()
       .then(() => {
@@ -79,7 +79,24 @@ class MailSender extends events.EventEmitter {
 
         gmail.users.messages.send(request, null, (err, response) => {
           if (!err) {
-            return resolve();
+            const get = {
+              auth: this.oauth2Client,
+              userId: 'me',
+              id: response.data.id
+            };
+
+            gmail.users.messages.get(get, null, (error, resp) => {
+              if (!error) {
+                const messageId = resp.data.payload.headers.find((header) => {
+                  return header.name === 'Message-Id';
+                });
+
+                return resolve(messageId.value);
+
+              } else {
+                return reject();
+              }
+            });
           } else {
             return reject(new GmailError('Unable to send email: ' + err));
           }

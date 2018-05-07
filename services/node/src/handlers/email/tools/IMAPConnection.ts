@@ -7,11 +7,11 @@ import * as Imap from 'imap';
 import { Box, ImapMessage } from 'imap';
 import * as events from 'events';
 import { MailParser } from 'mailparser-mit';
-import IMAPConnectionInterface from './interfaces/IMAPConnectionInterface';
+import IMAPConnectionInterface from './../interfaces/IMAPConnectionInterface';
 import XOauth from './Xoauth2Generator';
 import { Xoauth2Generator } from './Xoauth2Generator';
-import { IMAPError } from './../../config/errors';
-import { IMAPConnectionEvent } from './events/IMAPConnectionEvents';
+import { IMAPError } from './../../../config/errors';
+import { IMAPConnectionEvent } from './../events/IMAPConnectionEvents';
 
 /**
  * Sets up a connection to the imap-server.

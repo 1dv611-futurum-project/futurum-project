@@ -4,27 +4,33 @@
 
 // Imports
 import * as events from 'events';
-import IMAPConnectionInterface from './interfaces/IMAPConnectionInterface';
-import IReceivedEmail from './interfaces/IReceivedEmail';
-import IReceivedTicket from './interfaces/IReceivedTicket';
-import IReceivedAnswer from './interfaces/IReceivedAnswer';
-import { IMAPConnectionEvent } from './events/IMAPConnectionEvents';
-import { IncomingMailEvent } from './events/IncomingMailEvents';
-import { IMAPError } from './../../config/errors';
+import * as planer from 'planer';
+import { JSDOM } from 'jsdom';
+import * as h2p from 'html2plaintext';
+import IMAPConnectionInterface from './../interfaces/IMAPConnectionInterface';
+import IReceivedEmail from './../interfaces/IReceivedEmail';
+import IReceivedTicket from './../interfaces/IReceivedTicket';
+import IReceivedAnswer from './../interfaces/IReceivedAnswer';
+import { IMAPConnectionEvent } from './../events/IMAPConnectionEvents';
+import { IncomingMailEvent } from './../events/IncomingMailEvents';
+import { IMAPError, DBError } from './../../../config/errors';
 import MailSender from './MailSender';
-
-// This should be a database, only array for development
-const whitelist = ['mopooy@gmail.com', 'js223zs@student.lnu.se'];
 
 /**
  * Sets up a connection to the server and
  * listens for incoming messages.
  */
-class IMAPHandler extends events.EventEmitter {
+class MailReciever extends events.EventEmitter {
 
   private interval: number;
   private imapConnection: IMAPConnectionInterface;
   private ongoingTimeout: NodeJS.Timer;
+  private db: any;
+
+  constructor(db: any) {
+    super();
+    this.db = db;
+  }
 
   /**
    * Connects to the imap server.
@@ -78,21 +84,23 @@ class IMAPHandler extends events.EventEmitter {
    * Emits the new mail as a message.
    */
   private handleNewMailEvent(mail: IReceivedEmail): void {
-    const mailType = this.getType(mail);
-    let formattedMessage;
+    this.getType(mail)
+    .then((mailType) => {
+      let formattedMessage;
 
-    if (mailType === IncomingMailEvent.TICKET || mailType === IncomingMailEvent.FORWARD) {
-      formattedMessage = this.formatAsNewTicket(mail);
-    } else {
-      formattedMessage = this.formatAsAnswer(mail);
-    }
+      if (mailType === IncomingMailEvent.TICKET || mailType === IncomingMailEvent.FORWARD) {
+        formattedMessage = this.formatAsNewTicket(mail);
+      } else {
+        formattedMessage = this.formatAsAnswer(mail);
+      }
 
-    this.emitMessage(formattedMessage, mailType);
+      this.emitMessage(formattedMessage, mailType);
 
-    if (this.ongoingTimeout) {
-      clearTimeout(this.ongoingTimeout);
-    }
-    this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, this.interval);
+      if (this.ongoingTimeout) {
+        clearTimeout(this.ongoingTimeout);
+      }
+      this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, this.interval);
+    });
   }
 
   /**
@@ -109,19 +117,23 @@ class IMAPHandler extends events.EventEmitter {
   /**
    * Gets the type of the mail.
    */
-  private getType(mail: IReceivedEmail): string {
-    let type;
+  private getType(mail: IReceivedEmail): Promise<string> {
+    return new Promise((resolve, reject) => {
+      let type;
 
-    if (this.isNewTicket(mail)) {
-      type = IncomingMailEvent.TICKET;
-      if (!this.isInWhitelist(Array.isArray(mail.from) ? mail.from[0].address : mail.from.address)) {
-        type = IncomingMailEvent.FORWARD;
-      }
-    } else {
-      type = IncomingMailEvent.ANSWER;
-    }
+      this.isInWhitelist(Array.isArray(mail.from) ? mail.from[0].address : mail.from.address)
+      .then((isWhitelisted) => {
+        if (isWhitelisted && this.isNewTicket(mail)) {
+          type = IncomingMailEvent.TICKET;
+        } else if (isWhitelisted) {
+          type = IncomingMailEvent.ANSWER;
+        } else {
+          type = IncomingMailEvent.FORWARD;
+        }
 
-    return type;
+        resolve(type);
+      });
+    });
   }
 
   /**
@@ -163,11 +175,12 @@ class IMAPHandler extends events.EventEmitter {
    */
   private formatAsAnswer(mail: IReceivedEmail): IReceivedAnswer {
     const message = ({} as IReceivedAnswer);
+    const dom = new JSDOM().window.document;
 
     message.mailID = mail.messageId;
     message.inAnswerTo = Array.isArray(mail.references) ? mail.references[0] : mail.references;
     message.received = mail.receivedDate;
-    message.body = mail.text;
+    message.body =  h2p(planer.extractFrom(mail.html, 'text/html', dom));
     message.fromCustomer = true;
 
     return message;
@@ -176,20 +189,29 @@ class IMAPHandler extends events.EventEmitter {
   /**
    * Checks if the sender is in the whitelist.
    */
-  private isInWhitelist(address: string): boolean {
-    // Commented out whitelist-testing.
-    /*let found = false;
-    // TODO: Logic.
-    whitelist.forEach((approved) => {
-      if (address.indexOf(approved) !== -1) {
-        return found = true;
-      }
+  private isInWhitelist(address: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      let found = false;
+
+      this.db.getAll('customer', {})
+      .then((customers) => {
+        const whitelist = customers.map((customer) => customer.email);
+
+        console.log(customers);
+        console.log(whitelist);
+
+        whitelist.forEach((approved) => {
+          if (address.indexOf(approved) !== -1) {
+            resolve(found = true);
+          }
+        });
+
+        resolve(found);
+      })
+      .catch((error) => {
+        this.handleConnectionError(new DBError('Something wrong with the whitelist.'));
+      });
     });
-
-    return found;*/
-
-    // Everyone is whitelist now.
-    return true;
   }
 
   /**
@@ -240,5 +262,4 @@ class IMAPHandler extends events.EventEmitter {
 }
 
 // Exports.
-export default new IMAPHandler();
-export type IMAPConnectionHandler = IMAPHandler;
+export default MailReciever;

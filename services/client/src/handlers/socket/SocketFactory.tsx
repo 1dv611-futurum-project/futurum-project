@@ -9,6 +9,7 @@ import TicketChannel from './channels/TicketChannel';
 import AssigneeChannel from './channels/AssigneeChannel';
 import CustomerChannel from './channels/CustomerChannel';
 import SettingChannel from './channels/SettingChannel';
+import MessageChannel from './channels/MessageChannel';
 
 /**
  * SocketFactory class
@@ -51,6 +52,15 @@ export default class SocketFactory {
 		this.io.on('error', (error: any) => {
 			cb(false);
 		});
+	}
+
+	/**
+	 * Initiates a new MessageChannel
+	 * @public
+	 */
+	public messageChannel() {
+		console.log('new messageChannel in client');
+		return new MessageChannel(this.io);
 	}
 
 	/**

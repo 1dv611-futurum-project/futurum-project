@@ -4,6 +4,7 @@
 
 // Imports.
 import * as SocketIo from 'socket.io';
+// import { }
 
 /**
  * Handles the connection.
@@ -65,6 +66,20 @@ export default class Emitter {
           console.log('Could not get customers from DB');
           console.log(error);
         });
+  }
+
+  /**
+   * Emits data to the server on message channels.
+   */
+  public emitErrorMessage(message: object): void {
+    this.io.emit('messages', JSON.stringify(message));
+  }
+
+  /**
+   * Emits data to the server on message channels.
+   */
+  public emitSuccessMessage(message: object): void {
+    this.io.emit('messages', JSON.stringify(message));
   }
 
   /**

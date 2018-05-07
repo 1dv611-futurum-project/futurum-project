@@ -7,7 +7,7 @@ import { expect } from 'chai';
 import { it, describe, before, after } from 'mocha';
 import * as sinon from 'sinon';
 import * as events from 'events';
-import MailSender from './../../src/handlers/email/MailSender';
+import MailSender from './../../src/handlers/email/tools/MailSender';
 import IMAPConnectionInterface from './../../src/handlers/email/interfaces/IMAPConnectionInterface';
 import { IMAPError } from '../../src/config/errors';
 import { IMAPConnectionEvent } from './../../src/handlers/email/events/IMAPConnectionEvents';

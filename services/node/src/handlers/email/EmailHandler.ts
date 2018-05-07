@@ -3,26 +3,27 @@
  */
 
 // Imports.
-import Connection from './IMAPConnection';
-import { IMAPConnection } from './IMAPConnection';
-import IMAPHandler from './IMAPHandler';
-import { IMAPConnectionHandler } from './IMAPHandler';
-import MailSender from './MailSender';
-import { GmailSender } from './MailSender';
+import Connection from './tools/IMAPConnection';
+import { IMAPConnection } from './tools/IMAPConnection';
+import MailReciever from './tools/MailReciever';
+import MailSender from './tools/MailSender';
+import { GmailSender } from './tools/MailSender';
 
 /**
  * Wraps incomping and outgoing email handlers.
  */
 class EmailHandler {
   private IMAPConnection: IMAPConnection;
-  private IMAPHandler: IMAPConnectionHandler;
+  private MailReciever: MailReciever;
   public MailSender: GmailSender;
+
+  private db: any;
 
   /**
    * Returns a handler of incoming mails.
    */
-  get Incoming(): IMAPConnectionHandler {
-    return this.IMAPHandler;
+  get Incoming(): MailReciever {
+    return this.MailReciever;
   }
 
   /**
@@ -32,8 +33,9 @@ class EmailHandler {
     return this.MailSender;
   }
 
-  constructor() {
-    this.IMAPHandler = IMAPHandler;
+  constructor(db: any) {
+    this.db = db;
+    this.MailReciever = new MailReciever(this.db);
     this.IMAPConnection = Connection;
     this.MailSender = MailSender;
   }
@@ -43,10 +45,9 @@ class EmailHandler {
    * in case new credentials has been added.
    */
   public updateIMAPConnection() {
-    this.IMAPHandler.connect(this.IMAPConnection);
+    this.MailReciever.connect(this.IMAPConnection);
   }
 }
 
 // Exports.
-export default new EmailHandler();
-export type MailWrapper = EmailHandler;
+export default EmailHandler;
