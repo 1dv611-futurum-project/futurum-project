@@ -3,6 +3,8 @@
  * @module containers/AllTicketsPage/AllTicketsPage
  */
 import * as React from 'react';
+import { Badge } from 'material-ui';
+import { Mail } from 'material-ui-icons';
 import { Ticket } from '../../components/Ticket/Ticket';
 import { SnackbarNotice } from '../../components/SnackbarNotice/SnackbarNotice';
 
@@ -72,7 +74,12 @@ export class AllTicketsPage extends React.Component<any, any> {
 	 */
 	private getTickets(ticket: any, i: any): any {
 		const location = this.props.location.pathname;
-		const ticketJsx = <Ticket key={i} ticket={ticket} onSend={this.onStatusChange} />;
+		// ticket.read = true;
+		const ticketJsx = ticket.read ? (
+				<Badge className='ticket__badge' badgeContent={<Mail />} color='secondary'>
+					<Ticket key={i} ticket={ticket} onSend={this.onStatusChange} />
+				</Badge>
+			) : <Ticket key={i} ticket={ticket} onSend={this.onStatusChange} />;
 
 		if (location.indexOf('open') !== -1 && ticket.status === 0) {
 			return ticketJsx;
