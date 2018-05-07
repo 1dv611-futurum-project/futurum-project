@@ -8,6 +8,7 @@ import IMail from './IMail';
 export default interface ITicket {
   ticketId?: number;
   mailId: string;
+  replyId: string[];
   status?: number;
   assignee?: string;
   title?: string;

@@ -4,8 +4,8 @@
 
 // Imports
 import * as xoauth2 from 'xoauth2';
-import IIMAPCredentials from './interfaces/IIMAPCredentials';
-import { NoIMAPCredentialsError } from './../../config/errors';
+import IIMAPCredentials from './../interfaces/IIMAPCredentials';
+import { NoIMAPCredentialsError } from './../../../config/errors';
 
 /**
  * Instantiates an xoauth generator

@@ -7,10 +7,11 @@ export default interface IReceivedTicket {
   assignee: any;
   status: number;
   mailId: string;
+  replyId?: string[];
   created: string;
   title: string;
   from: ICustomer;
-  body: IMessage[];
+  body: IMail[];
 }
 
 interface ICustomer {
@@ -18,7 +19,7 @@ interface ICustomer {
   email: string;
 }
 
-interface IMessage {
+interface IMail {
   received: string;
   body: string;
   fromCustomer: boolean;

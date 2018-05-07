@@ -4,7 +4,6 @@
 
 // Imports.
 import * as SocketIo from 'socket.io';
-import MailSender from './MailSender';
 
 import { TicketEvent } from '../models/TicketEvent';
 import { AssigneeEvent } from '../models/AssigneeEvent';
@@ -17,10 +16,13 @@ import { SettingEvent } from '../models/SettingEvent';
 export default class Listener {
   private io: SocketIo.Server;
   private db: any;
+  private mailSender: any;
 
-  constructor(io: SocketIo.Server, db: any) {
+  constructor(io: SocketIo.Server, db: any, mailSender: any) {
     this.io = io;
     this.db = db;
+    this.mailSender = mailSender;
+
   }
 
   public startListeners() {
@@ -39,12 +41,19 @@ export default class Listener {
         break;
       case TicketEvent.STATUS:
         this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
-            .then((payload: any) => MailSender.sendStatusUpdate(payload, data.send))
+            .then((payload: any) => this.mailSender.sendStatusUpdate(payload, data.send))
             .catch((error: any) => { console.error(error); });
         break;
       case TicketEvent.MESSAGE:
-        this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
-            .then((payload: any) => MailSender.sendMessageUpdate(payload))
+        this.db.getOne('ticket', { ticketId: ticket.ticketId })
+            .then((payload: any) => {
+              payload.body.push(ticket.body[ticket.body.length - 1]);
+              return this.mailSender.sendMessageUpdate(payload);
+            })
+            .then((payload: any) => {
+              ticket.replyId.push(payload);
+              this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId });
+            })
             .catch((error: any) => { console.error(error); });
         break;
       }

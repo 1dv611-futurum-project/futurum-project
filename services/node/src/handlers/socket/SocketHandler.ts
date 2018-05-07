@@ -8,6 +8,7 @@ import * as SocketIoJwt from 'socketio-jwt-decoder';
 
 import Listener from './tools/Listener';
 import Emitter from './tools/Emitter';
+import MailSender from './tools/MailSender';
 
 /**
  * Handles the connection.
@@ -18,12 +19,16 @@ export default class SocketHandler {
   private port: string | number;
   private io: SocketIo.Server;
   private db: any;
+  private emailhandler: any;
+  private mailSender: any;
   private listener: Listener;
 
   public emitter: Emitter;
 
-  constructor(db: any) {
+  constructor(db: any, emailhandler: any) {
     this.db = db;
+    this.emailhandler = emailhandler;
+    this.mailSender = new MailSender(this.emailhandler);
 
     this.config();
     this.authorize();
@@ -48,7 +53,7 @@ export default class SocketHandler {
 
   private onConnect(): void {
     this.io.on('connection', (socket: any) => {
-      this.listener = new Listener(socket, this.db);
+      this.listener = new Listener(socket, this.db, this.mailSender);
       this.emitter = new Emitter(socket, this.db);
       this.emitter.emitAll();
       this.listener.startListeners();

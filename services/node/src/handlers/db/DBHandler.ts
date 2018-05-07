@@ -8,7 +8,6 @@ import * as events from 'events';
 import Customer from './models/Customer';
 import Assignee from './models/Assignee';
 import Ticket from './models/Ticket';
-import IReceivedTicket from '../email/interfaces/IReceivedTicket';
 import ITicket from './interfaces/ITicket';
 import IAssignee from './interfaces/IAssignee';
 import ICustomer from './interfaces/ICustomer';
@@ -17,6 +16,8 @@ import { AssigneeMismatchError } from './../../config/errors';
 import { CustomerMismatchError } from './../../config/errors';
 import { DBCreationError } from './../../config/errors';
 import IReceivedEmail from '../email/interfaces/IReceivedEmail';
+import IReceivedAnswer from '../email/interfaces/IReceivedAnswer';
+import IReceivedTicket from '../email/interfaces/IReceivedTicket';
 
 /**
  * Sets up and handles the database.
@@ -108,8 +109,6 @@ class DBHandler extends events.EventEmitter {
           result.remove();
           resolve(result);
         }
-        // reject(result);
-        // resolve(result);
       })
       .catch((err) => {
         reject(err);
@@ -270,6 +269,18 @@ class DBHandler extends events.EventEmitter {
             reject(error);
           });
         break;
+      case 'answer':
+        this.createNewAnswer(conditions, info as IReceivedAnswer, options)
+          .then((saved) => {
+            return this.getOne('ticket', saved);
+          })
+          .then((populated) => {
+            resolve(populated);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+        break;
       case 'customer':
         this.createNewCustomer(conditions, info as ICustomer, options)
           .then((saved) => {
@@ -318,6 +329,14 @@ class DBHandler extends events.EventEmitter {
         ticket.status = info.status;
       }
 
+      if (info.replyId) {
+        console.log('had')
+        console.log(ticket.replyId)
+        console.log('setting reply id to')
+        console.log(info.replyId)
+        ticket.replyId = info.replyId;
+      }
+
       this.getCustomerReference(info)
       .then((ref) => {
         ticket.from = ref;
@@ -334,13 +353,45 @@ class DBHandler extends events.EventEmitter {
             found[attribute] = ticket[attribute];
           });
 
-          const bodies = Array.isArray(info.body) ? info.body : found.body.concat(this.createNewMails(info.body));
+          const bodies = Array.isArray(info.body)
+            ? info.body as IMail[]
+            : found.body.concat(this.createNewMails(info.body)) as IMail[];
           found.body = bodies;
         } else {
           ticket.body = this.createNewMails(info.body);
           found = new Ticket(ticket);
         }
         return found.save();
+      })
+      .then((saved) => {
+        resolve(saved);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+    });
+  }
+
+  /**
+   * Adds to the answer-thread.
+   */
+  private createNewAnswer(conditions: object, info: IReceivedAnswer, options: object) {
+    return new Promise((resolve, reject) => {
+      Ticket.findOne(conditions)
+      .then((found) => {
+        if (found) {
+          const bodies = found.body.concat(this.createNewMails(info));
+          found.body = bodies;
+
+          const replyIDs = found.replyId;
+          replyIDs.push('<' + info.mailID + '>');
+          found.replyId = replyIDs;
+          return found.save();
+        } else {
+          // TODO: some sort of error
+          console.log('error');
+          reject();
+        }
       })
       .then((saved) => {
         resolve(saved);
@@ -429,8 +480,8 @@ class DBHandler extends events.EventEmitter {
   }
 
   private seedAssignees() {
-    this.addOrUpdate('Assignee', {name: 'Anton Myrberg', email: 'mollyarhammar@gmail.com'}, {email: 'mollyarhammar@gmail.com'});
-    this.addOrUpdate('Assignee', {name: 'Sebastian Borgfeldt', email: 'sanne.lundback@gmail.com'}, {email: 'sanne.lundback@gmail.com'});
+    this.addOrUpdate('Assignee', {name: 'Anton Myrberg', email: 'anton@anton.com'}, {email: 'sebbe@sebbe.com'});
+    this.addOrUpdate('Assignee', {name: 'Sebastian Borgfeldt', email: 'sebbe@sebbe.com'}, {email: 'sebbe@sebbe.com'});
   }
 }
 

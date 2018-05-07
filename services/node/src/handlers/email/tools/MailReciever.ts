@@ -4,13 +4,16 @@
 
 // Imports
 import * as events from 'events';
-import IMAPConnectionInterface from './interfaces/IMAPConnectionInterface';
-import IReceivedEmail from './interfaces/IReceivedEmail';
-import IReceivedTicket from './interfaces/IReceivedTicket';
-import IReceivedAnswer from './interfaces/IReceivedAnswer';
-import { IMAPConnectionEvent } from './events/IMAPConnectionEvents';
-import { IncomingMailEvent } from './events/IncomingMailEvents';
-import { IMAPError } from './../../config/errors';
+import * as planer from 'planer';
+import { JSDOM } from 'jsdom';
+import * as h2p from 'html2plaintext';
+import IMAPConnectionInterface from './../interfaces/IMAPConnectionInterface';
+import IReceivedEmail from './../interfaces/IReceivedEmail';
+import IReceivedTicket from './../interfaces/IReceivedTicket';
+import IReceivedAnswer from './../interfaces/IReceivedAnswer';
+import { IMAPConnectionEvent } from './../events/IMAPConnectionEvents';
+import { IncomingMailEvent } from './../events/IncomingMailEvents';
+import { IMAPError } from './../../../config/errors';
 import MailSender from './MailSender';
 
 // This should be a database, only array for development
@@ -20,7 +23,7 @@ const whitelist = ['mopooy@gmail.com', 'js223zs@student.lnu.se'];
  * Sets up a connection to the server and
  * listens for incoming messages.
  */
-class IMAPHandler extends events.EventEmitter {
+class IMAPMailReciever extends events.EventEmitter {
 
   private interval: number;
   private imapConnection: IMAPConnectionInterface;
@@ -163,11 +166,12 @@ class IMAPHandler extends events.EventEmitter {
    */
   private formatAsAnswer(mail: IReceivedEmail): IReceivedAnswer {
     const message = ({} as IReceivedAnswer);
+    const dom = new JSDOM().window.document;
 
     message.mailID = mail.messageId;
     message.inAnswerTo = Array.isArray(mail.references) ? mail.references[0] : mail.references;
     message.received = mail.receivedDate;
-    message.body = mail.text;
+    message.body =  h2p(planer.extractFrom(mail.html, 'text/html', dom));
     message.fromCustomer = true;
 
     return message;
@@ -240,5 +244,5 @@ class IMAPHandler extends events.EventEmitter {
 }
 
 // Exports.
-export default new IMAPHandler();
-export type IMAPConnectionHandler = IMAPHandler;
+export default new IMAPMailReciever();
+export type MailReciever = IMAPMailReciever;
