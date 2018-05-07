@@ -16,8 +16,10 @@ class MailSender {
    * Sends a statusupdate to the customer.
    */
   public sendStatusUpdate(payload: any, doSend: boolean) {
-    const mailBody = 'Status för ärende med ärendeID: ' + payload[0].ticketId + ' har ändrats.';
-    const mailSubject = 'Kundärende har fått uppdaterad status';
+    const statuses = ['Ej påbörjad', 'Påbörjad', 'Genomförd', 'Stängd'];
+    const status = statuses[payload[0].status];
+    const mailBody = 'Status för ärende med ärendenamn: \'' + payload[0].title + '\' har ändrats till ' + status;
+    const mailSubject = 'Kundärende ' + payload[0].title + ' har fått uppdaterad status';
     const mail = {to: payload[0].from.email,
       subject: mailSubject, body: mailBody};
 
