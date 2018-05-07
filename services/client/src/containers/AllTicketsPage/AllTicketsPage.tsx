@@ -78,7 +78,7 @@ export class AllTicketsPage extends React.Component<any, any> {
 			return ticketJsx;
 		} else if (location.indexOf('in-progress') !== -1 && ticket.status === 1) {
 			return ticketJsx;
-		} else if (location.indexOf('closed') !== -1 && ticket.status === 2 || ticket.status === 3) {
+		} else if (location.indexOf('closed') !== -1 && (ticket.status === 2 || ticket.status === 3)) {
 			return ticketJsx;
 		} else if (location === '/') {
 			return ticketJsx;
