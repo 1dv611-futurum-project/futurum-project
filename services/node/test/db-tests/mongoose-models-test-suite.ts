@@ -15,21 +15,22 @@ import Assignee from './../../src/handlers/db/models/Assignee';
 export function run() {
   describe('Mongoose Models', () => {
     describe('Customer', () => {
-      it('should be valid if name is empty', (done) => {
+      it('should be invalid if name is empty', (done) => {
         const cust = new Customer({email: 'halla@halla.com'});
+
         cust.validate((err) => {
           // tslint:disable-next-line:no-unused-expression
-          expect(err).to.not.exist;
+          expect(err.errors.name).to.exist;
           done();
         });
       });
 
-      it('should be set email to default array if not given', (done) => {
+      it('should be invalid if email is empty', (done) => {
         const cust = new Customer({name: 'halla@halla.com'});
+
         cust.validate((err) => {
           // tslint:disable-next-line:no-unused-expression
-          expect(cust.email).to.exist;
-          expect(Array.isArray(cust.email)).to.equal(true);
+          expect(err.errors.email).to.exist;
           done();
         });
       });

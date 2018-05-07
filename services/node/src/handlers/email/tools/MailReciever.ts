@@ -197,6 +197,9 @@ class MailReciever extends events.EventEmitter {
       .then((customers) => {
         const whitelist = customers.map((customer) => customer.email);
 
+        console.log(customers);
+        console.log(whitelist);
+
         whitelist.forEach((approved) => {
           if (address.indexOf(approved) !== -1) {
             resolve(found = true);
