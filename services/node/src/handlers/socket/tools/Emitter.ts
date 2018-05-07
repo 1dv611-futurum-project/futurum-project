@@ -4,7 +4,7 @@
 
 // Imports.
 import * as SocketIo from 'socket.io';
-// import { }
+import Message from './../models/Message';
 
 /**
  * Handles the connection.
@@ -35,8 +35,9 @@ export default class Emitter {
           this.io.emit('tickets', JSON.stringify(tickets));
         })
         .catch((error) => {
-          console.log('Could not get tickets from DB');
           console.log(error);
+          const message = new Message('error', 'Could not get tickets from DB');
+          this.emitErrorMessage(message);
         });
   }
 
@@ -49,8 +50,9 @@ export default class Emitter {
           this.io.emit('assignees', JSON.stringify(assignees));
         })
         .catch((error) => {
-          console.log('Could not get asignees from DB');
           console.log(error);
+          const message = new Message('error', 'Could not get assignees from DB');
+          this.emitErrorMessage(message);
         });
   }
 
@@ -63,8 +65,9 @@ export default class Emitter {
           this.io.emit('customers', JSON.stringify(customers));
         })
         .catch((error) => {
-          console.log('Could not get customers from DB');
           console.log(error);
+          const message = new Message('error', 'Could not get customers from DB');
+          this.emitErrorMessage(message);
         });
   }
 

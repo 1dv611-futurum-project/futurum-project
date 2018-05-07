@@ -90,7 +90,8 @@ class App {
     });
 
     this.emailHandler.Incoming.on(IncomingMailEvent.ANSWER, (mail) => {
-      this.DBHandler.addOrUpdate(IncomingMailEvent.ANSWER, mail, { replyId: '<' + mail.inAnswerTo + '>' })
+      const query = { $or: [ { replyId: '<' + mail.inAnswerTo + '>' }, { mailId: mail.inAnswerTo} ]};
+      this.DBHandler.addOrUpdate(IncomingMailEvent.ANSWER, mail, query)
         .then(() => Promise.resolve()) // TODO: Emit answer note to client
         .then(() => this.socketHandler.emitter.emitTickets())
         .catch((error) => {

@@ -83,7 +83,12 @@ export default class Listener {
 
       switch (event) {
       case CustomerEvent.ADD:
-        this.db.addOrUpdate('customer', customer, { email })
+        this.db.getOne('customer', { email })
+        .then((cust) => {
+          if (!cust) {
+            this.db.addOrUpdate('customer', customer, { email });
+          }
+        })
         .catch((error: any) => {
           const message = new Message('error', 'Failed to add customer to database.');
           this.emitter.emitErrorMessage('error', message);
