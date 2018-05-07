@@ -18,14 +18,13 @@ import EmailHandler from './../handlers/email/EmailHandler';
 import SocketHandler from './../handlers/socket/SocketHandler';
 import IReceivedTicket from './../handlers/email/interfaces/IReceivedTicket';
 import { IncomingMailEvent } from './../handlers/email/events/IncomingMailEvents';
-import MailReciever from '../handlers/email/tools/MailReciever';
 import Message from '../handlers/socket/models/Message';
 
 /**
  * Express app.
  */
 class App {
-  private static DB_CONNECTION = 'mongodb://futurum-db:27017';
+  private static DB_CONNECTION = 'mongodb://developer:test@ds117070.mlab.com:17070/futurum_test';
 
   public express: Application;
   private mainRouter: Router;
@@ -71,8 +70,10 @@ class App {
 
   private handleDB(): void {
     this.DBHandler.on('error', (error) => {
-      this.socketHandler.emitter.emitErrorMessage(new Message('error', 'The database is experienceing problems'));
-      console.log(error);
+      console.error(error);
+      if (this.socketHandler.emitter) {
+        this.socketHandler.emitter.emitErrorMessage(new Message('error', 'The database is experienceing problems'));
+      }
     });
     this.DBHandler.connect(App.DB_CONNECTION);
   }
@@ -82,7 +83,7 @@ class App {
       this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail, { mailId: mail.mailId })
         .then(() => this.socketHandler.emitter.emitTickets())
         .catch((error) => {
-          // TODO: send out email with non database-mail
+          // TODO: send out email with non-database-mail
           this.socketHandler.emitter.emitErrorMessage(new Message('error', 'Could not update database.', mail));
           console.error(error);
         });
@@ -90,52 +91,49 @@ class App {
 
     this.emailHandler.Incoming.on(IncomingMailEvent.ANSWER, (mail) => {
       this.DBHandler.addOrUpdate(IncomingMailEvent.ANSWER, mail, { replyId: '<' + mail.inAnswerTo + '>' })
+        .then(() => Promise.resolve()) // TODO: Emit answer note to client
         .then(() => this.socketHandler.emitter.emitTickets())
         .catch((error) => {
           console.error(error);
-          // TODO: send out email with non database-answer
+          // TODO: send out email with non-database-answer
           this.socketHandler.emitter.emitErrorMessage(new Message('error', 'Could not update database.', mail));
         });
     });
 
     this.emailHandler.Incoming.on(IncomingMailEvent.FORWARD, (mail) => {
-      console.log('Got mail not in whitelist:');
-      console.log(mail);
-      console.log('forwarding the mail');
-      const forward = {from: mail.from.email, body: mail.messages[0].body, subject: mail.title};
+      const forward = {from: mail.from.email, body: mail.body[0].body, subject: mail.title};
       this.emailHandler.Outgoing.forward(forward, mail.mailID, process.env.IMAP_FORWARDING_ADDRESS)
       .then(() => {
         console.log('mail is forwarded');
         // TODO: send out message to client of forward?
       })
       .catch((error) => {
-        this.socketHandler.emitter.emitErrorMessage(new Message('error', 'Could not forward not whitelist-email.', mail));
+        // TODO: Email somewhere else about failed forward
+        const message = 'Could not forward not whitelist-email.';
+        this.socketHandler.emitter.emitErrorMessage(new Message('error', message, mail));
         console.log(error);
       });
-      console.log('emit forward to client?');
     });
 
     this.emailHandler.Incoming.on(IncomingMailEvent.UNAUTH, (payload) => {
-      console.log('Got unauth:');
-      console.log(payload);
-      console.log('We are missing authorization details for the email, should direct user to auth-route?.');
+      const message = 'User is not authorized, please reload the page to authorize.';
+      this.socketHandler.emitter.emitErrorMessage(new Message('error', message));
     });
 
-    this.emailHandler.Incoming.on(IncomingMailEvent.MESSAGE, (message) => {
-      console.log('imap connection is probably going to go down in a calculated way. Action?:');
-      console.log(message);
-      console.log('Make call to ws to send notification of message.');
+    this.emailHandler.Incoming.on(IncomingMailEvent.MESSAGE, () => {
+      const message = 'Emails are being accesses externally. Possibly reload the page to ensure continued validity.';
+      this.socketHandler.emitter.emitErrorMessage(new Message('error', message));
     });
 
-    this.emailHandler.Incoming.on(IncomingMailEvent.TAMPER, (message) => {
-      this.socketHandler.emitter.emitErrorMessage(new Message('error', 'Got tamper message, means emails are being accesses externally and possible reload should happen:'));
+    this.emailHandler.Incoming.on(IncomingMailEvent.TAMPER, () => {
+      const message = 'Emails are being accesses externally. Possibly reload the page to ensure continued validity.';
+      this.socketHandler.emitter.emitErrorMessage(new Message('error', message));
     });
 
     this.emailHandler.Incoming.on(IncomingMailEvent.ERROR, (error) => {
-      this.socketHandler.emitter.emitErrorMessage(new Message('error', 'Email error.'));
-      console.log('Possibly make call to email module to email the error to different email address:');
-      // TODO: send error to email:
-      // EmailHandler.Outgoing.send({to: 'dev@futurumdigital.se', subject: 'error', body: 'Error'})
+      const message = 'Email error. Reload page and double check emails externally.';
+      this.socketHandler.emitter.emitErrorMessage(new Message('error', message));
+      // TODO: send error to email
     });
   }
 

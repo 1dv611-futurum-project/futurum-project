@@ -6,7 +6,7 @@
 import { expect } from 'chai';
 import { it, describe, before, after } from 'mocha';
 import * as events from 'events';
-import Connection from './../../src/handlers/email/IMAPConnection';
+import Connection from './../../src/handlers/email/tools/IMAPConnection';
 
 /**
  * Run the tests.

@@ -87,17 +87,13 @@ class MailSender extends events.EventEmitter {
 
             gmail.users.messages.get(get, null, (error, resp) => {
               if (!error) {
-                console.log(resp.data.payload.headers)
                 const messageId = resp.data.payload.headers.find((header) => {
                   return header.name === 'Message-Id';
                 });
 
-                console.log(messageId.value);
-
                 return resolve(messageId.value);
 
               } else {
-                console.log(error);
                 return reject();
               }
             });

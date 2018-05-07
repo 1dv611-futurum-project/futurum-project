@@ -54,8 +54,8 @@ export default class SocketHandler {
 
   private onConnect(): void {
     this.io.on('connection', (socket: any) => {
-      this.listener = new Listener(socket, this.db, this.mailSender);
       this.emitter = new Emitter(socket, this.db);
+      this.listener = new Listener(socket, this.db, this.mailSender, this.emitter);
       this.emitter.emitAll();
       this.listener.startListeners();
     });

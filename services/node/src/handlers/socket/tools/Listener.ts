@@ -10,6 +10,7 @@ import { AssigneeEvent } from '../models/AssigneeEvent';
 import { CustomerEvent } from '../models/CustomerEvent';
 import { SettingEvent } from '../models/SettingEvent';
 import { MessageEvent } from '../models/MessageEvent';
+import Message from '../models/Message';
 
 /**
  * Handles the connection.
@@ -17,11 +18,13 @@ import { MessageEvent } from '../models/MessageEvent';
 export default class Listener {
   private io: SocketIo.Server;
   private db: any;
+  private emitter: any;
   private mailSender: any;
 
-  constructor(io: SocketIo.Server, db: any, mailSender: any) {
+  constructor(io: SocketIo.Server, db: any, mailSender: any, emitter: any) {
     this.io = io;
     this.db = db;
+    this.emitter = emitter;
     this.mailSender = mailSender;
 
   }
@@ -38,12 +41,18 @@ export default class Listener {
       switch (event) {
       case TicketEvent.ASSIGNEE:
         this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
-            .catch((error: any) => { console.error(error); });
+            .catch((error: any) => {
+              const message = new Message('error', 'Failed to update assignee in the database');
+              this.emitter.emitErrorMessage('error', message);
+            });
         break;
       case TicketEvent.STATUS:
         this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
             .then((payload: any) => this.mailSender.sendStatusUpdate(payload, data.send))
-            .catch((error: any) => { console.error(error); });
+            .catch((error: any) => {
+              const message = new Message('error', 'Failed to update status in database, or send status to customer.');
+              this.emitter.emitErrorMessage('error', message);
+            });
         break;
       case TicketEvent.MESSAGE:
         this.db.getOne('ticket', { ticketId: ticket.ticketId })
@@ -55,7 +64,10 @@ export default class Listener {
               ticket.replyId.push(payload);
               this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId });
             })
-            .catch((error: any) => { console.error(error); });
+            .catch((error: any) => {
+              const message = new Message('error', 'Failed to update email-thread in database, and send to customer.');
+              this.emitter.emitErrorMessage('error', message);
+            });
         break;
       }
     });
@@ -66,21 +78,30 @@ export default class Listener {
    */
   private customerListener() {
     this.io.on('customers', (event: string, customer: any) => {
-      const email = Array.isArray(customer.email) ? customer.email : [customer.email];
+      const email = Array.isArray(customer.email) ? customer.email[0] : customer.email;
       customer.email = email;
 
       switch (event) {
       case CustomerEvent.ADD:
-        this.db.addOrUpdate('customer', customer)
-            .catch((error: any) => { console.error(error); });
+        this.db.addOrUpdate('customer', customer, { email })
+        .catch((error: any) => {
+          const message = new Message('error', 'Failed to add customer to database.');
+          this.emitter.emitErrorMessage('error', message);
+        });
         break;
       case CustomerEvent.EDIT:
         this.db.addOrUpdate('customer', customer, { email })
-            .catch((error: any) => { console.error(error); });
+        .catch((error: any) => {
+          const message = new Message('error', 'Failed to edit customer in database.');
+          this.emitter.emitErrorMessage('error', message);
+        });
         break;
       case CustomerEvent.DELETE:
         this.db.removeOne('customer', { _id: customer._id })
-            .catch((error: any) => { console.error(error); });
+        .catch((error: any) => {
+          const message = new Message('error', 'Failed to remove customer from database.');
+          this.emitter.emitErrorMessage('error', message);
+        });
         break;
       }
     });

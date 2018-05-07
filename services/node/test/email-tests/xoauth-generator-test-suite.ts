@@ -5,7 +5,7 @@
 // Requires
 import { expect } from 'chai';
 import { it, describe, before, after } from 'mocha';
-import XOauthGen from './../../src/handlers/email/Xoauth2Generator';
+import XOauthGen from './../../src/handlers/email/tools/Xoauth2Generator';
 import { NoIMAPCredentialsError } from './../../src/config/errors';
 
 /**

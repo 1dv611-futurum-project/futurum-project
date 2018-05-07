@@ -5,8 +5,7 @@
 // Imports.
 import Connection from './tools/IMAPConnection';
 import { IMAPConnection } from './tools/IMAPConnection';
-import IMAPMailReciever from './tools/MailReciever';
-import { MailReciever } from './tools/MailReciever';
+import MailReciever from './tools/MailReciever';
 import MailSender from './tools/MailSender';
 import { GmailSender } from './tools/MailSender';
 
@@ -36,7 +35,7 @@ class EmailHandler {
 
   constructor(db: any) {
     this.db = db;
-    this.MailReciever = IMAPMailReciever;
+    this.MailReciever = new MailReciever(this.db);
     this.IMAPConnection = Connection;
     this.MailSender = MailSender;
   }

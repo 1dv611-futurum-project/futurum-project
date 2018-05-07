@@ -5,7 +5,7 @@
 // Requires
 import {expect } from 'chai';
 import { it, describe, before, after } from 'mocha';
-import Customer from './../../src/models/Customer';
+import Customer from './../../src/handlers/db/models/Customer';
 
 /**
  * Run the tests.
