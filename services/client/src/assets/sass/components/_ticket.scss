@@ -72,4 +72,15 @@
 		padding-top: 0;
 		float: right;
 	}
+
+	&__badge {
+		> span {
+			top: 5px;
+			right: 0;
+
+			> svg {
+				height: 0.5em;
+			}
+		}
+	}
 }

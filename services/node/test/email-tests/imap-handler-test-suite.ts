@@ -13,15 +13,13 @@ import { IMAPError } from '../../src/config/errors';
 import { IMAPConnectionEvent } from './../../src/handlers/email/events/IMAPConnectionEvents';
 import { IncomingMailEvent } from './../../src/handlers/email/events/IncomingMailEvents';
 
-const IMAPMailReciever = new MailReciever(getDBMock());
-
 /**
  * Run the tests.
  */
 export function run() {
   describe('MailReciever', () => {
     after((done) => {
-      IMAPMailReciever.disconnect();
+      MailReciever.disconnect();
       done();
     });
 
@@ -29,7 +27,7 @@ export function run() {
       const ConnectionMock = getInterfaceMock();
 
       before((done) => {
-        IMAPMailReciever.connect(sinon.stub(ConnectionMock));
+        MailReciever.connect(sinon.stub(ConnectionMock));
         done();
       });
 
@@ -48,12 +46,12 @@ export function run() {
       const ConnectionMock = getInterfaceMock();
 
       before((done) => {
-        IMAPMailReciever.connect(sinon.stub(ConnectionMock));
+        MailReciever.connect(sinon.stub(ConnectionMock));
         done();
       });
 
       it('should disconnect', (done) => {
-        IMAPMailReciever.disconnect();
+        MailReciever.disconnect();
         expect(ConnectionMock.closeConnection.called).to.equal(true);
         done();
       });
@@ -63,14 +61,14 @@ export function run() {
       const EmitMock = getInterfaceMock();
 
       before((done) => {
-        IMAPMailReciever.connect(EmitMock);
+        MailReciever.connect(EmitMock);
         done();
       });
 
       describe('TICKET', () => {
         let ticketSpy;
         const ticket = {
-          from: {name: 'hi', address: 'test@test.com'},
+          from: {name: 'hi', address: 'address'},
           messageId: '4672',
           receivedDate: 'Today',
           subject: 'Hi',
@@ -79,9 +77,9 @@ export function run() {
 
         before((done) => {
           ticketSpy = sinon.spy();
-          IMAPMailReciever.on(IncomingMailEvent.TICKET, ticketSpy);
+          MailReciever.on(IncomingMailEvent.TICKET, ticketSpy);
           EmitMock.emit(IMAPConnectionEvent.MAIL, ticket);
-          setTimeout(done, 1500);
+          done();
         });
 
         it('should emit ticket-event when alerted with a mail-event that does not have references-property', (done) => {
@@ -98,19 +96,19 @@ export function run() {
       describe('ANSWER', () => {
         let answerSpy;
         const answer = {
-          from: {name: 'hi', address: 'test@test.com'},
+          from: {name: 'hi', address: 'address'},
           references: '1234',
           messageId: '4672',
           receivedDate: 'Today',
           subject: 'Hi',
-          html: '<div>Hi</div>',
+          text: 'Hi',
         };
 
         before((done) => {
           answerSpy = sinon.spy();
-          IMAPMailReciever.on(IncomingMailEvent.ANSWER, answerSpy);
+          MailReciever.on(IncomingMailEvent.ANSWER, answerSpy);
           EmitMock.emit(IMAPConnectionEvent.MAIL, answer);
-          setTimeout(done, 1000);
+          done();
         });
 
         it('should emit answer-event when alerted with a mail-event that has references-property', (done) => {
@@ -128,9 +126,9 @@ export function run() {
         let errorSpy;
         before((done) => {
           errorSpy = sinon.spy();
-          IMAPMailReciever.on(IncomingMailEvent.ERROR, errorSpy);
+          IMAPHandler.on(IncomingMailEvent.ERROR, errorSpy);
           EmitMock.emit(IMAPConnectionEvent.ERROR, new Error());
-          setTimeout(done, 1000);
+          done();
         });
 
         it('should emit own error event on error event being emitted from the connection', (done) => {
@@ -154,9 +152,9 @@ export function run() {
         let tamperSpy;
         before((done) => {
           tamperSpy = sinon.spy();
-          IMAPMailReciever.on(IncomingMailEvent.TAMPER, tamperSpy);
+          MailReciever.on(IncomingMailEvent.TAMPER, tamperSpy);
           EmitMock.emit(IMAPConnectionEvent.CHANGE);
-          setTimeout(done, 1000);
+          done();
         });
 
         it('should emit tamper event om server change', (done) => {
@@ -181,9 +179,9 @@ export function run() {
         let unauthSpy;
         before((done) => {
           unauthSpy = sinon.spy();
-          IMAPMailReciever.on(IncomingMailEvent.UNAUTH, unauthSpy);
+          MailReciever.on(IncomingMailEvent.UNAUTH, unauthSpy);
           EmitMock.emit(IMAPConnectionEvent.UNAUTH);
-          setTimeout(done, 1000);
+          done();
         });
 
         it('should emit unauth event on unauth event from connection', (done) => {
@@ -203,9 +201,9 @@ export function run() {
         let messageSpy;
         before((done) => {
           messageSpy = sinon.spy();
-          IMAPMailReciever.on(IncomingMailEvent.MESSAGE, messageSpy);
+          MailReciever.on(IncomingMailEvent.MESSAGE, messageSpy);
           EmitMock.emit(IMAPConnectionEvent.SERVER);
-          setTimeout(done, 1000);
+          done();
         });
 
         it('should emit tamper event om server change', (done) => {
@@ -234,16 +232,6 @@ function getInterfaceMock() {
   return new InterfaceMock();
 }
 
-// Helpers.
-function getDBMock() {
-  return {
-    getAll: () => { return (new Promise((resolve, reject) => {
-      resolve([{name: 'hi', email: ['test@test.com']}]);
-    })); }
-  };
-}
-
-// tslint:disable-next-line:max-classes-per-file
 class InterfaceMock extends events.EventEmitter implements IMAPConnectionInterface {
   public updateCredentials() {
     console.log('');
