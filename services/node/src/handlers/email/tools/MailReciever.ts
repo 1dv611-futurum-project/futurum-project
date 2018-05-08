@@ -174,14 +174,34 @@ class MailReciever extends events.EventEmitter {
    * Formats as an answer.
    */
   private formatAsAnswer(mail: IReceivedEmail): IReceivedAnswer {
-    console.log(mail)
     const message = ({} as IReceivedAnswer);
 
     if (mail.html) {
       const dom = new JSDOM().window.document;
       message.body =  h2p(planer.extractFrom(mail.html, 'text/html', dom));
     } else {
-      message.body =  planer.extractFrom(mail.text, 'text/plain');
+      const replyString = /^(On\s(\n|.)*wrote(.*)$)/m;
+      const replyStringSwe = /^(Den\s(\n|.)*skrev(.*)$)/m;
+      const replyStringDate = /^([0-9]{4}-(((0[13578]|(10|12))-(0[1-9]|[1-2][0-9]|3[0-1]))|(02-(0[1-9]|[1-2][0-9]))|((0[469]|11)-(0[1-9]|[1-2][0-9]|30)))\s(([0-1][0-9]|[2][0-3]):([0-5][0-9]))\s(GMT+))/m;
+      const rexexps = [
+        replyString,
+        replyStringSwe,
+        replyStringDate
+      ];
+
+      let text;
+      const mildlyParsed = planer.extractFrom(mail.text, 'text/plain');
+
+      rexexps.forEach((exp) => {
+        const match = exp.exec(mildlyParsed);
+
+        if (match) {
+          const index = mildlyParsed.indexOf(match[0]);
+          text = mildlyParsed.substring(0, index);
+        }
+      });
+
+      message.body = text;
     }
 
     message.mailId = mail.messageId;
@@ -190,7 +210,6 @@ class MailReciever extends events.EventEmitter {
     message.fromCustomer = true;
     message.fromAddress = Array.isArray(mail.from) ? mail.from[0].address : mail.from.address;
 
-    console.log(message.body)
     return message;
   }
 
