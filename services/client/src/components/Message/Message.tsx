@@ -43,7 +43,13 @@ export class Message extends React.Component<IMessage, any> {
 							{` ${this.getFormattedDate(received)}`}
 						</span>
 					</p>
-					<p className='message__content__text'>{body}</p>
+					<p className='message__content__text'>
+						{
+							body.split('\n').map((text: any, i: number) => {
+								return <span key={i}>{text}<br/></span>;
+							})
+						}
+					</p>
 				</div>
 			</Paper>
 		);

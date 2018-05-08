@@ -74,8 +74,8 @@ export class AllTicketsPage extends React.Component<any, any> {
 	 */
 	private getTickets(ticket: any, i: any): any {
 		const location = this.props.location.pathname;
-		// ticket.read = true;
-		const ticketJsx = ticket.read ? (
+		// ticket.unread = true;
+		const ticketJsx = ticket.unread ? (
 				<Badge className='ticket__badge' badgeContent={<Mail />} color='secondary'>
 					<Ticket key={i} ticket={ticket} onSend={this.onStatusChange} />
 				</Badge>
