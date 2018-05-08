@@ -384,7 +384,6 @@ class DBHandler extends events.EventEmitter {
    */
   private createNewAnswer(conditions: object, info: IReceivedAnswer, options: object) {
     return new Promise((resolve, reject) => {
-      console.log(conditions)
       Ticket.findOne(conditions)
       .then((found) => {
         if (found) {

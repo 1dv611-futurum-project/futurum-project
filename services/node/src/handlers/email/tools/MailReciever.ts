@@ -177,11 +177,12 @@ class MailReciever extends events.EventEmitter {
     const message = ({} as IReceivedAnswer);
     const dom = new JSDOM().window.document;
 
-    message.mailID = mail.messageId;
+    message.mailId = mail.messageId;
     message.inAnswerTo = Array.isArray(mail.references) ? mail.references[0] : mail.references;
     message.received = mail.receivedDate;
     message.body =  h2p(planer.extractFrom(mail.html, 'text/html', dom));
     message.fromCustomer = true;
+    message.fromAddress = Array.isArray(mail.from) ? mail.from[0].address : mail.from.address;
 
     return message;
   }
@@ -196,9 +197,6 @@ class MailReciever extends events.EventEmitter {
       this.db.getAll('customer', {})
       .then((customers) => {
         const whitelist = customers.map((customer) => customer.email);
-
-        console.log(customers);
-        console.log(whitelist);
 
         whitelist.forEach((approved) => {
           if (address.indexOf(approved) !== -1) {

@@ -10,6 +10,7 @@ export default interface IReceivedEmail {
   receivedDate: string;
   subject: string;
   text: string;
+  html?: string;
 }
 
 interface ICustomer {

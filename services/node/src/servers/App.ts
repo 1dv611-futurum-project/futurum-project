@@ -83,7 +83,9 @@ class App {
       this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail, { mailId: mail.mailId })
         .then(() => this.socketHandler.emitter.emitTickets())
         .catch((error) => {
-          // TODO: send out email with non-database-mail
+          const failSubject = 'Ticket-system failed to handle incoming ticket: ' + mail.title;
+          const forward = {from: mail.from.email, body: mail.body[0].body, subject: failSubject};
+          this.emailHandler.Outgoing.forward(forward, mail.mailId, process.env.IMAP_FORWARDING_ADDRESS);
           this.socketHandler.emitter.emitErrorMessage(new Message('error', 'Could not update database.', mail));
           console.error(error);
         });
@@ -96,21 +98,30 @@ class App {
         .then(() => this.socketHandler.emitter.emitTickets())
         .catch((error) => {
           console.error(error);
-          // TODO: send out email with non-database-answer
-          this.socketHandler.emitter.emitErrorMessage(new Message('error', 'Could not update database.', mail));
+          const failSubject = 'Ticket-system failed to handle incoming thread with email from ' + mail.fromAddress;
+          const forward = {from: mail.fromAddress, body: mail.body, subject: failSubject};
+          this.emailHandler.Outgoing.forward(forward, mail.mailId, process.env.IMAP_FORWARDING_ADDRESS);
+          const message = failSubject;
+          this.socketHandler.emitter.emitErrorMessage(new Message('error', message, mail));
         });
     });
 
     this.emailHandler.Incoming.on(IncomingMailEvent.FORWARD, (mail) => {
       const forward = {from: mail.from.email, body: mail.body[0].body, subject: mail.title};
-      this.emailHandler.Outgoing.forward(forward, mail.mailID, process.env.IMAP_FORWARDING_ADDRESS)
+      this.emailHandler.Outgoing.forward(forward, mail.mailId, process.env.IMAP_FORWARDING_ADDRESS)
       .then(() => {
         console.log('mail is forwarded');
-        // TODO: send out message to client of forward?
+        // TODO: emit message to client of forward?
       })
       .catch((error) => {
-        // TODO: Email somewhere else about failed forward
-        const message = 'Could not forward not whitelist-email.';
+        const errorSubject = 'Error: Ticket-system failed to forward non-whitelist email from: ' + mail.from.email;
+        const errorBody = 'Ticket-system is recieving errors when forwarding emails not in whitelist.' +
+        'Please double check the forwarding address you\ve given and double check emails externally.';
+        const to = process.env.IMAP_ERROR_ADDRESS || process.env.IMAP_FORWARDING_ADDRESS;
+        const send = {body: mail.body[0].body, subject: errorSubject, to};
+        this.emailHandler.Outgoing.send(send);
+        const message = 'Could not forward non-whitelist-email.';
+
         this.socketHandler.emitter.emitErrorMessage(new Message('error', message, mail));
         console.log(error);
       });
@@ -134,7 +145,13 @@ class App {
     this.emailHandler.Incoming.on(IncomingMailEvent.ERROR, (error) => {
       const message = 'Email error. Reload page and double check emails externally.';
       this.socketHandler.emitter.emitErrorMessage(new Message('error', message));
-      // TODO: send error to email
+
+      const errorSubject = 'Error: Something is going wrong with the ticket-system handling incoming emails.';
+      const errorBody = 'Ticket-system is recieving errors from incoming emails.' +
+      'Please reload the app-page or restart the server and double check emails externally.';
+      const to = process.env.IMAP_ERROR_ADDRESS || process.env.IMAP_FORWARDING_ADDRESS;
+      const send = {body: errorBody, subject: errorSubject, to};
+      this.emailHandler.Outgoing.send(send);
     });
   }
 
@@ -149,14 +166,14 @@ class App {
 
   // 500
   private errorHandler(err: any, req: Request, res: Response, next: NextFunction): void {
-    // TODO: Handle errors instead of pushing all of them out to client
+    // TODO: Handle errors instead of pushing all of them out to client?
     if (err.name === 'UnauthorizedError') {
       return res.redirect('/node/auth/google');
     }
 
     res.status(500).send({
       success: false,
-      message: err.stack
+      message: err.message
     });
   }
 }

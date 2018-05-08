@@ -32,7 +32,7 @@ class MailSender extends events.EventEmitter {
    * subject to the given address.
    * @param params {IEmail} an IEmail object with the params to populate the email with.
    */
-  public send(params: IEmail): Promise<void> {
+  public send(params: IEmail): Promise<string> {
     const headers = this.getNewEmailHeaders(params);
     return this.sendMail(headers);
   }
@@ -42,7 +42,7 @@ class MailSender extends events.EventEmitter {
    * @param params {IEmail} an IEmail object with the params to populate the answer with.
    * @param messageID {string} the messageID of the email to answer.
    */
-  public answer(params: IEmail, messageID: string): Promise<void> {
+  public answer(params: IEmail, messageID: string): Promise<string> {
     const headers = this.getReplyHeaders(params, messageID);
     return this.sendMail(headers);
   }

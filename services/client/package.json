@@ -4,9 +4,9 @@
   "description": "boilerplate: server side",
   "main": "server.js",
   "scripts": {
-    "start": "webpack-dev-server --hot --inline --mode development",
+    "start": "npm run build && nodemon --exec ts-node -- ./server/index.tsx",
     "build": "webpack -p --mode production",
-    "server": "npm run build && nodemon --exec ts-node -- ./server/index.tsx",
+    "server": "webpack-dev-server --hot --inline --mode development",
     "test": "karma start"
   },
   "keywords": [
