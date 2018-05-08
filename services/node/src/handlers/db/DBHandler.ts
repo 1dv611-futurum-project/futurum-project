@@ -36,7 +36,7 @@ class DBHandler extends events.EventEmitter {
   }
 
   private seedAssignees() {
-    this.addOrUpdate('Assignee', {name: 'Anton Myrberg', email: 'anton@anton.com'}, {email: 'sebbe@sebbe.com'});
+    this.addOrUpdate('Assignee', {name: 'Anton Myrberg', email: 'anton@anton.com'}, {email: 'anton@anton.com'});
     this.addOrUpdate('Assignee', {name: 'Sebastian Borgfeldt', email: 'sebbe@sebbe.com'}, {email: 'sebbe@sebbe.com'});
   }
 

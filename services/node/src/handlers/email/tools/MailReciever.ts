@@ -174,6 +174,7 @@ class MailReciever extends events.EventEmitter {
    * Formats as an answer.
    */
   private formatAsAnswer(mail: IReceivedEmail): IReceivedAnswer {
+    console.log(mail)
     const message = ({} as IReceivedAnswer);
 
     if (mail.html) {
@@ -189,6 +190,7 @@ class MailReciever extends events.EventEmitter {
     message.fromCustomer = true;
     message.fromAddress = Array.isArray(mail.from) ? mail.from[0].address : mail.from.address;
 
+    console.log(message.body)
     return message;
   }
 
