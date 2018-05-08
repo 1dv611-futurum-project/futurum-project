@@ -8,6 +8,7 @@ import { IMAPConnection } from './tools/IMAPConnection';
 import MailReciever from './tools/MailReciever';
 import MailSender from './tools/MailSender';
 import { GmailSender } from './tools/MailSender';
+import Listener from './tools/Listener';
 
 /**
  * Wraps incomping and outgoing email handlers.
@@ -16,6 +17,7 @@ class EmailHandler {
   private IMAPConnection: IMAPConnection;
   private MailReciever: MailReciever;
   public MailSender: GmailSender;
+  public Listener: Listener;
 
   private db: any;
 
@@ -35,6 +37,7 @@ class EmailHandler {
 
   constructor(db: any) {
     this.db = db;
+    this.Listener = new Listener();
     this.MailReciever = new MailReciever(this.db);
     this.IMAPConnection = Connection;
     this.MailSender = MailSender;
@@ -46,6 +49,10 @@ class EmailHandler {
    */
   public updateIMAPConnection() {
     this.MailReciever.connect(this.IMAPConnection);
+  }
+
+  public startMailListener(socket: any) {
+    this.Listener.listen(socket, this.db, this.MailSender, this.MailReciever);
   }
 }
 

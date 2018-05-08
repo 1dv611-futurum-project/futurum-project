@@ -35,11 +35,13 @@ class DBHandler extends events.EventEmitter {
     // this.seedCustomers();
   }
 
+  // For development
   private seedAssignees() {
-    this.addOrUpdate('Assignee', {name: 'Anton Myrberg', email: 'anton@anton.com'}, {email: 'sebbe@sebbe.com'});
+    this.addOrUpdate('Assignee', {name: 'Anton Myrberg', email: 'anton@anton.com'}, {email: 'anton@anton.com'});
     this.addOrUpdate('Assignee', {name: 'Sebastian Borgfeldt', email: 'sebbe@sebbe.com'}, {email: 'sebbe@sebbe.com'});
   }
 
+  // For development
   private seedCustomers() {
     this.addOrUpdate('Customer',
     {name: 'Johan Söderlund', email: 'js223zs@student.lnu.se'}, {email: 'js223zs@student.lnu.se'});

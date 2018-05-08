@@ -16,8 +16,6 @@ import DBHandler from './../handlers/db/DBHandler';
 import DBConnection from './../handlers/db/DBConnection';
 import EmailHandler from './../handlers/email/EmailHandler';
 import SocketHandler from './../handlers/socket/SocketHandler';
-import IReceivedTicket from './../handlers/email/interfaces/IReceivedTicket';
-import { IncomingMailEvent } from './../handlers/email/events/IncomingMailEvents';
 import Message from '../handlers/socket/models/Message';
 
 /**
@@ -79,80 +77,7 @@ class App {
   }
 
   private handleIncomingEmails(): void {
-    this.emailHandler.Incoming.on(IncomingMailEvent.TICKET, (mail: IReceivedTicket) => {
-      this.DBHandler.addOrUpdate(IncomingMailEvent.TICKET, mail, { mailId: mail.mailId })
-        .then(() => this.socketHandler.emitter.emitTickets())
-        .catch((error) => {
-          const failSubject = 'Ticket-system failed to handle incoming ticket: ' + mail.title;
-          const forward = {from: mail.from.email, body: mail.body[0].body, subject: failSubject};
-          this.emailHandler.Outgoing.forward(forward, mail.mailId, process.env.IMAP_FORWARDING_ADDRESS);
-          this.socketHandler.emitter.emitErrorMessage(new Message('error', 'Could not update database.', mail));
-          console.error(error);
-        });
-    });
-
-    this.emailHandler.Incoming.on(IncomingMailEvent.ANSWER, (mail) => {
-      const query = { $or: [ { replyId: '<' + mail.inAnswerTo + '>' }, { mailId: mail.inAnswerTo} ]};
-      this.DBHandler.addOrUpdate(IncomingMailEvent.ANSWER, mail, query)
-        .then(() => Promise.resolve()) // TODO: Emit answer note to client
-        .then(() => this.socketHandler.emitter.emitTickets())
-        .catch((error) => {
-          console.error(error);
-          const failSubject = 'Ticket-system failed to handle incoming thread with email from ' + mail.fromAddress;
-          const forward = {from: mail.fromAddress, body: mail.body, subject: failSubject};
-          this.emailHandler.Outgoing.forward(forward, mail.mailId, process.env.IMAP_FORWARDING_ADDRESS);
-          const message = failSubject;
-          this.socketHandler.emitter.emitErrorMessage(new Message('error', message, mail));
-        });
-    });
-
-    this.emailHandler.Incoming.on(IncomingMailEvent.FORWARD, (mail) => {
-      const forward = {from: mail.from.email, body: mail.body[0].body, subject: mail.title};
-      this.emailHandler.Outgoing.forward(forward, mail.mailId, process.env.IMAP_FORWARDING_ADDRESS)
-      .then(() => {
-        console.log('mail is forwarded');
-        // TODO: emit message to client of forward?
-      })
-      .catch((error) => {
-        const errorSubject = 'Error: Ticket-system failed to forward non-whitelist email from: ' + mail.from.email;
-        const errorBody = 'Ticket-system is recieving errors when forwarding emails not in whitelist.' +
-        'Please double check the forwarding address you\ve given and double check emails externally.';
-        const to = process.env.IMAP_ERROR_ADDRESS || process.env.IMAP_FORWARDING_ADDRESS;
-        const send = {body: mail.body[0].body, subject: errorSubject, to};
-        this.emailHandler.Outgoing.send(send);
-        const message = 'Could not forward non-whitelist-email.';
-
-        this.socketHandler.emitter.emitErrorMessage(new Message('error', message, mail));
-        console.log(error);
-      });
-    });
-
-    this.emailHandler.Incoming.on(IncomingMailEvent.UNAUTH, (payload) => {
-      const message = 'User is not authorized, please reload the page to authorize.';
-      this.socketHandler.emitter.emitErrorMessage(new Message('error', message));
-    });
-
-    this.emailHandler.Incoming.on(IncomingMailEvent.MESSAGE, () => {
-      const message = 'Emails are being accesses externally. Possibly reload the page to ensure continued validity.';
-      this.socketHandler.emitter.emitErrorMessage(new Message('error', message));
-    });
-
-    this.emailHandler.Incoming.on(IncomingMailEvent.TAMPER, () => {
-      const message = 'Emails are being accesses externally. Possibly reload the page to ensure continued validity.';
-      this.socketHandler.emitter.emitErrorMessage(new Message('error', message));
-    });
-
-    this.emailHandler.Incoming.on(IncomingMailEvent.ERROR, (error) => {
-      const message = 'Email error. Reload page and double check emails externally.';
-      this.socketHandler.emitter.emitErrorMessage(new Message('error', message));
-
-      const errorSubject = 'Error: Something is going wrong with the ticket-system handling incoming emails.';
-      const errorBody = 'Ticket-system is recieving errors from incoming emails.' +
-      'Please reload the app-page or restart the server and double check emails externally.';
-      const to = process.env.IMAP_ERROR_ADDRESS || process.env.IMAP_FORWARDING_ADDRESS;
-      const send = {body: errorBody, subject: errorSubject, to};
-      this.emailHandler.Outgoing.send(send);
-    });
+    this.emailHandler.startMailListener(this.socketHandler);
   }
 
   // 404

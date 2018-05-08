@@ -175,12 +175,17 @@ class MailReciever extends events.EventEmitter {
    */
   private formatAsAnswer(mail: IReceivedEmail): IReceivedAnswer {
     const message = ({} as IReceivedAnswer);
-    const dom = new JSDOM().window.document;
+
+    if (mail.html) {
+      const dom = new JSDOM().window.document;
+      message.body =  h2p(planer.extractFrom(mail.html, 'text/html', dom));
+    } else {
+      message.body =  planer.extractFrom(mail.text, 'text/plain');
+    }
 
     message.mailId = mail.messageId;
     message.inAnswerTo = Array.isArray(mail.references) ? mail.references[0] : mail.references;
     message.received = mail.receivedDate;
-    message.body =  h2p(planer.extractFrom(mail.html, 'text/html', dom));
     message.fromCustomer = true;
     message.fromAddress = Array.isArray(mail.from) ? mail.from[0].address : mail.from.address;
 
