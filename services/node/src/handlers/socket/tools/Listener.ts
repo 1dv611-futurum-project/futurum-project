@@ -42,22 +42,24 @@ export default class Listener {
         this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
             .catch((error: any) => {
               const message = new Message('error', 'Failed to update assignee in the database');
-              this.emitter.emitErrorMessage('error', message);
+              this.emitter.emitErrorMessage(message);
             });
         break;
       case TicketEvent.STATUS:
         this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
             .then((payload: any) => this.mailSender.sendStatusUpdate(payload, data.send))
             .catch((error: any) => {
-              const message = new Message('error', 'Failed to update status in database, or send status to customer.');
-              this.emitter.emitErrorMessage('error', message);
+              const errorMessage = (error.name === 'GmailError')
+                                  ? error.message
+                                  : 'Failed to update status in database, and send to customer.';
+              const message = new Message('error', errorMessage);
             });
         break;
       case TicketEvent.MESSAGE:
         this.db.getOne('ticket', { ticketId: ticket.ticketId })
             .then((payload: any) => {
               const newMessage = ticket.body[ticket.body.length - 1];
-              newMessage.fromName = payload.assignee.name;
+              newMessage.fromName = payload.assignee ? payload.assignee.name || 'Futurum Digital' : 'Futurum Digital';
               ticket.body[ticket.body.length - 1] = newMessage;
               payload.body.push(newMessage);
               return this.mailSender.sendMessageUpdate(payload);
@@ -67,8 +69,11 @@ export default class Listener {
               this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId });
             })
             .catch((error: any) => {
-              const message = new Message('error', 'Failed to update email-thread in database, and send to customer.');
-              this.emitter.emitErrorMessage('error', message);
+              const errorMessage = (error.name === 'GmailError')
+                                  ? error.message
+                                  : 'Failed to update email-thread in database, and send to customer.';
+              const message = new Message('error', errorMessage);
+              this.emitter.emitErrorMessage(message);
             });
         break;
       }
@@ -93,21 +98,21 @@ export default class Listener {
         })
         .catch((error: any) => {
           const message = new Message('error', 'Failed to add customer to database.');
-          this.emitter.emitErrorMessage('error', message);
+          this.emitter.emitErrorMessage(message);
         });
         break;
       case CustomerEvent.EDIT:
         this.db.addOrUpdate('customer', customer, { email })
         .catch((error: any) => {
           const message = new Message('error', 'Failed to edit customer in database.');
-          this.emitter.emitErrorMessage('error', message);
+          this.emitter.emitErrorMessage(message);
         });
         break;
       case CustomerEvent.DELETE:
         this.db.removeOne('customer', { _id: customer._id })
         .catch((error: any) => {
           const message = new Message('error', 'Failed to remove customer from database.');
-          this.emitter.emitErrorMessage('error', message);
+          this.emitter.emitErrorMessage(message);
         });
         break;
       }
