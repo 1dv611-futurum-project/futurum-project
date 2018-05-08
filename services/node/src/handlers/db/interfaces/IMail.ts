@@ -6,4 +6,5 @@ export default interface IMail {
   received?: Date;
   body?: string;
   fromCustomer?: boolean;
+  fromName?: string;
 }

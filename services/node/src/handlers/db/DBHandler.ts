@@ -393,7 +393,7 @@ class DBHandler extends events.EventEmitter {
           found.body = bodies;
 
           const replyIDs = found.replyId;
-          replyIDs.push('<' + info.mailID + '>');
+          replyIDs.push('<' + info.mailId + '>');
           found.replyId = replyIDs;
           return found.save();
         } else {
@@ -421,6 +421,7 @@ class DBHandler extends events.EventEmitter {
       mailBodies.push({
         received: email.received,
         fromCustomer: email.fromCustomer,
+        fromName: email.fromName,
         body: email.body});
     });
     return mailBodies;
@@ -431,7 +432,7 @@ class DBHandler extends events.EventEmitter {
    */
   private createNewCustomer(conditions: object, customer: ICustomer, options: object): Promise<ICustomer> {
     return new Promise((resolve, reject) => {
-      Customer.findOneAndUpdate(conditions, customer, options, (err, saved: Customer) => {
+      Customer.findOneAndUpdate(conditions, customer, options, (err, saved: ICustomer) => {
         if (err) {
           reject(new DBCreationError('Customer could not be saved in the Database.'));
         }

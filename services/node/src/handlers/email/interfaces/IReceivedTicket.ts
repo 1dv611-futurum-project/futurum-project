@@ -23,4 +23,5 @@ interface IMail {
   received: string;
   body: string;
   fromCustomer: boolean;
+  fromName: string;
 }

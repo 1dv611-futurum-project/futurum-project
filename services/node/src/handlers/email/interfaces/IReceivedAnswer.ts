@@ -9,5 +9,5 @@ export default interface IReceivedAnswer {
   received: string;
   body: string;
   fromCustomer: boolean;
-  fromAddress: string;
+  fromName: string;
 }

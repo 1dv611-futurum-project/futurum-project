@@ -48,7 +48,7 @@ export default class Listener {
         .then(() => this.socket.emitter.emitTickets())
         .catch((error) => {
           console.error(error);
-          const failSubject = 'Ticket-system failed to handle incoming thread with email from ' + mail.fromAddress;
+          const failSubject = 'Ticket-system failed to handle incoming thread with email from ' + mail.fromName;
           const forward = {from: mail.fromAddress, body: mail.body, subject: failSubject};
           this.mailSender.forward(forward, mail.mailId, process.env.IMAP_FORWARDING_ADDRESS);
           const message = failSubject;
