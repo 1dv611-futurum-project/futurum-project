@@ -44,7 +44,11 @@ export default class Listener {
     this.mailReciever.on(IncomingMailEvent.ANSWER, (mail) => {
       const query = { $or: [ { replyId: '<' + mail.inAnswerTo + '>' }, { mailId: mail.inAnswerTo} ]};
       this.db.addOrUpdate(IncomingMailEvent.ANSWER, mail, query)
-        .then(() => Promise.resolve()) // TODO: Emit answer note to client
+        .then(() => {
+          // TODO: Emit answer note to client
+          console.log('here should be an emit to the client that an answer has been recieved');
+          Promise.resolve();
+        })
         .then(() => this.socket.emitter.emitTickets())
         .catch((error) => {
           console.error(error);
@@ -60,7 +64,7 @@ export default class Listener {
       const forward = {from: mail.from.email, body: mail.body[0].body, subject: mail.title};
       this.mailSender.forward(forward, mail.mailId, process.env.IMAP_FORWARDING_ADDRESS)
       .then(() => {
-        console.log('mail is forwarded');
+        console.log('Here should be an emit to the client that a mail has been forwarded, maybe?');
         // TODO: emit message to client of forward?
       })
       .catch((error) => {

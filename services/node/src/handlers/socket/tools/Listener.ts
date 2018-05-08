@@ -26,7 +26,6 @@ export default class Listener {
     this.db = db;
     this.emitter = emitter;
     this.mailSender = mailSender;
-
   }
 
   public startListeners() {
