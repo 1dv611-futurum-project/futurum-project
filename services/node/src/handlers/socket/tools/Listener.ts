@@ -56,8 +56,10 @@ export default class Listener {
       case TicketEvent.MESSAGE:
         this.db.getOne('ticket', { ticketId: ticket.ticketId })
             .then((payload: any) => {
-              console.log(payload);
-              payload.body.push(ticket.body[ticket.body.length - 1]);
+              const newMessage = ticket.body[ticket.body.length - 1];
+              newMessage.fromName = payload.assignee.name;
+              ticket.body[ticket.body.length - 1] = newMessage;
+              payload.body.push(newMessage);
               return this.mailSender.sendMessageUpdate(payload);
             })
             .then((payload: any) => {
