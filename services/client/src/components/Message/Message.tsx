@@ -27,7 +27,7 @@ export class Message extends React.Component<IMessage, any> {
 	 * @public
 	 */
 	public render() {
-		const { body, fromCustomer, received } = this.props.data;
+		const { body, fromCustomer, received, fromName } = this.props.data;
 		const { customer } = this.props;
 		const assignee = this.props.assignee ? this.props.assignee.name : 'Futurum Digital';
 
@@ -38,7 +38,7 @@ export class Message extends React.Component<IMessage, any> {
 				</Avatar>
 				<div className='message__content'>
 					<p className='message__content__title'>
-						{fromCustomer ? customer : assignee},
+						{fromCustomer ? fromName || customer : fromName || assignee},
 						<span className='message__content__title--regular'>
 							{` ${this.getFormattedDate(received)}`}
 						</span>
