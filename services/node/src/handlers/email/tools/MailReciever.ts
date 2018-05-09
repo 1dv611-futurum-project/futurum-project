@@ -210,7 +210,6 @@ class MailReciever extends events.EventEmitter {
     message.mailId = mail.messageId;
     message.inAnswerTo = Array.isArray(mail.references) ? mail.references[0] : mail.references;
     message.received = mail.receivedDate;
-    message.fromCustomer = true;
     message.fromName = Array.isArray(mail.from)
                         ? (mail.from[0].name || mail.from[0].address)
                         : (mail.from.name || mail.from.address);
