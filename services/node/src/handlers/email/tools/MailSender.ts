@@ -152,7 +152,7 @@ class MailSender extends events.EventEmitter {
     const headers = [];
     headers.push('From: <' + (from || process.env.IMAP_USER) + '>');
     headers.push('To: ' + to);
-    headers.push('Content-type: text/html;charset=iso-8859-1');
+    headers.push('Content-type: text/plain;charset=iso-8859-1');
     headers.push('MIME-Version: 1.0');
 
     return headers;

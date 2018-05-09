@@ -38,7 +38,7 @@ class MailSender {
       const mailSubject = payload.title;
       const mail = {to: payload.from.email,
         subject: mailSubject, body: payload.body.pop().body};
-      this.emailhandler.Outgoing.answer(mail, payload.mailID)
+      this.emailhandler.Outgoing.answer(mail, payload.mailId)
       .then((mailID) => {
         resolve(mailID);
       })

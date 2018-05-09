@@ -183,17 +183,17 @@ class MailReciever extends events.EventEmitter {
       const dom = new JSDOM().window.document;
       message.body =  h2p(planer.extractFrom(mail.html, 'text/html', dom));
     } else {
-      const replyString = /$^(On\s(\n|.)*wrote(.*)$)/m;
-      const replyStringSwe = /$^(Den\s(\n|.)*skrev(.*)$)/m;
-      const replyStringDate = /$^([0-9]{4}-(((0[13578]|(10|12))-(0[1-9]|[1-2][0-9]|3[0-1]))|(02-(0[1-9]|[1-2][0-9]))|((0[469]|11)-(0[1-9]|[1-2][0-9]|30)))\s(([0-1][0-9]|[2][0-3]):([0-5][0-9]))\s(GMT+))/m;
+      const replyString = /[\r\n]+^(On\s(\n|.)*wrote(.*)$)/m;
+      const replyStringSwe = /[\r\n]+^(Den\s(\n|.)*skrev(.*)$)/m;
+      const replyStringDate = /[\r\n]+^([0-9]{4}-(((0[13578]|(10|12))-(0[1-9]|[1-2][0-9]|3[0-1]))|(02-(0[1-9]|[1-2][0-9]))|((0[469]|11)-(0[1-9]|[1-2][0-9]|30)))\s(([0-1][0-9]|[2][0-3]):([0-5][0-9]))\s(GMT+))/m;
       const rexexps = [
         replyString,
         replyStringSwe,
         replyStringDate
       ];
 
-      let text;
       const mildlyParsed = planer.extractFrom(mail.text, 'text/plain');
+      let text = mildlyParsed;
 
       rexexps.forEach((exp) => {
         const match = exp.exec(mildlyParsed);
