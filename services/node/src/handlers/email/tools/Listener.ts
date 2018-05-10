@@ -45,7 +45,7 @@ export default class Listener {
       const query = { $or: [ { replyId: '<' + mail.inAnswerTo + '>' }, { mailId: mail.inAnswerTo} ]};
       this.db.addOrUpdate(IncomingMailEvent.ANSWER, mail, query)
         .then(() => {
-          // TODO: Emit answer note to client
+          // TODO: Emit answer note to client with  this.socket.emitter.[vettigEmitFunktion], kanske emitSuccessMessage?
           console.log('here should be an emit to the client that an answer has been recieved');
           Promise.resolve();
         })
