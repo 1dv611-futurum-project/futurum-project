@@ -44,9 +44,6 @@ export default class Listener {
     this.mailReciever.on(IncomingMailEvent.ANSWER, (mail) => {
       const query = { $or: [ { replyId: '<' + mail.inAnswerTo + '>' }, { mailId: mail.inAnswerTo} ]};
       this.db.addOrUpdate(IncomingMailEvent.ANSWER, mail, query)
-        .then(() => {
-          return this.db.addOrUpdate(IncomingMailEvent.TICKET, {isRead: false}, query);
-        })
         .then(() => this.socket.emitter.emitTickets())
         .catch((error) => {
           console.error(error);

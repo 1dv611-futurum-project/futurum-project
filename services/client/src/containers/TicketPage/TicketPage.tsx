@@ -108,9 +108,20 @@ export class TicketPage extends React.Component<any, any> {
 	private setTicket(tickets: any[], id: string): any {
 		tickets.forEach((ticket: any) => {
 			if (ticket.ticketId === Number(id)) {
+				this.onVisit(ticket);
 				this.setState({ ticket });
 			}
 		});
+	}
+
+	/**
+	 * Handles isRead change when ticket is visited
+	 * @private
+	 * @param {Object} ticket - The full ticket data
+	 */
+	private onVisit(ticket: any) {
+		ticket.isRead = true;
+		this.props.ticketAction.emitRead({ticket});
 	}
 
 	/**

@@ -74,12 +74,9 @@ export class AllTicketsPage extends React.Component<any, any> {
 	 */
 	private getTickets(ticket: any, i: any): any {
 		const location = this.props.location.pathname;
-		// ticket.unread = true;
-		const ticketJsx = ticket.unread ? (
-				<Badge className='ticket__badge' badgeContent={<Mail />} color='secondary' key={i}>
-					<Ticket key={i} ticket={ticket} onSend={this.onStatusChange} />
-				</Badge>
-			) : <Ticket key={i} ticket={ticket} onSend={this.onStatusChange} />;
+		const ticketJsx = ticket.isRead ?
+				<Ticket key={i} ticket={ticket} onSend={this.onStatusChange} />
+			: this.notification(ticket, i);
 
 		if (location.indexOf('open') !== -1 && ticket.status === 0) {
 			return ticketJsx;
@@ -92,6 +89,20 @@ export class AllTicketsPage extends React.Component<any, any> {
 		} else {
 			return;
 		}
+	}
+
+	/**
+	 * Handles status change on tickets
+	 * @private
+	 * @param {String} ticket - The full ticket data
+	 * @param {Number} i - The array index
+	 */
+	private notification(ticket: any, i: number) {
+		return (
+			<Badge className='ticket__badge' badgeContent={<Mail />} color='secondary' key={i}>
+				<Ticket key={i} ticket={ticket} onSend={this.onStatusChange} />
+			</Badge>
+		);
 	}
 
 	/**

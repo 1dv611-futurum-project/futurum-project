@@ -15,10 +15,12 @@ abstract class DBInteractor {
     const mailBodies = [];
     emails = Array.isArray(emails) ? emails : [emails];
     emails.forEach((email) => {
-      mailBodies.push({
-        received: email.received,
-        fromName: email.fromName,
-        body: email.body});
+      if (email) {
+        mailBodies.push({
+          received: email.received,
+          fromName: email.fromName,
+          body: email.body});
+      }
     });
     return mailBodies;
   }

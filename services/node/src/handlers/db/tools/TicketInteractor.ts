@@ -171,6 +171,10 @@ class TicketInteractor extends DBInteractor {
       ticket.replyId = info.replyId;
     }
 
+    if (info.isRead) {
+      ticket.isRead = info.isRead;
+    }
+
     return ticket;
   }
 

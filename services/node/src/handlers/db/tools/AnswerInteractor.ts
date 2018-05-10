@@ -60,6 +60,7 @@ class AnswerInteractor extends DBInteractor {
           const replyIDs = found.replyId;
           replyIDs.push('<' + info.mailId + '>');
           found.replyId = replyIDs;
+          found.isRead = false;
           return found.save();
         } else {
           reject(new DBCreationError('Could not add answer to thread in database.'));

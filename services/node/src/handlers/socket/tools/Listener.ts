@@ -76,6 +76,13 @@ export default class Listener {
               this.emitter.emitErrorMessage(message);
             });
         break;
+      case TicketEvent.READ:
+        this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
+            .catch((error: any) => {
+              const message = new Message('error', 'Failed to end the notification that the message is read');
+              this.emitter.emitErrorMessage(message);
+            });
+        break;
       }
     });
   }

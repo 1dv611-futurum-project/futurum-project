@@ -52,4 +52,14 @@ export default class TicketChannel extends Channel {
 		console.log(ticket);
 		this.emit(TicketEvent.MESSAGE, ticket);
 	}
+
+	/**
+	 * Emits an isRead event when the ticket has been visited
+	 * @public
+	 * @param {Object} ticket - A ticket object
+	 */
+	public emitRead(ticket: object) {
+		console.log(ticket);
+		this.emit(TicketEvent.READ, ticket);
+	}
 }
