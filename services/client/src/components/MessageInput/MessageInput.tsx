@@ -68,7 +68,6 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 		this.props.ticket.body.push({
 			received: moment().format(),
 			body: this.state.message,
-			fromCustomer: false,
 			fromName: this.props.ticket.assignee ? this.props.ticket.assignee.name : 'Futurum Digital'
 		});
 

@@ -13,8 +13,6 @@ import 'moment/locale/sv';
  */
 export interface IMessage {
 	data: any;
-	customer: string;
-	assignee: any;
 }
 
 /**
@@ -27,9 +25,7 @@ export class Message extends React.Component<IMessage, any> {
 	 * @public
 	 */
 	public render() {
-		const { body, fromCustomer, received, fromName } = this.props.data;
-		const { customer } = this.props;
-		const assignee = this.props.assignee ? this.props.assignee.name : 'Futurum Digital';
+		const { body, received, fromName } = this.props.data;
 
 		return (
 			<Paper className='message'>
@@ -38,7 +34,7 @@ export class Message extends React.Component<IMessage, any> {
 				</Avatar>
 				<div className='message__content'>
 					<p className='message__content__title'>
-						{fromCustomer ? fromName || customer : fromName || assignee},
+						{fromName},
 						<span className='message__content__title--regular'>
 							{` ${this.getFormattedDate(received)}`}
 						</span>

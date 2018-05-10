@@ -10,12 +10,10 @@ describe('<Message />', () => {
 	let wrapper: any;
 	const props = {
 		data: {
-			fromCustomer: true,
+			fromName: 'fromName',
 			received: '2018-04-27T23:25:05.000Z',
 			body: 'body'
-		},
-		customer: 'customer',
-		assignee: 'assignee'
+		}
 	};
 
 	before(() => {
@@ -24,7 +22,7 @@ describe('<Message />', () => {
 
 	it('should have an author and a date as locale convention', () => {
 		const expectedDateString = '2018-04-27';
-		const expected = props.customer + ', ' + expectedDateString;
+		const expected = props.data.fromName + ', ' + expectedDateString;
 		expect(wrapper.find('.message__content__title').text()).to.equal(expected);
 	});
 

@@ -77,14 +77,7 @@ export class TicketPage extends React.Component<any, any> {
 					{
 						this.state.ticket.body ?
 						this.state.ticket.body.map((message: any, i: number) => {
-							return (
-								<Message
-									key={i}
-									data={message}
-									customer={this.state.ticket.from.name}
-									assignee={this.state.ticket.assignee}
-								/>
-							);
+							return <Message key={i} data={message} />;
 						}).reverse() : null
 					}
 				</div>
