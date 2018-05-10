@@ -31,12 +31,16 @@ export default class Listener {
   private incomingMailListener() {
     this.mailReciever.on(IncomingMailEvent.TICKET, (mail: IReceivedTicket) => {
       this.db.addOrUpdate(IncomingMailEvent.TICKET, mail, { mailId: mail.mailId })
+        .then((result) => this.socket.emitter.emitSuccessMessage(`Nytt meddelande från ${result[0].from.name}`))
         .then(() => this.socket.emitter.emitTickets())
         .catch((error) => {
           const failSubject = 'Ticket-system failed to handle incoming ticket: ' + mail.title;
           const forward = {from: mail.from.email, body: mail.body[0].body, subject: failSubject};
-          this.mailSender.forward(forward, mail.mailId, process.env.IMAP_FORWARDING_ADDRESS);
-          this.socket.emitter.emitErrorMessage(new Message('error', 'Could not update database.', mail));
+          const to = process.env.IMAP_FORWARDING_ADDRESS;
+
+          this.mailSender.forward(forward, mail.mailId, to);
+          const message = `Misslyckades med att ta emot nytt meddelande. Vidarebefodras till ${to}`;
+          this.socket.emitter.emitErrorMessage(message);
           console.error(error);
         });
     });
@@ -44,29 +48,33 @@ export default class Listener {
     this.mailReciever.on(IncomingMailEvent.ANSWER, (mail) => {
       const query = { $or: [ { replyId: '<' + mail.inAnswerTo + '>' }, { mailId: mail.inAnswerTo} ]};
       this.db.addOrUpdate(IncomingMailEvent.ANSWER, mail, query)
+        .then((result) => this.socket.emitter.emitSuccessMessage(`Nytt meddelande från ${result[0].from.name}`))
         .then(() => this.socket.emitter.emitTickets())
         .catch((error) => {
           console.error(error);
           const failSubject = 'Ticket-system failed to handle incoming thread with email from ' + mail.fromName;
           const forward = {from: mail.fromAddress, body: mail.body, subject: failSubject};
-          this.mailSender.forward(forward, mail.mailId, process.env.IMAP_FORWARDING_ADDRESS);
-          const message = failSubject;
-          this.socket.emitter.emitErrorMessage(new Message('error', message, mail));
+          const to = process.env.IMAP_FORWARDING_ADDRESS;
+
+          this.mailSender.forward(forward, mail.mailId, to);
+          const message = `Misslyckades med att ta emot nytt meddelande. Vidarebefodras till ${to}`;
+          this.socket.emitter.emitErrorMessage(message);
         });
     });
 
     this.mailReciever.on(IncomingMailEvent.FORWARD, (mail) => {
       const forward = {from: mail.from.email, body: mail.body[0].body, subject: mail.title};
       this.mailSender.forward(forward, mail.mailId, process.env.IMAP_FORWARDING_ADDRESS)
-      .then(() => {
-        console.log('Here should be an emit to the client that a mail has been forwarded, maybe?');
-        // TODO: emit message to client of forward?
+      .then((result) => {
+        const to = process.env.IMAP_FORWARDING_ADDRESS;
+        const message = `Mail från okänd mailaddress. Vidarebefodrar till ${to}`;
+        this.socket.emitter.emitSuccessMessage(`Nytt meddelande från ${result[0].from.name}`);
       })
       .catch((error) => {
         console.error(error);
 
-        const message = 'Could not forward non-whitelist-email.';
-        this.socket.emitter.emitErrorMessage(new Message('error', message, mail));
+        const message = 'Misslyckades med att vidarebefodra mail från okänd mailaddress';
+        this.socket.emitter.emitErrorMessage(message);
 
         const errorSubject = 'Error: Ticket-system failed to forward non-whitelist email from: ' + mail.from.email;
         const errorBody = 'Ticket-system is recieving errors when forwarding emails not in whitelist.' +

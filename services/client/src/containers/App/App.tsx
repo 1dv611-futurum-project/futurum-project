@@ -7,6 +7,7 @@ import SocketFactory from '../../handlers/socket/SocketFactory';
 
 import { Header } from '../../components/Header/Header';
 import { Modal } from '../../components/Modal/Modal';
+import { SnackbarNotice } from '../../components/SnackbarNotice/SnackbarNotice';
 
 /**
  * App class
@@ -22,7 +23,9 @@ export class App extends React.Component<any, any> {
 			tickets: [],
 			assignees: [],
 			customers: [],
-			settings: []
+			settings: [],
+			snackMessage: '',
+			snackState: false
 		};
 
 		this.socket = new SocketFactory();
@@ -93,10 +96,12 @@ export class App extends React.Component<any, any> {
 	 * @private
 	 */
 	private messageListener() {
-		console.log('messageListener');
 		this.socket.messageChannel().onMessage((message: any) => {
 			message = JSON.parse(message);
-			console.log(message);
+			this.setState({
+				snackMessage: message,
+				snackState: true,
+			});
 		});
 	}
 
@@ -136,6 +141,11 @@ export class App extends React.Component<any, any> {
 						}}
 					/>
 					: null }
+				<SnackbarNotice
+					message={this.state.snackMessage}
+					open={this.state.snackState}
+					onClose={() => this.setState({ snackState: false })}
+				/>
 			</div>
 		);
 	}

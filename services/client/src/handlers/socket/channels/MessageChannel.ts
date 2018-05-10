@@ -29,6 +29,7 @@ export default class MessageChannel extends Channel  {
 	 * @param {object} message - message object
 	 */
 	public emitSuccessMessage(message: object) {
+		console.log(message);
 		this.emit(MessageEvent.SUCCESS, message);
 	}
 

@@ -74,14 +74,14 @@ export default class Emitter {
   /**
    * Emits data to the server on message channels.
    */
-  public emitErrorMessage(message: object): void {
+  public emitSuccessMessage(message: object): void {
     this.io.emit('messages', JSON.stringify(message));
   }
 
   /**
    * Emits data to the server on message channels.
    */
-  public emitSuccessMessage(message: object): void {
+  public emitErrorMessage(message: object): void {
     this.io.emit('messages', JSON.stringify(message));
   }
 

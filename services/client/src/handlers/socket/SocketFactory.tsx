@@ -59,7 +59,6 @@ export default class SocketFactory {
 	 * @public
 	 */
 	public messageChannel() {
-		console.log('new messageChannel in client');
 		return new MessageChannel(this.io);
 	}
 
