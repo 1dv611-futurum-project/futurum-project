@@ -11,6 +11,7 @@ export default interface IReceivedTicket {
   created: string;
   title: string;
   from: ICustomer;
+  isRead: boolean;
   body: IMail[];
 }
 
@@ -22,6 +23,5 @@ interface ICustomer {
 interface IMail {
   received: string;
   body: string;
-  fromCustomer: boolean;
   fromName: string;
 }

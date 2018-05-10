@@ -143,7 +143,7 @@ export default class Listener {
       const setting = data.setting;
       switch (event) {
       case SettingEvent.UPDATE:
-            // TODO: add settings to db
+        // TODO: add settings to db
         break;
       }
     });

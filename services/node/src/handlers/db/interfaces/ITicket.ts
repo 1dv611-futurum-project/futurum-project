@@ -14,5 +14,6 @@ export default interface ITicket {
   title?: string;
   from?: string;
   created?: Date;
+  isRead: boolean;
   body?: IMail[];
 }

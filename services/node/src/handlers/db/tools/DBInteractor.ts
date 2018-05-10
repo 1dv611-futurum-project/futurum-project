@@ -17,7 +17,6 @@ abstract class DBInteractor {
     emails.forEach((email) => {
       mailBodies.push({
         received: email.received,
-        fromCustomer: email.fromCustomer,
         fromName: email.fromName,
         body: email.body});
     });

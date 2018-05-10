@@ -18,6 +18,7 @@ const TicketSchema: Schema = new Schema({
   title: {type: String, required: false},
   from: { type: Schema.Types.ObjectId, ref: 'Customer' },
   created: {type: Date, required: true},
+  isRead: {type: Boolean, required: true, default: false},
   body: {type: [], default: []}
 });
 

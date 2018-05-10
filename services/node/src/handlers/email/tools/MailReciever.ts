@@ -155,6 +155,7 @@ class MailReciever extends events.EventEmitter {
     message.mailId = mail.messageId;
     message.created = mail.receivedDate;
     message.title = mail.subject;
+    message.isRead = false;
     message.from = {
       name: Array.isArray(mail.from) ? mail.from[0].name : mail.from.name,
       email: Array.isArray(mail.from) ? mail.from[0].address : mail.from.address
@@ -163,7 +164,6 @@ class MailReciever extends events.EventEmitter {
       {
         received: mail.receivedDate,
         body: mail.text,
-        fromCustomer: true,
         fromName: Array.isArray(mail.from)
                         ? (mail.from[0].name || mail.from[0].address)
                         : (mail.from.name || mail.from.address)

@@ -8,6 +8,5 @@ export default interface IReceivedAnswer {
   inAnswerTo: string;
   received: string;
   body: string;
-  fromCustomer: boolean;
   fromName: string;
 }
