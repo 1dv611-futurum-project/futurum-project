@@ -13,7 +13,7 @@ Projektet bygger på en utvecklingsmiljö med Docker och kräver med andra ord a
 4. Avvakta någon till några minuter för containrarna att laddas ner och startas upp.
 5. Applikationen körs nu på `localhost:8080` eller `127.0.0.1:8080`.
 6. Applikationen kan användas mot mailen `dev@futurumdigital.se` och behöver godkännas mot den mailen efter uppstart.
-6. När du är klar med demon, stoppa alla containers genom att köra kommandot `docker-compose stop`.
+6. När du är klar med demon, stoppa alla containers genom att köra kommandot `docker-compose -f docker-compose-test.yml stop`.
 
 #### Starta projektet med Docker - för utveckling
 
