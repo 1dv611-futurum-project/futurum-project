@@ -131,6 +131,45 @@ export default class Listener {
   }
 
   /**
+   * Listens for assignee-events.
+   */
+  private assigneeListener() {
+    this.io.on('assignees', (event: string, assignee: any) => {
+      const email = Array.isArray(assignee.email) ? assignee.email[0] : assignee.email;
+      assignee.email = email;
+
+      switch (event) {
+      case AssigneeEvent.ADD:
+        this.db.getOne('assignee', { email })
+        .then((cust) => {
+          if (!cust) {
+            this.db.addOrUpdate('assignee', assignee, { email });
+          }
+        })
+        .catch((error: any) => {
+          const message = new Message('error', 'Failed to add assignee to database.');
+          this.emitter.emitErrorMessage(message);
+        });
+        break;
+      case AssigneeEvent.EDIT:
+        this.db.addOrUpdate('assignee', assignee, { email })
+        .catch((error: any) => {
+          const message = new Message('error', 'Failed to edit assignee in database.');
+          this.emitter.emitErrorMessage(message);
+        });
+        break;
+      case AssigneeEvent.DELETE:
+        this.db.removeOne('assignee', { _id: assignee._id })
+        .catch((error: any) => {
+          const message = new Message('error', 'Failed to remove assignee from database.');
+          this.emitter.emitErrorMessage(message);
+        });
+        break;
+      }
+    });
+  }
+
+  /**
    * Listens for message-events.
    */
   private messageListener() {
