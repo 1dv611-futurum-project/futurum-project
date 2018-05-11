@@ -30,6 +30,9 @@ export class ClientInput extends React.Component<IClientInput, any> {
 				email: ''
 			}
 		};
+
+		this.handleSubmit = this.handleSubmit.bind(this);
+		this.handleInput = this.handleInput.bind(this);
 	}
 
 	/**
@@ -48,6 +51,7 @@ export class ClientInput extends React.Component<IClientInput, any> {
 						name='name'
 						className={'client-input__input'}
 						onChange={this.handleInput}
+						value={this.state.client.name}
 					/>
 					<Input
 						placeholder='E-post'
@@ -57,6 +61,7 @@ export class ClientInput extends React.Component<IClientInput, any> {
 							type: 'email'
 						}}
 						onChange={this.handleInput}
+						value={this.state.client.email}
 					/>
 					<Button theme={true} formBlock={true} type='submit'>
 						Lägg till
@@ -73,6 +78,7 @@ export class ClientInput extends React.Component<IClientInput, any> {
 	private handleSubmit = (event: any) => {
 		event.preventDefault();
 		this.props.onClick(this.state.client);
+		this.resetInput(event);
 	}
 
 	/**
@@ -80,6 +86,16 @@ export class ClientInput extends React.Component<IClientInput, any> {
 	 * @private
 	 */
 	private handleInput = (event: any) => {
-		this.state.client[event.target.name] = event.target.value;
+		const { client } = this.state;
+		client[event.target.name] = event.target.value;
+		this.setState({ client });
+	}
+
+	private resetInput(event: any) {
+		const client = {
+			name: '',
+			email: ''
+		};
+		this.setState({ client });
 	}
 }
