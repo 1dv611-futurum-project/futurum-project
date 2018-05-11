@@ -48,6 +48,10 @@ export default class Listener {
       case TicketEvent.STATUS:
         this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
             .then((payload: any) => this.mailSender.sendStatusUpdate(payload, data.send))
+            .then((payload: any) => {
+              ticket.replyId.push(payload);
+              this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId });
+            })
             .catch((error: any) => {
               const errorMessage = (error.name === 'GmailError')
                                   ? error.message
