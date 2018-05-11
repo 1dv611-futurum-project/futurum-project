@@ -67,8 +67,8 @@ export default class Listener {
       this.mailSender.forward(forward, mail.mailId, process.env.IMAP_FORWARDING_ADDRESS)
       .then((result) => {
         const to = process.env.IMAP_FORWARDING_ADDRESS;
-        const message = `Mail från okänd mailaddress. Vidarebefodrar till ${to}`;
-        this.socket.emitter.emitSuccessMessage(`Nytt meddelande från ${result[0].from.name}`);
+        const message = `Nytt meddelande från ${mail.from.name}`;
+        this.socket.emitter.emitSuccessMessage(message);
       })
       .catch((error) => {
         console.error(error);

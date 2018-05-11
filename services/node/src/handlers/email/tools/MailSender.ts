@@ -66,44 +66,68 @@ class MailSender extends events.EventEmitter {
     return new Promise((resolve, reject) => {
       this.updateCredentials()
       .then(() => {
-        const gmail = google.gmail('v1');
-        const base64Email = this.getBase64EncodedEmailFromHeaders(headers);
-
-        const request = {
-          auth: this.oauth2Client,
-          userId: 'me',
-          resource: {
-            raw: base64Email
-          }
-        };
-
-        gmail.users.messages.send(request, null, (err, response) => {
-          if (!err) {
-            const get = {
-              auth: this.oauth2Client,
-              userId: 'me',
-              id: response.data.id
-            };
-
-            gmail.users.messages.get(get, null, (error, resp) => {
-              if (!error) {
-                const messageId = resp.data.payload.headers.find((header) => {
-                  return header.name === 'Message-Id';
-                });
-
-                return resolve(messageId.value);
-
-              } else {
-                return reject();
-              }
-            });
-          } else {
-            return reject(new GmailError('Unable to send email: ' + err));
-          }
-        });
+        return this.delay(1000);
+      })
+      .then(() => {
+        return this.sendThroughGmail(headers);
+      })
+      .then((messageID) => {
+        resolve(messageID);
+      })
+      .catch(() => {
+        return this.delay(1000);
+      })
+      .then(() => {
+        return this.sendThroughGmail(headers);
+      })
+      .then((messageID) => {
+        resolve(messageID);
       })
       .catch((error) => {
         reject(new GmailError(error.message || 'Something went wrong while sending emails.'));
+      });
+    });
+  }
+
+  /**
+   * Sends the email through the gmail API.
+   */
+  private sendThroughGmail(headers: string[]): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const gmail = google.gmail('v1');
+      const base64Email = this.getBase64EncodedEmailFromHeaders(headers);
+
+      const request = {
+        auth: this.oauth2Client,
+        userId: 'me',
+        resource: {
+          raw: base64Email
+        }
+      };
+
+      gmail.users.messages.send(request, null, (err, response) => {
+        if (!err) {
+          const get = {
+            auth: this.oauth2Client,
+            userId: 'me',
+            id: response.data.id
+          };
+
+          gmail.users.messages.get(get, null, (error, resp) => {
+            if (!error) {
+              const messageId = resp.data.payload.headers.find((header) => {
+                return header.name === 'Message-Id';
+              });
+
+              return resolve(messageId.value);
+
+            } else {
+              return reject();
+            }
+          });
+        } else {
+          return reject(new GmailError('Unable to send email: ' + err));
+        }
       });
     });
   }
@@ -215,6 +239,15 @@ class MailSender extends events.EventEmitter {
       }
 
       resolve();
+    });
+  }
+
+  /**
+   * Returns a delayed promise.
+   */
+  private delay(time: number, resolveWith?: any) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => { resolve(resolveWith); }, time);
     });
   }
 }
