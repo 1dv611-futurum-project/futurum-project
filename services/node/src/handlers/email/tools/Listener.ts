@@ -67,7 +67,7 @@ export default class Listener {
       this.mailSender.forward(forward, mail.mailId, process.env.IMAP_FORWARDING_ADDRESS)
       .then((result) => {
         const to = process.env.IMAP_FORWARDING_ADDRESS;
-        const message = `Nytt meddelande från ${mail.from.name}`;
+        const message = `Nytt meddelande från ${mail.from.name} vidarebefodrades till ${to}`;
         this.socket.emitter.emitSuccessMessage(message);
       })
       .catch((error) => {
