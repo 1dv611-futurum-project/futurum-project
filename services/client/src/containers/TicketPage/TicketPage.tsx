@@ -62,7 +62,7 @@ export class TicketPage extends React.Component<any, any> {
 		return (
 			<div className='ticket__wrapper'>
 				<TicketOverview
-					handleClick={() => this.setState({ showNewMessage: true })}
+					handleClick={() => this.setState({ showNewMessage: !this.state.showNewMessage })}
 					handleStatusChange={this.onStatusChange}
 					handleAssigneeChange={this.onAssigneeChange}
 					assignees={this.props.allAssignees}

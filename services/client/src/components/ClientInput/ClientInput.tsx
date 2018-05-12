@@ -14,6 +14,8 @@ import Button from '../../elements/CustomButton/CustomButton';
 export interface IClientInput {
 	onClick(client: any): void;
 	open: boolean;
+	isEdit?: boolean;
+	client?: any;
 }
 
 /**
@@ -33,6 +35,13 @@ export class ClientInput extends React.Component<IClientInput, any> {
 
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleInput = this.handleInput.bind(this);
+	}
+
+	public componentDidUpdate(prevProps: any) {
+		if (this.props !== prevProps && this.props.client) {
+			const { client } = this.props;
+			this.setState({ client });
+		}
 	}
 
 	/**
@@ -64,7 +73,9 @@ export class ClientInput extends React.Component<IClientInput, any> {
 						value={this.state.client.email}
 					/>
 					<Button theme={true} formBlock={true} type='submit'>
-						Lägg till
+						{this.props.isEdit ?
+							'Uppdatera' : 'Lägg till'
+						}
 					</Button>
 				</form>
 			</Paper>

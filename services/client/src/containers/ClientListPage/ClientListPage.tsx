@@ -20,6 +20,8 @@ export class ClientListPage extends React.Component<any, any> {
 			snackMessage: '',
 			snackState: false
 		};
+		this.addHandler = this.addHandler.bind(this);
+		this.editHandler = this.editHandler.bind(this);
 
 		this.addClient = this.addClient.bind(this);
 		this.editClient = this.editClient.bind(this);
@@ -38,16 +40,21 @@ export class ClientListPage extends React.Component<any, any> {
 					<div className='client-list-page__header__btn'>
 						<AddButton
 							text={'Lägg till kund'}
-							onClick={() => this.setState({ showNewClient: true })}
+							onClick={this.addHandler}
 						/>
 					</div>
 				</div>
 				<div className='ticket__wrapper__messages'>
-					<ClientInput onClick={this.addClient} open={this.state.showNewClient} />
+					<ClientInput
+						onClick={this.state.isEdit ? this.editClient : this.addClient}
+						open={this.state.showNewClient}
+						isEdit={this.state.isEdit}
+						client={this.state.client}
+					/>
 				</div>
 				<ClientList
 					customers={this.props.allCustomers}
-					onEdit={this.editClient}
+					onEdit={this.editHandler}
 					onDelete={this.deleteClient}
 				/>
 				<SnackbarNotice
@@ -57,6 +64,28 @@ export class ClientListPage extends React.Component<any, any> {
 				/>
 			</div>
 		);
+	}
+
+	/**
+	 * Handles input box for edit client
+	 * @private
+	 */
+	private addHandler() {
+		const showNewClient = !this.state.showNewClient;
+		const isEdit = false;
+		const client = { name: '', email: '' };
+		this.setState({ showNewClient, isEdit, client });
+	}
+
+	/**
+	 * Handles input box for edit client
+	 * @private
+	 * @param {Object} client - The existing client data
+	 */
+	private editHandler(client: any) {
+		const showNewClient = !this.state.showNewClient;
+		const isEdit = true;
+		this.setState({ showNewClient, isEdit, client });
 	}
 
 	/**
@@ -82,6 +111,7 @@ export class ClientListPage extends React.Component<any, any> {
 	 */
 	private editClient(client: any) {
 		this.setState({
+			showNewClient: false,
 			snackState: true,
 			snackMessage: 'Kundens uppgifter har uppdaterats.'
 		});

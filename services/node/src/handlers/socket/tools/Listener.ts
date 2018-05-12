@@ -113,7 +113,8 @@ export default class Listener {
         });
         break;
       case CustomerEvent.EDIT:
-        this.db.addOrUpdate('customer', customer, { email })
+        this.db.addOrUpdate('customer', customer, { _id: customer._id })
+        .then(() => this.emitter.emitTickets())
         .catch((error: any) => {
           const message = new Message('error', 'Failed to edit customer in database.');
           this.emitter.emitErrorMessage(message);
@@ -152,6 +153,7 @@ export default class Listener {
         });
         break;
       case AssigneeEvent.EDIT:
+        console.log(assignee);
         this.db.addOrUpdate('assignee', assignee, { email })
         .catch((error: any) => {
           const message = new Message('error', 'Failed to edit assignee in database.');
