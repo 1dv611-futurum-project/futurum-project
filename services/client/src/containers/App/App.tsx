@@ -25,7 +25,8 @@ export class App extends React.Component<any, any> {
 			customers: [],
 			settings: [],
 			snackMessage: '',
-			snackState: false
+			snackState: false,
+			snackError: false
 		};
 
 		this.socket = new SocketFactory();
@@ -96,6 +97,7 @@ export class App extends React.Component<any, any> {
 				this.setState({
 					snackMessage: message.content,
 					snackState: true,
+					snackError: true
 				});
 			}
 		});
@@ -153,6 +155,7 @@ export class App extends React.Component<any, any> {
 					message={this.state.snackMessage}
 					open={this.state.snackState}
 					onClose={() => this.setState({ snackState: false })}
+					error={this.state.snackError}
 				/>
 			</div>
 		);

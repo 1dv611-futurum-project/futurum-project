@@ -4,6 +4,7 @@
  */
 import * as React from 'react';
 import { Snackbar, IconButton } from 'material-ui';
+import { Error } from 'material-ui-icons';
 import { Close } from 'material-ui-icons';
 
 /**
@@ -13,6 +14,7 @@ export interface ISnackbarNotice {
 	message: string;
 	open: boolean;
 	onClose(event: any): void;
+	error?: boolean;
 }
 
 /**
@@ -33,7 +35,8 @@ export class SnackbarNotice extends React.Component<ISnackbarNotice, any> {
 	 * @public
 	 */
 	public render() {
-		const { message, onClose, open } = this.props;
+		const { message, onClose, open, error } = this.props;
+		const text = <span id='snackbar__message'>{error ? <Error color='error'/> : null}{message}</span>;
 
 		return (
 			<Snackbar
@@ -45,7 +48,7 @@ export class SnackbarNotice extends React.Component<ISnackbarNotice, any> {
 				open={open}
 				autoHideDuration={6000}
 				onClose={onClose}
-				message={<span id='snackbar__message'>{message}</span>}
+				message={text}
 				action={[
 					<IconButton
 						key='close'
