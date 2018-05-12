@@ -1,4 +1,5 @@
 /**
+ * Proof Of Concept: Settings-channel for e.g. status colors
  * SettingChannel class for handling Socket settings events
  * @module handlers/socket/channels/SettingChannel
  */

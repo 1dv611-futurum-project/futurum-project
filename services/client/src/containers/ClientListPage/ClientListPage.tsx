@@ -67,7 +67,7 @@ export class ClientListPage extends React.Component<any, any> {
 	}
 
 	/**
-	 * Handles input box for edit client
+	 * Handles input box for add client
 	 * @private
 	 */
 	private addHandler() {

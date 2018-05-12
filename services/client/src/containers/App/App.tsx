@@ -33,8 +33,8 @@ export class App extends React.Component<any, any> {
 		this.ticketsListener();
 		this.assigneesListener();
 		this.customersListener();
-		this.settingsListener();
 		this.messageListener();
+		// this.settingsListener();
 	}
 
 	/**
@@ -84,17 +84,6 @@ export class App extends React.Component<any, any> {
 	 * Listens to the event of newly added/updated settings
 	 * @private
 	 */
-	private settingsListener() {
-		this.socket.settingChannel().onSettings((settings: any) => {
-			settings = JSON.parse(settings);
-			this.setState({ settings });
-		});
-	}
-
-	/**
-	 * Listens to the event of newly added/updated settings
-	 * @private
-	 */
 	private messageListener() {
 		this.socket.messageChannel().onMessage((message: any) => {
 			message = JSON.parse(message);
@@ -112,6 +101,18 @@ export class App extends React.Component<any, any> {
 		});
 	}
 
+	// /**
+	//  * Proof Of Concept: Settings-channel for e.g. status colors
+	//  * Listens to the event of newly added/updated settings
+	//  * @private
+	//  */
+	// private settingsListener() {
+	// 	this.socket.settingChannel().onSettings((settings: any) => {
+	// 		settings = JSON.parse(settings);
+	// 		this.setState({ settings });
+	// 	});
+	// }
+
 	/**
 	 * The render method
 	 * @public
@@ -124,8 +125,8 @@ export class App extends React.Component<any, any> {
 			allSettings: this.state.settings,
 			ticketAction: this.socket.ticketChannel(),
 			customerAction: this.socket.customerChannel(),
-			settingsAction: this.socket.settingChannel(),
-			messageAction: this.socket.messageChannel()
+			assigneeAction: this.socket.assigneeChannel(),
+			// settingsAction: this.socket.settingChannel(),
 		};
 
 		return (

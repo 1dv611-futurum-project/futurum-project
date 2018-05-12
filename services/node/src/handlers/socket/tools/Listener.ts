@@ -31,7 +31,8 @@ export default class Listener {
   public startListeners() {
     this.ticketListener();
     this.customerListener();
-    this.settingsListener();
+    this.assigneeListener();
+    // this.settingsListener();
   }
 
   private ticketListener() {
@@ -144,7 +145,9 @@ export default class Listener {
         this.db.getOne('assignee', { email })
         .then((cust) => {
           if (!cust) {
-            this.db.addOrUpdate('assignee', assignee, { email });
+            this.db.addOrUpdate('assignee', assignee, { email })
+              .then((result) => console.log(result))
+              .catch((e) => console.log(e));
           }
         })
         .catch((error: any) => {
@@ -153,8 +156,7 @@ export default class Listener {
         });
         break;
       case AssigneeEvent.EDIT:
-        console.log(assignee);
-        this.db.addOrUpdate('assignee', assignee, { email })
+        this.db.addOrUpdate('assignee', assignee, { _id: assignee._id })
         .catch((error: any) => {
           const message = new Message('error', 'Failed to edit assignee in database.');
           this.emitter.emitErrorMessage(message);
@@ -171,33 +173,15 @@ export default class Listener {
     });
   }
 
-  /**
-   * Listens for message-events.
-   */
-  private messageListener() {
-    this.io.on('messages', (event: string, message: any) => {
-      switch (event) {
-      case MessageEvent.SUCCESS:
-        console.log(message);
-        break;
-      case MessageEvent.ERROR:
-        console.log(message);
-        break;
-      default:
-        console.error('Wrong eventname from client-socket');
-        break;
-      }
-    });
-  }
-
-  private settingsListener() {
-    this.io.on('settings', (event: string, data: any) => {
-      const setting = data.setting;
-      switch (event) {
-      case SettingEvent.UPDATE:
-        // TODO: add settings to db
-        break;
-      }
-    });
-  }
+  // Proof Of Concept: Settings-channel for e.g. status colors
+  // private settingsListener() {
+  //   this.io.on('settings', (event: string, data: any) => {
+  //     const setting = data.setting;
+  //     switch (event) {
+  //     case SettingEvent.UPDATE:
+  //       // TODO: add settings to db
+  //       break;
+  //     }
+  //   });
+  // }
 }

@@ -1,0 +1,32 @@
+/**
+ * Client input component
+ */
+.assignee-input {
+	margin-top: 25px;
+	padding: 15px 20px;
+
+	&--hidden {
+		display: none;
+	}
+
+	&__field {
+		margin: 0;
+
+		&__btn {
+			float: right;
+
+			span {
+				font-size: 12px !important;
+			}
+		}
+	}
+
+	&__input {
+		margin-left: 10px;
+
+		input {
+			font-size: 12px !important;
+			width: 250px;
+		}
+	}
+}

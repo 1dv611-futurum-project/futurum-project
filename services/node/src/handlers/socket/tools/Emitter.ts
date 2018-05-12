@@ -22,7 +22,7 @@ export default class Emitter {
     this.emitTickets();
     this.emitAssignees();
     this.emitCustomers();
-    this.emitSettings();
+    // this.emitSettings();
     this.emitExpired();
   }
 
@@ -71,6 +71,14 @@ export default class Emitter {
         });
   }
 
+  // /**
+  //  * Proof of concept: channel for settings
+  //  * Emits data to the server on settings channels.
+  //  */
+  // public emitSettings(): void {
+  //   this.io.emit('settings', JSON.stringify([]));
+  // }
+
   /**
    * Emits data to the server on message channels.
    */
@@ -83,13 +91,6 @@ export default class Emitter {
    */
   public emitErrorMessage(message: object): void {
     this.io.emit('messages', JSON.stringify(message));
-  }
-
-  /**
-   * Emits data to the server on settings channels.
-   */
-  public emitSettings(): void {
-    this.io.emit('settings', JSON.stringify([]));
   }
 
   /**

@@ -22,4 +22,31 @@ export default class AssigneeChannel extends Channel {
 	public onAssignees(cb: any) {
 		this.listen(cb);
 	}
+
+	/**
+	 * Emits an addAssignee event to channel
+	 * @public
+	 * @param {Object} assignee - A customer object
+	 */
+	public emitAddAssignee(assignee: object) {
+		this.emit(AssigneeEvent.ADD, assignee);
+	}
+
+	/**
+	 * Emits an editAssignee event to channel
+	 * @public
+	 * @param {Object} assignee - A customer object
+	 */
+	public emitEditAssignee(assignee: object) {
+		this.emit(AssigneeEvent.EDIT, assignee);
+	}
+
+	/**
+	 * Emits a deleteAssignee event to channel
+	 * @public
+	 * @param {Object} assignee - A customer object
+	 */
+	public emitDeleteAssignee(assignee: object) {
+		this.emit(AssigneeEvent.DELETE, assignee);
+	}
 }

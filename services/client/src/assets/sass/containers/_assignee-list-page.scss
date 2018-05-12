@@ -1,0 +1,24 @@
+/**
+ * Clientlist page container
+ */
+.assignee-list-page {
+	&__wrapper {
+		overflow: visible;
+	}
+
+	&__header {
+		margin: 0 0 20px 10px;
+
+		&__title {
+			margin-top: 0;
+			font-size: 20px;
+			font-family: 'Source Sans Pro', sans-serif;
+			font-weight: bold;
+			display: inline-block;
+		}
+
+		&__btn {
+			float: right;
+		}
+	}
+}

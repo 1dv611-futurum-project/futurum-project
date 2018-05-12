@@ -86,11 +86,12 @@ export default class SocketFactory {
 		return new CustomerChannel(this.io);
 	}
 
-	/**
-	 * Initiates a new SettingChannel
-	 * @public
-	 */
-	public settingChannel() {
-		return new SettingChannel(this.io);
-	}
+	// /**
+	//  * Proof Of Concept: Settings-channel for e.g. status colors
+	//  * Initiates a new SettingChannel
+	//  * @public
+	//  */
+	// public settingChannel() {
+	// 	return new SettingChannel(this.io);
+	// }
 }
