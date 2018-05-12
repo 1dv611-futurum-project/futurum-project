@@ -24,7 +24,6 @@ class DBHandler extends events.EventEmitter {
     this.setUpInteractors();
     this.setUpDBListeners();
     // TODO: Change this to handling the same way customers are handled?
-    this.seedAssignees();
   }
 
   /**
@@ -110,14 +109,6 @@ class DBHandler extends events.EventEmitter {
     this.interactors.assignee = new AssigneeInteractor();
     this.interactors.ticket = new TicketInteractor();
     this.interactors.answer = new AnswerInteractor();
-  }
-
-  /**
-   * Seeds assignees for development.
-   */
-  private seedAssignees() {
-    this.addOrUpdate('Assignee', {name: 'Anton Myrberg', email: 'anton@anton.com'}, {email: 'anton@anton.com'});
-    this.addOrUpdate('Assignee', {name: 'Sebastian Borgstedt', email: 'sebbe@sebbe.com'}, {email: 'sebbe@sebbe.com'});
   }
 }
 

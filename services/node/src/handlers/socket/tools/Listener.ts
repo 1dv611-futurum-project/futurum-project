@@ -137,17 +137,16 @@ export default class Listener {
    */
   private assigneeListener() {
     this.io.on('assignees', (event: string, assignee: any) => {
-      const email = Array.isArray(assignee.email) ? assignee.email[0] : assignee.email;
-      assignee.email = email;
 
       switch (event) {
       case AssigneeEvent.ADD:
-        this.db.getOne('assignee', { email })
+        this.db.getOne('assignee', { name: assignee.name, email: assignee.email })
         .then((cust) => {
           if (!cust) {
-            this.db.addOrUpdate('assignee', assignee, { email })
-              .then((result) => console.log(result))
-              .catch((e) => console.log(e));
+            this.db.addOrUpdate('assignee', assignee);
+          } else {
+            const message = new Message('error', 'Den ansvarige finns redan');
+            this.emitter.emitErrorMessage(message);
           }
         })
         .catch((error: any) => {
