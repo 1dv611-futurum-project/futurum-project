@@ -67,6 +67,7 @@ export default class Listener {
               newMessage.fromName = payload.assignee ? payload.assignee.name || 'Futurum Digital' : 'Futurum Digital';
               ticket.body[ticket.body.length - 1] = newMessage;
               payload.body.push(newMessage);
+
               return this.mailSender.sendMessageUpdate(payload);
             })
             .then((payload: any) => {
@@ -82,7 +83,7 @@ export default class Listener {
             });
         break;
       case TicketEvent.READ:
-        this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
+        this.db.addOrUpdate('ticket', { isRead: ticket.isRead }, { ticketId: ticket.ticketId })
             .catch((error: any) => {
               const message = new Message('error', 'Failed to end the notification that the message is read');
               this.emitter.emitErrorMessage(message);
@@ -122,6 +123,11 @@ export default class Listener {
         });
         break;
       case CustomerEvent.DELETE:
+      // Uncomment below to remove all tickets when a customer is removed
+        /*this.db.removeAll('tickets', { from: customer._id })
+        .then(() => {
+          this.db.removeOne('customer', { _id: customer._id })
+        })*/
         this.db.removeOne('customer', { _id: customer._id })
         .catch((error: any) => {
           const message = new Message('error', 'Failed to remove customer from database.');
@@ -140,10 +146,10 @@ export default class Listener {
 
       switch (event) {
       case AssigneeEvent.ADD:
-        this.db.getOne('assignee', { name: assignee.name, email: assignee.email })
-        .then((cust) => {
-          if (!cust) {
-            this.db.addOrUpdate('assignee', assignee);
+        this.db.getOne('assignee', { email: assignee.email })
+        .then((ass) => {
+          if (!ass) {
+            this.db.addOrUpdate('assignee', assignee, { email: assignee.email });
           } else {
             const message = new Message('error', 'Den ansvarige finns redan');
             this.emitter.emitErrorMessage(message);

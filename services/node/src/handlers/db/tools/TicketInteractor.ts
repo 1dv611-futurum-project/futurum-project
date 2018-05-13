@@ -182,15 +182,21 @@ class TicketInteractor extends DBInteractor {
    * Adds customer and assignee references
    * to the ticket object given.
    */
-  private addReferencesToTicket(ticket: ITicket, info: object): Promise<ITicket> {
+  private addReferencesToTicket(ticket: ITicket, info: IReceivedTicket): Promise<ITicket> {
     return new Promise((resolve, reject) => {
       this.getCustomerReference(info as IReceivedTicket)
       .then((reference) => {
-        ticket.from = reference;
+
+        if (info.from) {
+          ticket.from = reference;
+        }
         return this.getAssigneeReference(info as IReceivedTicket);
       })
       .then((reference) => {
-        ticket.assignee = reference;
+        if (info.assignee) {
+          ticket.assignee = reference;
+        }
+
         resolve(ticket);
       })
       .catch((err) => {

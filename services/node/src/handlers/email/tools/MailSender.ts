@@ -84,7 +84,8 @@ class MailSender extends events.EventEmitter {
         resolve(messageID);
       })
       .catch((error) => {
-        reject(new GmailError(error.message || 'Something went wrong while sending emails.'));
+        const message = error ? error.message ? error.message : '' : '';
+        reject(new GmailError( message || 'Something went wrong while sending emails.'));
       });
     });
   }

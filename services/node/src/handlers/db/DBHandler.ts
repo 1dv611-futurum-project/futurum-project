@@ -23,7 +23,6 @@ class DBHandler extends events.EventEmitter {
     this.dbconnection = dbconnection;
     this.setUpInteractors();
     this.setUpDBListeners();
-    // TODO: Change this to handling the same way customers are handled?
   }
 
   /**
