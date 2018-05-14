@@ -5,6 +5,7 @@
 import * as React from 'react';
 import { Select, MenuItem } from 'material-ui';
 import { DropDownSelect } from '../DropDownSelect/DropDownSelect';
+import { StatusNames } from './StatusNames';
 
 /**
  * StatusSelect Props Interface
@@ -19,7 +20,12 @@ export interface IStatusSelect {
  */
 export class StatusSelect extends React.Component<IStatusSelect, any> {
 
-	private static STATUSES: string[] = ['Ej påbörjad', 'Påbörjad', 'Genomförd', 'Stängd'];
+	private static STATUSES: string[] = [
+		StatusNames.WAITING,
+		StatusNames.IN_PROGRESS,
+		StatusNames.DONE,
+		StatusNames.CLOSED
+	];
 
 	constructor(props: any) {
 		super(props);
