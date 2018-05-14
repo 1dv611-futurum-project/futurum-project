@@ -4,3 +4,4 @@ services/node/package-lock.json
 node_modules
 services/client/src/public/dist
 /*/*/.env
+services/node/ts-node-94a6b447580330f9f2b609422537b04239ff3a39df9137e32efd559f1a2935cb/
