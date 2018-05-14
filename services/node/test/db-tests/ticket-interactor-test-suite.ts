@@ -6,6 +6,7 @@ import TicketInteractor from './../../src/handlers/db/tools/TicketInteractor';
 /**
  * Run the tests.
  */
+/*
 export function run() {
   describe('TicketInteractor', () => {
 
@@ -23,3 +24,4 @@ export function run() {
 
   });
 }
+*/

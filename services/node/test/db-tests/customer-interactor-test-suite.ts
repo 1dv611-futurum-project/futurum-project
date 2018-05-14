@@ -6,6 +6,7 @@ import CustomerInteractor from './../../src/handlers/db/tools/CustomerInteractor
 /**
  * Run the tests.
  */
+/*
 export function run() {
   describe('CustomerInteractor', () => {
 
@@ -23,3 +24,4 @@ export function run() {
 
   });
 }
+*/
