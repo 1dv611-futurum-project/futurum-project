@@ -32,13 +32,12 @@ export class Ticket extends React.Component<ITicket, any> {
 		};
 	}
 
-	// TODO: Add componentDidUpdate when database is running on server
-	//
-	// public componentDidUpdate(prevProps: any) {
-	// 	if (prevProps !== this.props) {
-	// 		this.setState({ status: this.props.ticket.status});
-	// 	}
-	// }
+	public componentDidUpdate(prevProps: any) {
+		if (prevProps !== this.props) {
+			const status = this.props.ticket.status;
+			this.setState({ status });
+		}
+	}
 
 	/**
 	 * The render method
@@ -70,7 +69,6 @@ export class Ticket extends React.Component<ITicket, any> {
 				</CardContent>
 				<TicketAction
 					ticket={ticket}
-					onStatusChange={(status: number) => this.setState({ status })}
 					onSend={onSend}
 				/>
 			</Card>

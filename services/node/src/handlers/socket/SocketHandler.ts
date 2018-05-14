@@ -17,7 +17,6 @@ import Message from './models/Message';
 export default class SocketHandler {
   private static readonly PORT: number = 3001;
   private static readonly PATH: string = '/socket';
-  private port: string | number;
   private io: SocketIo.Server;
   private db: any;
   private emailhandler: any;

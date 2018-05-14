@@ -6,7 +6,6 @@ import * as React from 'react';
 import { Badge } from 'material-ui';
 import { Mail } from 'material-ui-icons';
 import { Ticket } from '../../components/Ticket/Ticket';
-import { SnackbarNotice } from '../../components/SnackbarNotice/SnackbarNotice';
 
 /**
  * AllTicketsPage class
@@ -15,10 +14,6 @@ export class AllTicketsPage extends React.Component<any, any> {
 
 	constructor(props: any) {
 		super(props);
-		this.state = {
-			snackMessage: '',
-			snackState: false
-		};
 
 		this.getTickets = this.getTickets.bind(this);
 		this.onStatusChange = this.onStatusChange.bind(this);
@@ -38,11 +33,6 @@ export class AllTicketsPage extends React.Component<any, any> {
 				<div className='tickets__wrapper'>
 					{tickets.reverse()}
 				</div>
-				<SnackbarNotice
-					message={this.state.snackMessage}
-					open={this.state.snackState}
-					onClose={() => this.setState({ snackState: false })}
-				/>
 			</div>
 		);
 	}
@@ -112,14 +102,6 @@ export class AllTicketsPage extends React.Component<any, any> {
 	 * @param {Boolean} send - If customer should get an email about the status change
 	 */
 	private onStatusChange(ticket: any, send: boolean) {
-		const snackMessage = send ? 'Status för ärendet har uppdaterats och skickats till kund.' :
-			'Status för ärendet har uppdaterats.';
-
-		this.setState({
-			snackState: true,
-			snackMessage
-		});
-
 		this.props.ticketAction.emitStatus({ ticket, send });
 	}
 }

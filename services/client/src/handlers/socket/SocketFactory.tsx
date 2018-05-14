@@ -41,8 +41,12 @@ export default class SocketFactory {
 	 * @private
 	 */
 	public isValidToken(cb: any) {
-		this.io.on('connect', () => {
+		this.io.on('connect', (socket: any) => {
 			cb(true);
+		});
+
+		this.io.on('disconnect', (socket: any) => {
+			cb(false);
 		});
 
 		this.io.on('expired', (error: any) => {

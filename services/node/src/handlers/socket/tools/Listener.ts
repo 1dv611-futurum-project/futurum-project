@@ -4,24 +4,26 @@
 
 // Imports.
 import * as SocketIo from 'socket.io';
+import { runInThisContext } from 'vm';
 
 import { TicketEvent } from '../models/TicketEvent';
 import { AssigneeEvent } from '../models/AssigneeEvent';
 import { CustomerEvent } from '../models/CustomerEvent';
 import { SettingEvent } from '../models/SettingEvent';
-import { MessageEvent } from '../models/MessageEvent';
-import Message from '../models/Message';
+
+import SuccessHandler from './SuccessHandler';
+import ErrorHandler from './ErrorHandler';
 
 /**
  * Handles the connection.
  */
 export default class Listener {
-  private io: SocketIo.Server;
+  private io: any;
   private db: any;
   private emitter: any;
   private mailSender: any;
 
-  constructor(io: SocketIo.Server, db: any, mailSender: any, emitter: any) {
+  constructor(io: any, db: any, mailSender: any, emitter: any) {
     this.io = io;
     this.db = db;
     this.emitter = emitter;
@@ -41,53 +43,36 @@ export default class Listener {
       switch (event) {
       case TicketEvent.ASSIGNEE:
         this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
-            .catch((error: any) => {
-              const message = new Message('error', 'Failed to update assignee in the database');
-              this.emitter.emitErrorMessage(message);
-            });
+            .then(() => this.emitter.emitAll())
+            .then(() => new SuccessHandler(this.io).TicketSuccess(TicketEvent.ASSIGNEE))
+            .catch((error: any) => { throw new ErrorHandler(this.io).DbSaveError('ticket'); })
+            .catch((error: any) => error ? console.error(error) : null);
         break;
       case TicketEvent.STATUS:
         this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
             .then((payload: any) => this.mailSender.sendStatusUpdate(payload, data.send))
-            .then((payload: any) => {
-              ticket.replyId.push(payload);
-              this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId });
-            })
-            .catch((error: any) => {
-              const errorMessage = (error.name === 'GmailError')
-                                  ? error.message
-                                  : 'Failed to update status in database, and send to customer.';
-              const message = new Message('error', errorMessage);
-            });
+            .then((payload: any) => this.updateTicket(ticket, payload))
+            .then(() => this.emitter.emitAll())
+            .then(() => new SuccessHandler(this.io).TicketSuccess(TicketEvent.STATUS))
+            .catch((error: any) => { throw new ErrorHandler(this.io).DbSaveError('ticket'); })
+            .catch((error: any) => error ? console.error(error) : null);
         break;
       case TicketEvent.MESSAGE:
         this.db.getOne('ticket', { ticketId: ticket.ticketId })
-            .then((payload: any) => {
-              const newMessage = ticket.body[ticket.body.length - 1];
-              newMessage.fromName = payload.assignee ? payload.assignee.name || 'Futurum Digital' : 'Futurum Digital';
-              ticket.body[ticket.body.length - 1] = newMessage;
-              payload.body.push(newMessage);
-
-              return this.mailSender.sendMessageUpdate(payload);
-            })
-            .then((payload: any) => {
-              ticket.replyId.push(payload);
-              this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId });
-            })
+            .then((payload: any) => this.handleMessage(ticket, payload))
+            .then((payload: any) => this.updateTicket(ticket, payload))
+            .then(() => this.emitter.emitAll())
+            .then(() => new SuccessHandler(this.io).TicketSuccess(TicketEvent.MESSAGE))
             .catch((error: any) => {
-              const errorMessage = (error.name === 'GmailError')
-                                  ? error.message
-                                  : 'Failed to update email-thread in database, and send to customer.';
-              const message = new Message('error', errorMessage);
-              this.emitter.emitErrorMessage(message);
-            });
+              this.emitter.emitAll();
+              throw new ErrorHandler(this.io).SendMessageError();
+            })
+            .catch((error: any) => error ? console.error(error) : null);
         break;
       case TicketEvent.READ:
         this.db.addOrUpdate('ticket', { isRead: ticket.isRead }, { ticketId: ticket.ticketId })
-            .catch((error: any) => {
-              const message = new Message('error', 'Failed to end the notification that the message is read');
-              this.emitter.emitErrorMessage(message);
-            });
+            .catch((error: any) => { throw new ErrorHandler(this.io).DbSaveError('ticket'); })
+            .catch((error: any) => error ? console.error(error) : null);
         break;
       }
     });
@@ -104,35 +89,26 @@ export default class Listener {
       switch (event) {
       case CustomerEvent.ADD:
         this.db.getOne('customer', { email })
-        .then((cust) => {
-          if (!cust) {
-            this.db.addOrUpdate('customer', customer, { email });
-          }
-        })
-        .catch((error: any) => {
-          const message = new Message('error', 'Failed to add customer to database.');
-          this.emitter.emitErrorMessage(message);
-        });
+            .then((cust) => this.handleCustomerAdd(cust, customer))
+            .then(() => this.emitter.emitCustomers())
+            .then(() => new SuccessHandler(this.io).CustomerSuccess(CustomerEvent.ADD))
+            .catch((error: any) => this.handleCustomerAddError(error))
+            .catch((error: any) => error ? console.error(error) : null);
         break;
       case CustomerEvent.EDIT:
         this.db.addOrUpdate('customer', customer, { _id: customer._id })
-        .then(() => this.emitter.emitTickets())
-        .catch((error: any) => {
-          const message = new Message('error', 'Failed to edit customer in database.');
-          this.emitter.emitErrorMessage(message);
-        });
+            .then(() => this.emitter.emitAll())
+            .then(() => new SuccessHandler(this.io).CustomerSuccess(CustomerEvent.EDIT))
+            .catch((error: any) => { throw new ErrorHandler(this.io).DbSaveError('customers'); })
+            .catch((error: any) => error ? console.error(error) : null);
         break;
       case CustomerEvent.DELETE:
-      // Uncomment below to remove all tickets when a customer is removed
-        /*this.db.removeAll('tickets', { from: customer._id })
-        .then(() => {
-          this.db.removeOne('customer', { _id: customer._id })
-        })*/
-        this.db.removeOne('customer', { _id: customer._id })
-        .catch((error: any) => {
-          const message = new Message('error', 'Failed to remove customer from database.');
-          this.emitter.emitErrorMessage(message);
-        });
+        this.db.removeAll('ticket', { from: customer._id })
+            .then(() => this.db.removeOne('customer', { _id: customer._id }))
+            .then(() => this.emitter.emitAll())
+            .then(() => new SuccessHandler(this.io).CustomerSuccess(CustomerEvent.DELETE))
+            .catch((error: any) => { throw new ErrorHandler(this.io).DbSaveError('customers'); })
+            .catch((error: any) => error ? console.error(error) : null);
         break;
       }
     });
@@ -147,32 +123,25 @@ export default class Listener {
       switch (event) {
       case AssigneeEvent.ADD:
         this.db.getOne('assignee', { email: assignee.email })
-        .then((ass) => {
-          if (!ass) {
-            this.db.addOrUpdate('assignee', assignee, { email: assignee.email });
-          } else {
-            const message = new Message('error', 'Den ansvarige finns redan');
-            this.emitter.emitErrorMessage(message);
-          }
-        })
-        .catch((error: any) => {
-          const message = new Message('error', 'Failed to add assignee to database.');
-          this.emitter.emitErrorMessage(message);
-        });
+            .then((ass) => this.handleAssigneeAdd(ass, assignee))
+            .then(() => this.emitter.emitAll())
+            .then(() => new SuccessHandler(this.io).AssigneeSuccess(AssigneeEvent.ADD))
+            .catch((error: any) => this.handleAssigneeAddError(error))
+            .catch((error: any) => error ? console.error(error) : null);
         break;
       case AssigneeEvent.EDIT:
         this.db.addOrUpdate('assignee', assignee, { _id: assignee._id })
-        .catch((error: any) => {
-          const message = new Message('error', 'Failed to edit assignee in database.');
-          this.emitter.emitErrorMessage(message);
-        });
+            .then(() => this.emitter.emitAll())
+            .then(() => new SuccessHandler(this.io).AssigneeSuccess(AssigneeEvent.EDIT))
+            .catch((error: any) => { throw new ErrorHandler(this.io).DbSaveError('assignees'); })
+            .catch((error: any) => error ? console.error(error) : null);
         break;
       case AssigneeEvent.DELETE:
         this.db.removeOne('assignee', { _id: assignee._id })
-        .catch((error: any) => {
-          const message = new Message('error', 'Failed to remove assignee from database.');
-          this.emitter.emitErrorMessage(message);
-        });
+            .then(() => this.emitter.emitAssignees())
+            .then(() => new SuccessHandler(this.io).AssigneeSuccess(AssigneeEvent.DELETE))
+            .catch((error: any) => { throw new ErrorHandler(this.io).DbSaveError('assignees'); })
+            .catch((error: any) => error ? console.error(error) : null);
         break;
       }
     });
@@ -189,4 +158,48 @@ export default class Listener {
   //     }
   //   });
   // }
+
+  private updateTicket(ticket: any, payload: any): any {
+    ticket.replyId.push(payload);
+    return this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId });
+  }
+
+  private handleMessage(ticket, payload): any {
+    const newMessage = ticket.body[ticket.body.length - 1];
+    newMessage.fromName = payload.assignee ? payload.assignee.name || 'Futurum Digital' : 'Futurum Digital';
+    ticket.body[ticket.body.length - 1] = newMessage;
+    payload.body.push(newMessage);
+
+    return this.mailSender.sendMessageUpdate(payload);
+  }
+
+  private handleCustomerAdd(result, customer) {
+    if (!result) {
+      this.db.addOrUpdate('customer', customer, { email: customer.email });
+    } else {
+      return Promise.reject('exists');
+    }
+  }
+
+  private handleCustomerAddError(error: any) {
+    if (error === 'exists') {
+      throw new ErrorHandler(this.io).CustomerExistsError();
+    }
+    throw new ErrorHandler(this.io).DbSaveError('customers');
+  }
+
+  private handleAssigneeAdd(result, assignee) {
+    if (!result) {
+      this.db.addOrUpdate('assignee', assignee, { email: assignee.email });
+    } else {
+      return Promise.reject('exists');
+    }
+  }
+
+  private handleAssigneeAddError(error: any) {
+    if (error === 'exists') {
+      throw new ErrorHandler(this.io).AssigneeExistsError();
+    }
+    throw new ErrorHandler(this.io).DbSaveError('assignees');
+  }
 }

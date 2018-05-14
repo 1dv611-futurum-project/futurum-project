@@ -9,7 +9,6 @@ import 'moment/locale/sv';
 import { TicketOverview } from '../../components/TicketOverview/TicketOverview';
 import { Message } from '../../components/Message/Message';
 import { MessageInput } from '../../components/MessageInput/MessageInput';
-import { SnackbarNotice } from '../../components/SnackbarNotice/SnackbarNotice';
 
 /**
  * TicketPage class
@@ -22,8 +21,6 @@ export class TicketPage extends React.Component<any, any> {
 		this.state = {
 			ticket: false,
 			showNewMessage: false,
-			snackState: false,
-			snackMessage: ''
 		};
 
 		this.onStatusChange = this.onStatusChange.bind(this);
@@ -81,11 +78,6 @@ export class TicketPage extends React.Component<any, any> {
 						}).reverse() : null
 					}
 				</div>
-				<SnackbarNotice
-					message={this.state.snackMessage}
-					open={this.state.snackState}
-					onClose={() => this.setState({ snackState: false })}
-				/>
 			</div>
 		);
 	}
@@ -131,15 +123,6 @@ export class TicketPage extends React.Component<any, any> {
 	 * @param {Boolean} send - If an email should be sent to client about status update
 	 */
 	private onStatusChange(ticket: any, send: boolean) {
-		const snackMessage = send ? 'Status för ärendet har uppdaterats och skickats till kund.' :
-			'Status för ärendet har uppdaterats.';
-
-		this.setState({
-			ticket,
-			snackState: true,
-			snackMessage
-		});
-
 		this.props.ticketAction.emitStatus({ticket, send});
 	}
 
@@ -149,12 +132,6 @@ export class TicketPage extends React.Component<any, any> {
 	 * @param {Number} assignee - The new assignee
 	 */
 	private onAssigneeChange(ticket: any) {
-		this.setState({
-			ticket,
-			snackState: true,
-			snackMessage: `Ärendet har tilldelats ${ticket.assignee ? ticket.assignee.name : 'ingen'}.`
-		});
-
 		this.props.ticketAction.emitAssignee({ ticket });
 	}
 
@@ -164,7 +141,7 @@ export class TicketPage extends React.Component<any, any> {
 	 * @param {String} message - The written message
 	 */
 	private handleMessage(ticket: any) {
-		this.setState({ ticket, showNewMessage: false });
+		this.setState({ showNewMessage: false });
 		this.props.ticketAction.emitMessage({ ticket });
 	}
 }

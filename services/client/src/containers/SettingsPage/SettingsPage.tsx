@@ -8,7 +8,6 @@ import { AddButton } from '../../components/AddButton/AddButton';
 // import { StatusColor } from '../../components/StatusColor/StatusColor';
 import { AssigneeList } from '../../components/AssigneeList/AssigneeList';
 import { AssigneeInput } from '../../components/AssigneeInput/AssigneeInput';
-import { SnackbarNotice } from '../../components/SnackbarNotice/SnackbarNotice';
 
 /**
  * Proof Of Concept
@@ -20,8 +19,6 @@ export class SettingsPage extends React.Component<any, any> {
 		super(props);
 		this.state = {
 			showNewAssignee: false,
-			snackMessage: '',
-			snackState: false
 		};
 		this.addHandler = this.addHandler.bind(this);
 		this.editHandler = this.editHandler.bind(this);
@@ -69,14 +66,6 @@ export class SettingsPage extends React.Component<any, any> {
 						onEdit={this.editHandler}
 						onDelete={this.deleteAssignee}
 					/>
-					<SnackbarNotice
-						message={this.state.snackMessage}
-						open={this.state.snackState}
-						onClose={() => this.setState({ snackState: false })}
-					/>
-
-				{/* <h1 className='settings__header__title'>Redigera ansvariga</h1>
-				<AddButton text='Lägg till ansvariga' onClick={() => { return; }}/> */}
 			</div>
 		);
 	}
@@ -120,35 +109,16 @@ export class SettingsPage extends React.Component<any, any> {
 	 * @param {Object} assignee - The new assignee
 	 */
 	private addAssignee(assignee: any) {
-		this.setState({
-			showNewAssignee: false,
-			snackState: true,
-			snackMessage: 'Den nya ansvarige har lagts till i listan.'
-		});
-
-		this.props.allAssignees.push(assignee);
+		this.setState({ showNewAssignee: false });
 		this.props.assigneeAction.emitAddAssignee(assignee);
 	}
 
 	private editAssignee(assignee: any) {
-		this.setState({
-			showNewAssignee: false,
-			snackState: true,
-			snackMessage: 'Den ansvariges uppgifter har uppdaterats.'
-		});
-
+		this.setState({ showNewAssignee: false });
 		this.props.assigneeAction.emitEditAssignee(assignee);
 	}
 
 	private deleteAssignee(assignee: any) {
-		const index = this.props.allAssignees.indexOf(assignee);
-
-		this.props.allAssignees.splice(index, 1);
-		this.setState({
-			snackState: true,
-			snackMessage: 'Ansvarig har tagits bort från listan.'
-		});
-
 		this.props.assigneeAction.emitDeleteAssignee(assignee);
 	}
 }

@@ -88,17 +88,20 @@ export class App extends React.Component<any, any> {
 	private messageListener() {
 		this.socket.messageChannel().onMessage((message: any) => {
 			message = JSON.parse(message);
-			if (typeof message === 'string') {
-				this.setState({
-					snackMessage: message,
-					snackState: true,
-				});
-			} else {
-				this.setState({
-					snackMessage: message.content,
-					snackState: true,
-					snackError: true
-				});
+			switch (message.type) {
+				case 'success':
+					this.setState({
+						snackMessage: message.content,
+						snackState: true,
+					});
+					break;
+				case 'error':
+					this.setState({
+						snackMessage: message.content,
+						snackState: true,
+						snackError: true
+					});
+					break;
 			}
 		});
 	}

@@ -29,7 +29,6 @@ export default class TicketChannel extends Channel {
 	 * @param {Object} ticket - A ticket object
 	 */
 	public emitStatus(ticket: object) {
-		console.log(ticket);
 		this.emit(TicketEvent.STATUS, ticket);
 	}
 
@@ -39,7 +38,6 @@ export default class TicketChannel extends Channel {
 	 * @param {Object} ticket - A ticket object
 	 */
 	public emitAssignee(ticket: object) {
-		console.log(ticket);
 		this.emit(TicketEvent.ASSIGNEE, ticket);
 	}
 
@@ -49,7 +47,6 @@ export default class TicketChannel extends Channel {
 	 * @param {Object} ticket - A ticket object
 	 */
 	public emitMessage(ticket: object) {
-		console.log(ticket);
 		this.emit(TicketEvent.MESSAGE, ticket);
 	}
 
@@ -59,7 +56,6 @@ export default class TicketChannel extends Channel {
 	 * @param {Object} ticket - A ticket object
 	 */
 	public emitRead(ticket: object) {
-		console.log(ticket);
 		this.emit(TicketEvent.READ, ticket);
 	}
 }

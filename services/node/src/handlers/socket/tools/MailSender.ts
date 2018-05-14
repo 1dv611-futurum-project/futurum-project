@@ -2,6 +2,8 @@
  * Handles the email events.
  */
 
+import ErrorHandler from './ErrorHandler';
+
 /**
  * Handles the email messages.
  */

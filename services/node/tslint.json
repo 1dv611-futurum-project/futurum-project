@@ -12,7 +12,8 @@
         "trailing-comma": false,
         "ordered-imports": false,
         "no-console": false,
-        "member-ordering": false
+        "member-ordering": false,
+        "max-classes-per-file": false
     },
     "rulesDirectory": []
 }

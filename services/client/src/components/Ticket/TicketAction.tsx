@@ -12,7 +12,6 @@ import { Modal } from '../Modal/Modal';
  */
 export interface ITicketAction {
 	ticket: any;
-	onStatusChange(status: number): void;
 	onSend(message: string, mailCustomer: boolean): void;
 }
 
@@ -28,6 +27,13 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 			status: this.props.ticket.status,
 			statusText: ''
 		};
+	}
+
+	public componentDidUpdate(prevProps: any) {
+		if (prevProps !== this.props) {
+			const status = this.props.ticket.status;
+			this.setState({ status });
+		}
 	}
 
 	/**
@@ -60,7 +66,6 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 	 * @param {String} statusText - The status in text
 	 */
 	private handleStatusChange = (status: number, statusText: string): void => {
-		this.props.onStatusChange(status);
 		this.setState({
 			displayModal: true,
 			status,

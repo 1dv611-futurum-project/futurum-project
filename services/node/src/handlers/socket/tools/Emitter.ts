@@ -4,6 +4,7 @@
 
 // Imports.
 import * as SocketIo from 'socket.io';
+import ErrorHandler from './ErrorHandler';
 import Message from './../models/Message';
 
 /**
@@ -22,8 +23,8 @@ export default class Emitter {
     this.emitTickets();
     this.emitAssignees();
     this.emitCustomers();
+    this.emitExpiredCookie();
     // this.emitSettings();
-    this.emitExpired();
   }
 
   /**
@@ -33,11 +34,10 @@ export default class Emitter {
     this.db.getAll('ticket', {})
         .then((tickets: any) => {
           this.io.emit('tickets', JSON.stringify(tickets));
+          this.io.broadcast.emit('tickets', JSON.stringify(tickets));
         })
         .catch((error) => {
-          console.log(error);
-          const message = new Message('error', 'Could not get tickets from DB');
-          this.emitErrorMessage(message);
+          throw new ErrorHandler(this.io).DbFetchError('tickets');
         });
   }
 
@@ -48,11 +48,10 @@ export default class Emitter {
     this.db.getAll('assignee', {})
         .then((assignees: any) => {
           this.io.emit('assignees', JSON.stringify(assignees));
+          this.io.broadcast.emit('assignees', JSON.stringify(assignees));
         })
         .catch((error) => {
-          console.log(error);
-          const message = new Message('error', 'Could not get assignees from DB');
-          this.emitErrorMessage(message);
+          throw new ErrorHandler(this.io).DbFetchError('assignees');
         });
   }
 
@@ -63,21 +62,12 @@ export default class Emitter {
     this.db.getAll('customer', {})
         .then((customers: any) => {
           this.io.emit('customers', JSON.stringify(customers));
+          this.io.broadcast.emit('customers', JSON.stringify(customers));
         })
         .catch((error) => {
-          console.log(error);
-          const message = new Message('error', 'Could not get customers from DB');
-          this.emitErrorMessage(message);
+          throw new ErrorHandler(this.io).DbFetchError('customers');
         });
   }
-
-  // /**
-  //  * Proof of concept: channel for settings
-  //  * Emits data to the server on settings channels.
-  //  */
-  // public emitSettings(): void {
-  //   this.io.emit('settings', JSON.stringify([]));
-  // }
 
   /**
    * Emits data to the server on message channels.
@@ -96,11 +86,19 @@ export default class Emitter {
   /**
    * Emit information about expired jwt.
    */
-  public emitExpired(): void {
+  public emitExpiredCookie(): void {
     const exp = new Date(this.io.decoded_token.exp * 1000).getTime() - new Date().getTime();
     setTimeout(() => {
       this.io.emit('expired');
       this.io.disconnect();
     }, exp);
   }
+
+  // /**
+  //  * Proof of concept: channel for settings
+  //  * Emits data to the server on settings channels.
+  //  */
+  // public emitSettings(): void {
+  //   this.io.emit('settings', JSON.stringify([]));
+  // }
 }
