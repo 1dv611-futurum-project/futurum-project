@@ -111,17 +111,25 @@ export default class Listener {
    * Listens for errors.
    */
   private errorListener() {
-    this.mailReciever.on(IncomingMailEvent.ERROR, (error) => {
+    this.mailReciever.on(IncomingMailEvent.ERROR, (error, mail) => {
       const message = 'Email error. Reload page and double check emails externally.';
       this.socket.emitter.emitErrorMessage(new Message('error', message));
 
-      const errorSubject = 'Error: Something is going wrong with the ticket-system handling incoming emails.';
-      const errorBody = 'Ticket-system is recieving errors from incoming emails.' +
-      'Please reload the app-page or restart the server and double check emails externally.';
-      const to = process.env.IMAP_ERROR_ADDRESS || process.env.IMAP_FORWARDING_ADDRESS;
-      const send = {body: errorBody, subject: errorSubject, to};
+      if (mail) {
+        const to = process.env.IMAP_FORWARDING_ADDRESS;
+        const failSubject = 'Ticket-system failed to handle incoming ticket: ' + mail.subject;
+        const forward = {from: mail.from[0].address, body: mail.text, subject: failSubject};
 
-      this.mailSender.send(send);
+        this.mailSender.forward(forward, mail.messageId, to);
+      } else {
+        const to = process.env.IMAP_ERROR_ADDRESS || process.env.IMAP_FORWARDING_ADDRESS;
+        const errorSubject = 'Error: Something is going wrong with the ticket-system handling incoming emails.';
+        const errorBody = 'Ticket-system is recieving errors from incoming emails.' +
+          'Please reload the app-page or restart the server and double check emails externally.';
+        const send = {body: errorBody, subject: errorSubject, to};
+
+        this.mailSender.send(send);
+      }
     });
   }
 }

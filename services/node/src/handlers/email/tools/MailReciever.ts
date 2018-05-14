@@ -100,6 +100,9 @@ class MailReciever extends events.EventEmitter {
         clearTimeout(this.ongoingTimeout);
       }
       this.ongoingTimeout = setTimeout(() => { this.getUnreadEmails(); }, this.interval);
+    })
+    .catch((error) => {
+      this.handleConnectionError(error, mail);
     });
   }
 
@@ -132,7 +135,10 @@ class MailReciever extends events.EventEmitter {
         }
 
         resolve(type);
-      });
+      })
+      .catch((error) => {
+        reject(error);
+      })
     });
   }
 
@@ -237,7 +243,7 @@ class MailReciever extends events.EventEmitter {
         resolve(found);
       })
       .catch((error) => {
-        this.handleConnectionError(new DBError('Something wrong with the whitelist.'));
+        reject(new DBError('Something wrong with the whitelist.'));
       });
     });
   }
@@ -252,8 +258,12 @@ class MailReciever extends events.EventEmitter {
   /**
    * Emits connection errors.
    */
-  private handleConnectionError(err: Error): void {
-    this.emit(IncomingMailEvent.ERROR, new IMAPError(err) || new IMAPError('Something wrong with the connection.'));
+  private handleConnectionError(err: Error, obj?: object): void {
+    if (err instanceof DBError) {
+      this.emit(IncomingMailEvent.ERROR, new IMAPError(err) || new IMAPError('Something wrong with connection.'), obj);
+    } else {
+      this.emit(IncomingMailEvent.ERROR, new IMAPError(err) || new IMAPError('Something wrong with connection.'));
+    }
   }
 
   /**

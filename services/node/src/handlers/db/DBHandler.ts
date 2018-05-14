@@ -4,11 +4,14 @@
 
 // Imports
 import * as events from 'events';
+import * as mongoose from 'mongoose';
 
+import { DBConnectionError } from './../../config/errors';
 import CustomerInteractor from './tools/CustomerInteractor';
 import AssigneeInteractor from './tools/AssigneeInteractor';
 import TicketInteractor from './tools/TicketInteractor';
 import AnswerInteractor from './tools/AnswerInteractor';
+import DBConnection from './DBConnection';
 
 /**
  * Sets up and handles the database.
@@ -36,17 +39,29 @@ class DBHandler extends events.EventEmitter {
    * Returns the first document of the specific type that matches the info given.
    */
   public getOne(type: string, info: object): Promise<object> {
-    const lowerCaseType = type.toLowerCase();
-    return this.interactors[lowerCaseType].getOne(info);
+    if (!this.isConnected()) {
+      return new Promise((resolve, reject) => {
+        reject(new DBConnectionError('Connection to the database is down'));
+      });
+    } else {
+      const lowerCaseType = type.toLowerCase();
+      return this.interactors[lowerCaseType].getOne(info);
+    }
   }
 
   /**
    * Returns all documents of the specific type that matches the info given.
    */
   public getAll(type: string, info: object): Promise<object[]> {
-    const lowerCaseType = type.toLowerCase();
-    info = info || {};
-    return this.interactors[lowerCaseType].getAll(info);
+    if (!this.isConnected()) {
+      return new Promise((resolve, reject) => {
+        reject(new DBConnectionError('Connection to the database is down'));
+      });
+    } else {
+      const lowerCaseType = type.toLowerCase();
+      info = info || {};
+      return this.interactors[lowerCaseType].getAll(info);
+    }
   }
 
   /**
@@ -58,25 +73,50 @@ class DBHandler extends events.EventEmitter {
    * If more than one matching result is found, all will be updated.
    */
   public addOrUpdate(type: string, info: object, findBy?: object): Promise<object[]> {
-    const lowerCaseType = type.toLowerCase();
-    const conditions = findBy || info;
-    return this.interactors[lowerCaseType].addOrUpdate(info, conditions);
+    if (!this.isConnected()) {
+      return new Promise((resolve, reject) => {
+        reject(new DBConnectionError('Connection to the database is down'));
+      });
+    } else {
+      const lowerCaseType = type.toLowerCase();
+      const conditions = findBy || info;
+      return this.interactors[lowerCaseType].addOrUpdate(info, conditions);
+    }
   }
 
   /**
    * Removes one document of the given type that matches the given attributes.
    */
   public removeOne(type: string, removeOn: object): Promise<object> {
-    const lowerCaseType = type.toLowerCase();
-    return this.interactors[lowerCaseType].removeOne(removeOn);
+    if (!this.isConnected()) {
+      return new Promise((resolve, reject) => {
+        reject(new DBConnectionError('Connection to the database is down'));
+      });
+    } else {
+      const lowerCaseType = type.toLowerCase();
+      return this.interactors[lowerCaseType].removeOne(removeOn);
+    }
   }
 
   /**
    * Removes all document of the given type that matches the given attributes.
    */
   public removeAll(type: string, removeOn: object): Promise<object> {
-    const lowerCaseType = type.toLowerCase();
-    return this.interactors[lowerCaseType].removeAll(removeOn);
+    if (!this.isConnected) {
+      return new Promise((resolve, reject) => {
+        reject(new DBConnectionError('Connection to the database is down'));
+      });
+    } else {
+      const lowerCaseType = type.toLowerCase();
+      return this.interactors[lowerCaseType].removeAll(removeOn);
+    }
+  }
+
+  /**
+   * Checks if theconnection is up.
+   */
+  private isConnected(): boolean {
+    return mongoose.connection.readyState === 1;
   }
 
   /**

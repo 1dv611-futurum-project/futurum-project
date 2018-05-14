@@ -88,3 +88,11 @@ export function CustomerMismatchError(message) {
 }
 
 util.inherits(CustomerMismatchError, DBError);
+
+export function DBConnectionError(message) {
+  Error.captureStackTrace(this, this.constructor);
+  this.name = this.constructor.name;
+  this.message = message;
+}
+
+util.inherits(DBConnectionError, DBError);
