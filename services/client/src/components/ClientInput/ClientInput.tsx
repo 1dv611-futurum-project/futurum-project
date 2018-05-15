@@ -32,9 +32,6 @@ export class ClientInput extends React.Component<IClientInput, any> {
 				email: ''
 			}
 		};
-
-		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handleInput = this.handleInput.bind(this);
 	}
 
 	/**

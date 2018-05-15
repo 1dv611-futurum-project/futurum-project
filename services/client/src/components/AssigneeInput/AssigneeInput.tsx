@@ -32,9 +32,6 @@ export class AssigneeInput extends React.Component<IAssigneeInput, any> {
 				email: ''
 			}
 		};
-
-		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handleInput = this.handleInput.bind(this);
 	}
 
 	/**

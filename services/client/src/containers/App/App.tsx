@@ -93,6 +93,7 @@ export class App extends React.Component<any, any> {
 					this.setState({
 						snackMessage: message.content,
 						snackState: true,
+						snackError: false
 					});
 					break;
 				case 'error':
