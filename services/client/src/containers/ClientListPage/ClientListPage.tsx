@@ -16,7 +16,12 @@ export class ClientListPage extends React.Component<any, any> {
 		super(props);
 
 		this.state = {
-			showNewClient: false
+			showNewClient: false,
+			isEdit: false,
+			client: {
+				name: '',
+				email: ''
+			}
 		};
 	}
 

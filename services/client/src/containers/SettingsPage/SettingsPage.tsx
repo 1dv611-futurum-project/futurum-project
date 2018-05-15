@@ -19,7 +19,12 @@ export class SettingsPage extends React.Component<any, any> {
 		super(props);
 
 		this.state = {
-			showNewAssignee: false
+			showNewAssignee: false,
+			isEdit: false,
+			assignee: {
+				name: '',
+				email: ''
+			}
 		};
 	}
 
