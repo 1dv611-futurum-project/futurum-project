@@ -23,12 +23,31 @@ export interface IAssigneeList {
  */
 export class AssigneeList extends React.Component<IAssigneeList, any> {
 
+	constructor(props: any) {
+		super(props);
+		this.state = {
+			assignees: []
+		};
+	}
+
+	public componentDidMount() {
+		const { assignees } = this.props;
+		this.setState({ assignees });
+	}
+
+	public componentDidUpdate(prevProps: any) {
+		if (prevProps !== this.props) {
+			const { assignees } = this.props;
+			this.setState({ assignees });
+		}
+	}
+
 	/**
 	 * The render method
 	 * @public
 	 */
 	public render() {
-		const { assignees, onEdit, onDelete } = this.props;
+		const { onEdit, onDelete } = this.props;
 
 		return (
 			<Table className='assignee-list__table'>
@@ -40,7 +59,7 @@ export class AssigneeList extends React.Component<IAssigneeList, any> {
 				</TableRow>
 			</TableHead>
 			<TableBody className='assignee-list__table__body'>
-				{ assignees.map((assignee: any, i: any) => {
+				{ this.state.assignees.map((assignee: any, i: any) => {
 					return (
 						<AssigneeRow
 							key={i}

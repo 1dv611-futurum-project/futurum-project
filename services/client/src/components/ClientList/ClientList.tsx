@@ -23,12 +23,31 @@ export interface IClientList {
  */
 export class ClientList extends React.Component<IClientList, any> {
 
+	constructor(props: any) {
+		super(props);
+		this.state = {
+			customers: []
+		};
+	}
+
+	public componentDidMount() {
+		const { customers } = this.props;
+		this.setState({ customers });
+	}
+
+	public componentDidUpdate(prevProps: any) {
+		if (prevProps !== this.props) {
+			const { customers } = this.props;
+			this.setState({ customers });
+		}
+	}
+
 	/**
 	 * The render method
 	 * @public
 	 */
 	public render() {
-		const { customers, onEdit, onDelete } = this.props;
+		const { onEdit, onDelete } = this.props;
 
 		return (
 			<Table className='client-list__table'>
@@ -41,7 +60,7 @@ export class ClientList extends React.Component<IClientList, any> {
 				</TableRow>
 			</TableHead>
 			<TableBody className='client-list__table__body'>
-				{ customers.map((client: any, i: any) => {
+				{ this.state.customers.map((client: any, i: any) => {
 					return (
 						<ClientRow
 							key={i}
