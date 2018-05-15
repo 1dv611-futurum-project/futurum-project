@@ -1,6 +1,5 @@
 version: '3'
 services:
-
     # Reverse proxy (Nginx)
     reverse-proxy:
         image: futurumtest/reverse-proxy:test
