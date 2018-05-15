@@ -175,7 +175,7 @@ export default class Listener {
 
 	private handleCustomerAdd(result, customer) {
 		if (!result) {
-			this.db.addOrUpdate('customer', customer, { email: customer.email });
+			return this.db.addOrUpdate('customer', customer, { email: customer.email });
 		} else {
 			return Promise.reject('exists');
 		}
@@ -190,7 +190,7 @@ export default class Listener {
 
 	private handleAssigneeAdd(result, assignee) {
 		if (!result) {
-			this.db.addOrUpdate('assignee', assignee, { email: assignee.email });
+			return this.db.addOrUpdate('assignee', assignee, { email: assignee.email });
 		} else {
 			return Promise.reject('exists');
 		}
