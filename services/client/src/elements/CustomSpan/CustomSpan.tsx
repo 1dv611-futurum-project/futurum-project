@@ -18,6 +18,12 @@ class CustomSpan extends React.Component<any, any> {
 		};
 	}
 
+	/**
+	 * componentDidUpdate
+	 * Updates current color in state
+	 * @public
+	 * @param {Object} prevProps - The previous props
+	 */
 	public componentDidUpdate(prevProps: any) {
 		if (prevProps !== this.props) {
 			this.setState({

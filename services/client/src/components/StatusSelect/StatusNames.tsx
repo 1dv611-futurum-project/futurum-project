@@ -1,5 +1,5 @@
 /**
- * Status names
+ * Status names for Tickets
  */
 export enum StatusNames {
 	WAITING = 'Ej påbörjad',

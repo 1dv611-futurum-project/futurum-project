@@ -32,11 +32,13 @@ export class ClientInput extends React.Component<IClientInput, any> {
 				email: ''
 			}
 		};
-
-		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handleInput = this.handleInput.bind(this);
 	}
 
+	/**
+	 * componentDidUpdate
+	 * Updates current client in state
+	 * @public
+	 */
 	public componentDidUpdate(prevProps: any) {
 		if (this.props !== prevProps && this.props.client) {
 			const { client } = this.props;
@@ -102,6 +104,11 @@ export class ClientInput extends React.Component<IClientInput, any> {
 		this.setState({ client });
 	}
 
+	/**
+	 * Resets input fields after submit
+	 * @private
+	 * @param {Object} prevProps - The previous props
+	 */
 	private resetInput(event: any) {
 		const client = {
 			name: '',

@@ -14,15 +14,15 @@ export class ClientListPage extends React.Component<any, any> {
 
 	constructor(props: any) {
 		super(props);
+
 		this.state = {
 			showNewClient: false,
+			isEdit: false,
+			client: {
+				name: '',
+				email: ''
+			}
 		};
-		this.addHandler = this.addHandler.bind(this);
-		this.editHandler = this.editHandler.bind(this);
-
-		this.addClient = this.addClient.bind(this);
-		this.editClient = this.editClient.bind(this);
-		this.deleteClient = this.deleteClient.bind(this);
 	}
 
 	/**
@@ -62,7 +62,7 @@ export class ClientListPage extends React.Component<any, any> {
 	 * Handles input box for add client
 	 * @private
 	 */
-	private addHandler() {
+	private addHandler = () => {
 		const showNewClient = !this.state.showNewClient;
 		const isEdit = false;
 		const client = { name: '', email: '' };
@@ -74,7 +74,7 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @private
 	 * @param {Object} client - The existing client data
 	 */
-	private editHandler(client: any) {
+	private editHandler = (client: any) => {
 		const showNewClient = !this.state.showNewClient;
 		const isEdit = true;
 		this.setState({ showNewClient, isEdit, client });
@@ -85,7 +85,7 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @private
 	 * @param {Object} client - The new client
 	 */
-	private addClient(client: any) {
+	private addClient = (client: any) => {
 		this.setState({ showNewClient: false });
 		this.props.customerAction.emitAddCustomer(client);
 	}
@@ -95,7 +95,7 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @private
 	 * @param {Object} client - The existing client data
 	 */
-	private editClient(client: any) {
+	private editClient = (client: any) => {
 		this.setState({ showNewClient: false });
 		this.props.customerAction.emitEditCustomer(client);
 	}
@@ -105,7 +105,7 @@ export class ClientListPage extends React.Component<any, any> {
 	 * @private
 	 * @param {Object} client - The existing client data
 	 */
-	private deleteClient(client: any) {
+	private deleteClient = (client: any) => {
 		this.props.customerAction.emitDeleteCustomer(client);
 	}
 }

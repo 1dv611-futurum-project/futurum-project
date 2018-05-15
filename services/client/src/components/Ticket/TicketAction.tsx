@@ -29,6 +29,12 @@ export class TicketAction extends React.Component<ITicketAction, any> {
 		};
 	}
 
+	/**
+	 * componentDidUpdate
+	 * Updates current ticket in state
+	 * @public
+	 * @param {Object} prevProps - The previous props
+	 */
 	public componentDidUpdate(prevProps: any) {
 		if (prevProps !== this.props) {
 			const status = this.props.ticket.status;

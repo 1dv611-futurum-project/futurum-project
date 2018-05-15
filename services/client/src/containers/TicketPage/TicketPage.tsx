@@ -22,10 +22,6 @@ export class TicketPage extends React.Component<any, any> {
 			ticket: false,
 			showNewMessage: false,
 		};
-
-		this.onStatusChange = this.onStatusChange.bind(this);
-		this.onAssigneeChange = this.onAssigneeChange.bind(this);
-		this.handleMessage = this.handleMessage.bind(this);
 	}
 
 	/**
@@ -122,7 +118,7 @@ export class TicketPage extends React.Component<any, any> {
 	 * @param {Object} ticket - The full ticket data
 	 * @param {Boolean} send - If an email should be sent to client about status update
 	 */
-	private onStatusChange(ticket: any, send: boolean) {
+	private onStatusChange = (ticket: any, send: boolean) => {
 		this.props.ticketAction.emitStatus({ticket, send});
 	}
 
@@ -131,7 +127,7 @@ export class TicketPage extends React.Component<any, any> {
 	 * @private
 	 * @param {Number} assignee - The new assignee
 	 */
-	private onAssigneeChange(ticket: any) {
+	private onAssigneeChange = (ticket: any) => {
 		this.props.ticketAction.emitAssignee({ ticket });
 	}
 
@@ -140,7 +136,7 @@ export class TicketPage extends React.Component<any, any> {
 	 * @private
 	 * @param {String} message - The written message
 	 */
-	private handleMessage(ticket: any) {
+	private handleMessage = (ticket: any) => {
 		this.setState({ showNewMessage: false });
 		this.props.ticketAction.emitMessage({ ticket });
 	}

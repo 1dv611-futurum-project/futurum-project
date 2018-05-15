@@ -63,6 +63,7 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 		const assignees = this.props.assignees.map((assignee: any) => {
 			return assignee.name;
 		});
+
 		assignees.unshift('--');
 		const assignee = this.state.assignee ? this.state.assignee.name : '--';
 
@@ -134,7 +135,6 @@ export class TicketOverview extends React.Component<ITicketOverview, any> {
 		const newAssignee = assignees[selected] === '--' ? null : assignees[selected - 1];
 
 		ticket.assignee = newAssignee;
-		console.log(selected, ticket.assignee);
 		this.props.handleAssigneeChange(ticket);
 	}
 

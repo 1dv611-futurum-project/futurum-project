@@ -17,15 +17,15 @@ export class SettingsPage extends React.Component<any, any> {
 
 	constructor(props: any) {
 		super(props);
+
 		this.state = {
 			showNewAssignee: false,
+			isEdit: false,
+			assignee: {
+				name: '',
+				email: ''
+			}
 		};
-		this.addHandler = this.addHandler.bind(this);
-		this.editHandler = this.editHandler.bind(this);
-
-		this.addAssignee = this.addAssignee.bind(this);
-		this.editAssignee = this.editAssignee.bind(this);
-		this.deleteAssignee = this.deleteAssignee.bind(this);
 	}
 
 	/**
@@ -82,10 +82,10 @@ export class SettingsPage extends React.Component<any, any> {
 	// }
 
 	/**
-	 * Handles input box for add client
+	 * Handles input box for add assignee
 	 * @private
 	 */
-	private addHandler() {
+	private addHandler = ()  => {
 		const showNewAssignee = !this.state.showNewAssignee;
 		const isEdit = false;
 		const assignee = { name: '', email: '' };
@@ -93,11 +93,11 @@ export class SettingsPage extends React.Component<any, any> {
 	}
 
 	/**
-	 * Handles input box for edit client
+	 * Handles input box for edit assignee
 	 * @private
-	 * @param {Object} client - The existing client data
+	 * @param {Object} assignee - The existing assignee data
 	 */
-	private editHandler(assignee: any) {
+	private editHandler = (assignee: any) => {
 		const showNewAssignee = !this.state.showNewAssignee;
 		const isEdit = true;
 		this.setState({ showNewAssignee, isEdit, assignee });
@@ -108,17 +108,27 @@ export class SettingsPage extends React.Component<any, any> {
 	 * @private
 	 * @param {Object} assignee - The new assignee
 	 */
-	private addAssignee(assignee: any) {
+	private addAssignee = (assignee: any) => {
 		this.setState({ showNewAssignee: false });
 		this.props.assigneeAction.emitAddAssignee(assignee);
 	}
 
-	private editAssignee(assignee: any) {
+	/**
+	 * Edits an existing assignee
+	 * @private
+	 * @param {Object} assignee - The existing assignee data
+	 */
+	private editAssignee = (assignee: any) => {
 		this.setState({ showNewAssignee: false });
 		this.props.assigneeAction.emitEditAssignee(assignee);
 	}
 
-	private deleteAssignee(assignee: any) {
+	/**
+	 * Deletes an existing assignee
+	 * @private
+	 * @param {Object} assignee - The existing assignee data
+	 */
+	private deleteAssignee = (assignee: any) => {
 		this.props.assigneeAction.emitDeleteAssignee(assignee);
 	}
 }
