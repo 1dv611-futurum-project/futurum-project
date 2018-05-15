@@ -9,7 +9,7 @@ import TextArea from 'react-textarea-autosize';
 import Button from '../../elements/CustomButton/CustomButton';
 
 /**
- * ClientInput Props Interface
+ * AssigneeInput Props Interface
  */
 export interface IAssigneeInput {
 	onClick(client: any): void;
@@ -19,7 +19,7 @@ export interface IAssigneeInput {
 }
 
 /**
- * MessageInput class
+ * AssigneeInput class
  */
 export class AssigneeInput extends React.Component<IAssigneeInput, any> {
 
@@ -37,6 +37,12 @@ export class AssigneeInput extends React.Component<IAssigneeInput, any> {
 		this.handleInput = this.handleInput.bind(this);
 	}
 
+	/**
+	 * componentDidUpdate
+	 * Updates current assignee in state
+	 * @public
+	 * @param {Object} prevProps - The previous props
+	 */
 	public componentDidUpdate(prevProps: any) {
 		if (this.props !== prevProps && this.props.assignee) {
 			const { assignee } = this.props;
@@ -102,6 +108,10 @@ export class AssigneeInput extends React.Component<IAssigneeInput, any> {
 		this.setState({ assignee });
 	}
 
+	/**
+	 * Resets input fields after submit
+	 * @private
+	 */
 	private resetInput(event: any) {
 		const assignee = {
 			name: '',

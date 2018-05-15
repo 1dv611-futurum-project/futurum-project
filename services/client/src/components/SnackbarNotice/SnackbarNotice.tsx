@@ -4,8 +4,7 @@
  */
 import * as React from 'react';
 import { Snackbar, IconButton } from 'material-ui';
-import { Error } from 'material-ui-icons';
-import { Close } from 'material-ui-icons';
+import { Error, Close } from 'material-ui-icons';
 
 /**
  * SnackbarNotice Props Interface

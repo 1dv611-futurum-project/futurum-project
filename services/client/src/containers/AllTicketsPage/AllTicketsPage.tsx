@@ -16,7 +16,6 @@ export class AllTicketsPage extends React.Component<any, any> {
 		super(props);
 
 		this.getTickets = this.getTickets.bind(this);
-		this.onStatusChange = this.onStatusChange.bind(this);
 	}
 
 	/**
@@ -101,7 +100,7 @@ export class AllTicketsPage extends React.Component<any, any> {
 	 * @param {String} ticket - The full ticket data
 	 * @param {Boolean} send - If customer should get an email about the status change
 	 */
-	private onStatusChange(ticket: any, send: boolean) {
+	private onStatusChange = (ticket: any, send: boolean) => {
 		this.props.ticketAction.emitStatus({ ticket, send });
 	}
 }

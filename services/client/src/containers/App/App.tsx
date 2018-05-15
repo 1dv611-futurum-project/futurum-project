@@ -131,7 +131,7 @@ export class App extends React.Component<any, any> {
 			ticketAction: this.socket.ticketChannel(),
 			customerAction: this.socket.customerChannel(),
 			assigneeAction: this.socket.assigneeChannel(),
-			// settingsAction: this.socket.settingChannel(),
+			// settingsAction: this.socket.settingChannel()
 		};
 
 		return (
