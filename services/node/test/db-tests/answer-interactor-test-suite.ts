@@ -19,8 +19,7 @@ export function run() {
           sut.addOrUpdate(getAnswer(), resolve).then((result) => {
             expect(result).should.eventually
             .be.rejectedWith('Could not add answer to thread in database.')
-            .and.be.an.instanceOf(DBCreationError)
-            .and.have.property('code', 'EFOO');
+            .and.be.an.instanceOf(DBCreationError);
           });
         });
       });

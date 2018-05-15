@@ -30,18 +30,15 @@ import ImapHandlerTests = require('./email-tests/imap-handler-test-suite');
 import mailSenderTests = require('./email-tests/mail-sender-test-suite');
 
 // Runs
-
+answerInteractorTests.run();
 /*
-customerInteractorTests.run();
-ticketInteractorTests.run();
-*/
 mongooseTests.run();
 dbConnectionTests.run();
 dbHandlerTests.run();
-answerInteractorTests.run();
-assigneeInteractorTests.run();
+
 xoauthTests.run();
 ImapHandlerTests.run();
 ImapConnectionTests.run();
 mailSenderTests.run();
 emailHandlerTests.run();
+*/
