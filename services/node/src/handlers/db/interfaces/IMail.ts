@@ -3,7 +3,7 @@
  */
 
 export default interface IMail {
-  received?: Date;
-  body?: string;
-  fromName?: string;
+	received?: Date;
+	body?: string;
+	fromName?: string;
 }

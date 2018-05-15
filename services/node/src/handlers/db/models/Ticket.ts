@@ -11,15 +11,15 @@ export interface ITicketModel extends ITicket, Document {}
 autoIncrement.initialize(mongoose.connection);
 
 const TicketSchema: Schema = new Schema({
-  mailId: {type: String, required: true},
-  replyId: {type: [String], required: false, default: []},
-  status: {type: Number, default: 0},
-  assignee: { type: Schema.Types.ObjectId, ref: 'Assignee', required: false },
-  title: {type: String, required: false},
-  from: { type: Schema.Types.ObjectId, ref: 'Customer' },
-  created: {type: Date, required: true},
-  isRead: {type: Boolean, required: true, default: false},
-  body: {type: [], default: []}
+	mailId: {type: String, required: true},
+	replyId: {type: [String], required: false, default: []},
+	status: {type: Number, default: 0},
+	assignee: { type: Schema.Types.ObjectId, ref: 'Assignee', required: false },
+	title: {type: String, required: false},
+	from: { type: Schema.Types.ObjectId, ref: 'Customer' },
+	created: {type: Date, required: true},
+	isRead: {type: Boolean, required: true, default: false},
+	body: {type: [], default: []}
 });
 
 TicketSchema.plugin(autoIncrement.plugin, { model: 'Ticket', field: 'ticketId', startAt: 100 });

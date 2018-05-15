@@ -2,10 +2,10 @@
  * Assignee interface.
  */
 
- // Imports
+// Imports
 import { Schema } from 'mongoose';
 
 export default interface IAssignee {
-  email?: string;
-  name?: string;
+	email?: string;
+	name?: string;
 }

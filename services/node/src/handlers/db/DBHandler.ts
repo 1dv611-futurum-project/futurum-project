@@ -18,137 +18,137 @@ import DBConnection from './DBConnection';
  */
 class DBHandler extends events.EventEmitter {
 
-  private dbconnection;
-  private interactors;
+	private dbconnection;
+	private interactors;
 
-  constructor(dbconnection) {
-    super();
-    this.dbconnection = dbconnection;
-    this.setUpInteractors();
-    this.setUpDBListeners();
-  }
+	constructor(dbconnection) {
+		super();
+		this.dbconnection = dbconnection;
+		this.setUpInteractors();
+		this.setUpDBListeners();
+	}
 
-  /**
-   * Connects to the database with the connectionstring given.
-   */
-  public connect(connectionString: string) {
-    this.dbconnection.connect(connectionString);
-  }
+	/**
+	 * Connects to the database with the connectionstring given.
+	 */
+	public connect(connectionString: string) {
+		this.dbconnection.connect(connectionString);
+	}
 
-  /**
-   * Returns the first document of the specific type that matches the info given.
-   */
-  public getOne(type: string, info: object): Promise<object> {
-    if (!this.isConnected()) {
-      return new Promise((resolve, reject) => {
-        reject(new DBConnectionError('Connection to the database is down'));
-      });
-    } else {
-      const lowerCaseType = type.toLowerCase();
-      return this.interactors[lowerCaseType].getOne(info);
-    }
-  }
+	/**
+	 * Returns the first document of the specific type that matches the info given.
+	 */
+	public getOne(type: string, info: object): Promise<object> {
+		if (!this.isConnected()) {
+			return new Promise((resolve, reject) => {
+				reject(new DBConnectionError('Connection to the database is down'));
+			});
+		} else {
+			const lowerCaseType = type.toLowerCase();
+			return this.interactors[lowerCaseType].getOne(info);
+		}
+	}
 
-  /**
-   * Returns all documents of the specific type that matches the info given.
-   */
-  public getAll(type: string, info: object): Promise<object[]> {
-    if (!this.isConnected()) {
-      return new Promise((resolve, reject) => {
-        reject(new DBConnectionError('Connection to the database is down'));
-      });
-    } else {
-      const lowerCaseType = type.toLowerCase();
-      info = info || {};
-      return this.interactors[lowerCaseType].getAll(info);
-    }
-  }
+	/**
+	 * Returns all documents of the specific type that matches the info given.
+	 */
+	public getAll(type: string, info: object): Promise<object[]> {
+		if (!this.isConnected()) {
+			return new Promise((resolve, reject) => {
+				reject(new DBConnectionError('Connection to the database is down'));
+			});
+		} else {
+			const lowerCaseType = type.toLowerCase();
+			info = info || {};
+			return this.interactors[lowerCaseType].getAll(info);
+		}
+	}
 
-  /**
-   * Adds the given object of the given type to the databse.
-   * @param info - The info of the object to add.
-   * @param findBy - The property to look for in case of updating
-   * a document rather than adding one. If a document with the property is found
-   * that one will be updated with the new information, and no new document will be created.
-   * If more than one matching result is found, all will be updated.
-   */
-  public addOrUpdate(type: string, info: object, findBy?: object): Promise<object[]> {
-    if (!this.isConnected()) {
-      return new Promise((resolve, reject) => {
-        reject(new DBConnectionError('Connection to the database is down'));
-      });
-    } else {
-      const lowerCaseType = type.toLowerCase();
-      const conditions = findBy || info;
-      return this.interactors[lowerCaseType].addOrUpdate(info, conditions);
-    }
-  }
+	/**
+	 * Adds the given object of the given type to the databse.
+	 * @param info - The info of the object to add.
+	 * @param findBy - The property to look for in case of updating
+	 * a document rather than adding one. If a document with the property is found
+	 * that one will be updated with the new information, and no new document will be created.
+	 * If more than one matching result is found, all will be updated.
+	 */
+	public addOrUpdate(type: string, info: object, findBy?: object): Promise<object[]> {
+		if (!this.isConnected()) {
+			return new Promise((resolve, reject) => {
+				reject(new DBConnectionError('Connection to the database is down'));
+			});
+		} else {
+			const lowerCaseType = type.toLowerCase();
+			const conditions = findBy || info;
+			return this.interactors[lowerCaseType].addOrUpdate(info, conditions);
+		}
+	}
 
-  /**
-   * Removes one document of the given type that matches the given attributes.
-   */
-  public removeOne(type: string, removeOn: object): Promise<object> {
-    if (!this.isConnected()) {
-      return new Promise((resolve, reject) => {
-        reject(new DBConnectionError('Connection to the database is down'));
-      });
-    } else {
-      const lowerCaseType = type.toLowerCase();
-      return this.interactors[lowerCaseType].removeOne(removeOn);
-    }
-  }
+	/**
+	 * Removes one document of the given type that matches the given attributes.
+	 */
+	public removeOne(type: string, removeOn: object): Promise<object> {
+		if (!this.isConnected()) {
+			return new Promise((resolve, reject) => {
+				reject(new DBConnectionError('Connection to the database is down'));
+			});
+		} else {
+			const lowerCaseType = type.toLowerCase();
+			return this.interactors[lowerCaseType].removeOne(removeOn);
+		}
+	}
 
-  /**
-   * Removes all document of the given type that matches the given attributes.
-   */
-  public removeAll(type: string, removeOn: object): Promise<object> {
-    if (!this.isConnected) {
-      return new Promise((resolve, reject) => {
-        reject(new DBConnectionError('Connection to the database is down'));
-      });
-    } else {
-      const lowerCaseType = type.toLowerCase();
-      return this.interactors[lowerCaseType].removeAll(removeOn);
-    }
-  }
+	/**
+	 * Removes all document of the given type that matches the given attributes.
+	 */
+	public removeAll(type: string, removeOn: object): Promise<object> {
+		if (!this.isConnected) {
+			return new Promise((resolve, reject) => {
+				reject(new DBConnectionError('Connection to the database is down'));
+			});
+		} else {
+			const lowerCaseType = type.toLowerCase();
+			return this.interactors[lowerCaseType].removeAll(removeOn);
+		}
+	}
 
-  /**
-   * Checks if theconnection is up.
-   */
-  private isConnected(): boolean {
-    return mongoose.connection.readyState === 1;
-  }
+	/**
+	 * Checks if theconnection is up.
+	 */
+	private isConnected(): boolean {
+		return mongoose.connection.readyState === 1;
+	}
 
-  /**
-   * Sets up listeners on the database connection.
-   */
-  private setUpDBListeners(): void {
-    this.dbconnection.on('connection-error', (err) => {
-      this.emit('error', err);
-    });
+	/**
+	 * Sets up listeners on the database connection.
+	 */
+	private setUpDBListeners(): void {
+		this.dbconnection.on('connection-error', (err) => {
+			this.emit('error', err);
+		});
 
-    this.dbconnection.on('ready', () => {
-      this.emit('ready');
-    });
+		this.dbconnection.on('ready', () => {
+			this.emit('ready');
+		});
 
-    this.dbconnection.on('disconnected', () => {
-      this.emit('disconnected');
-    });
-    this.dbconnection.on('close', () => {
-      this.emit('disconnected');
-    });
-  }
+		this.dbconnection.on('disconnected', () => {
+			this.emit('disconnected');
+		});
+		this.dbconnection.on('close', () => {
+			this.emit('disconnected');
+		});
+	}
 
-  /**
-   * Sets up the database interactors.
-   */
-  private setUpInteractors() {
-    this.interactors = {};
-    this.interactors.customer = new CustomerInteractor();
-    this.interactors.assignee = new AssigneeInteractor();
-    this.interactors.ticket = new TicketInteractor();
-    this.interactors.answer = new AnswerInteractor();
-  }
+	/**
+	 * Sets up the database interactors.
+	 */
+	private setUpInteractors() {
+		this.interactors = {};
+		this.interactors.customer = new CustomerInteractor();
+		this.interactors.assignee = new AssigneeInteractor();
+		this.interactors.ticket = new TicketInteractor();
+		this.interactors.answer = new AnswerInteractor();
+	}
 }
 
 // Exports.

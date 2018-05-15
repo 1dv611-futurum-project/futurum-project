@@ -11,9 +11,9 @@ const socketport = process.env.SOCKET_PORT || 3001;
 
 // Start the server.
 App.listen(serverport, (err) => {
-  if (err) {
-    return console.error(err);
-  }
+	if (err) {
+		return console.error(err);
+	}
 
-  return console.log(`Server is listening on ${serverport}`);
+	return console.log(`Server is listening on ${serverport}`);
 });

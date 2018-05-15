@@ -12,31 +12,31 @@ const sut = new AnswerInteractor();
  * Run the tests.
  */
 export function run() {
-  describe('AnswerInteractor', () => {
-    describe('addOrUpdate', () => {
-      it('should throw database error', (done) => {
-        return new Promise((resolve) => {
-          sut.addOrUpdate(getAnswer(), resolve).then((result) => {
-            expect(result).should.eventually
-            .be.rejectedWith('Could not add answer to thread in database.')
-            .and.be.an.instanceOf(DBCreationError);
-          });
-        });
-      });
-    });
+	describe('AnswerInteractor', () => {
+		describe('addOrUpdate', () => {
+			it('should throw database error', (done) => {
+				return new Promise((resolve) => {
+					sut.addOrUpdate(getAnswer(), resolve).then((result) => {
+						expect(result).should.eventually
+						.be.rejectedWith('Could not add answer to thread in database.')
+						.and.be.an.instanceOf(DBCreationError);
+					});
+				});
+			});
+		});
 
-  });
+	});
 }
 
 /**
  * Help functions
  */
 function getAnswer(): any {
-  return {
-    mailId: 'rStr23',
-    inAnswerTo: 'question',
-    received: 'may14',
-    body: 'A question about',
-    fromName: 'Nils-Oskar'
-  } as IReceivedAnswer;
+	return {
+		mailId: 'rStr23',
+		inAnswerTo: 'question',
+		received: 'may14',
+		body: 'A question about',
+		fromName: 'Nils-Oskar'
+	} as IReceivedAnswer;
 }

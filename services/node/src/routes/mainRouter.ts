@@ -2,7 +2,7 @@
  * Main router.
  */
 
- // Imports.
+// Imports.
 import * as express from 'express';
 import { Application, Router, Request, Response, NextFunction, Error } from 'express';
 
@@ -12,33 +12,33 @@ const mainRouter = express.Router();
  * Router class
  */
 class MainRouter {
-  private mainRouter: Router;
+	private mainRouter: Router;
 
-  constructor() {
-    this.mainRouter = mainRouter;
-    this.mountRoutes();
-  }
+	constructor() {
+		this.mainRouter = mainRouter;
+		this.mountRoutes();
+	}
 
-  /**
-   * Returns the router.
-   */
-  get Router(): Router {
-    return this.mainRouter;
-  }
+	/**
+	 * Returns the router.
+	 */
+	get Router(): Router {
+		return this.mainRouter;
+	}
 
-  /**
-   * Mounts the routes.
-   */
-  private mountRoutes(): void {
-    this.mainRouter.get('/connection', this.connectionRoute);
-  }
+	/**
+	 * Mounts the routes.
+	 */
+	private mountRoutes(): void {
+		this.mainRouter.get('/connection', this.connectionRoute);
+	}
 
-  /**
-   * Target route for checking the connection status to the IMAP server.
-   */
-  private connectionRoute(request: express.Request, response: express.Response): void {
-    response.sendStatus(200);
-  }
+	/**
+	 * Target route for checking the connection status to the IMAP server.
+	 */
+	private connectionRoute(request: express.Request, response: express.Response): void {
+		response.sendStatus(200);
+	}
 }
 
 // Exports.

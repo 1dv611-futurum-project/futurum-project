@@ -4,8 +4,8 @@
 
 // Exports.
 export default interface IEmail {
-  from?: string;
-  to?: string;
-  subject: string;
-  body: string;
+	from?: string;
+	to?: string;
+	subject: string;
+	body: string;
 }

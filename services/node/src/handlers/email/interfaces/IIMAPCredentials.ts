@@ -4,9 +4,9 @@
 
 // Exports.
 export default interface IIMAPCredentials {
-  user: string;
-  accessToken: string;
-  refreshToken: string;
-  clientID: string;
-  clientSecret: string;
+	user: string;
+	accessToken: string;
+	refreshToken: string;
+	clientID: string;
+	clientSecret: string;
 }

@@ -4,9 +4,9 @@
 
 // Exports.
 export default interface IReceivedAnswer {
-  mailId: string;
-  inAnswerTo: string;
-  received: string;
-  body: string;
-  fromName: string;
+	mailId: string;
+	inAnswerTo: string;
+	received: string;
+	body: string;
+	fromName: string;
 }

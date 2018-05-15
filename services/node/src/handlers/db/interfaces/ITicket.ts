@@ -2,18 +2,18 @@
  * Ticket interface.
  */
 
- // Imports
+// Imports
 import IMail from './IMail';
 
 export default interface ITicket {
-  ticketId?: number;
-  mailId: string;
-  replyId: string[];
-  status?: number;
-  assignee?: string;
-  title?: string;
-  from?: string;
-  created?: Date;
-  isRead: boolean;
-  body?: IMail[];
+	ticketId?: number;
+	mailId: string;
+	replyId: string[];
+	status?: number;
+	assignee?: string;
+	title?: string;
+	from?: string;
+	created?: Date;
+	isRead: boolean;
+	body?: IMail[];
 }
