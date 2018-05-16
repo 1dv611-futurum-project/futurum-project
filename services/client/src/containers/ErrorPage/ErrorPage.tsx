@@ -3,7 +3,6 @@
  * @module containers/ErrorPage/ErrorPage
  */
 import * as React from 'react';
-import { Paper } from 'material-ui';
 
 /**
  * ErrorPage class
