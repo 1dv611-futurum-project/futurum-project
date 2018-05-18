@@ -13,13 +13,16 @@ import { IMAPError } from '../../src/config/errors';
 import { IMAPConnectionEvent } from './../../src/handlers/email/events/IMAPConnectionEvents';
 import { IncomingMailEvent } from './../../src/handlers/email/events/IncomingMailEvents';
 
+const mockDB  = {getAll: () => new Promise((resolve, reject) => {resolve([{email: 'address'}]); })};
+const sut = new MailReciever(mockDB);
+
 /**
  * Run the tests.
  */
 export function run() {
 	describe('MailReciever', () => {
 		after((done) => {
-			MailReciever.disconnect();
+			sut.disconnect();
 			done();
 		});
 
@@ -27,7 +30,7 @@ export function run() {
 			const ConnectionMock = getInterfaceMock();
 
 			before((done) => {
-				MailReciever.connect(sinon.stub(ConnectionMock));
+				sut.connect(sinon.stub(ConnectionMock));
 				done();
 			});
 
@@ -46,12 +49,12 @@ export function run() {
 			const ConnectionMock = getInterfaceMock();
 
 			before((done) => {
-				MailReciever.connect(sinon.stub(ConnectionMock));
+				sut.connect(sinon.stub(ConnectionMock));
 				done();
 			});
 
 			it('should disconnect', (done) => {
-				MailReciever.disconnect();
+				sut.disconnect();
 				expect(ConnectionMock.closeConnection.called).to.equal(true);
 				done();
 			});
@@ -61,7 +64,7 @@ export function run() {
 			const EmitMock = getInterfaceMock();
 
 			before((done) => {
-				MailReciever.connect(EmitMock);
+				sut.connect(EmitMock);
 				done();
 			});
 
@@ -77,7 +80,7 @@ export function run() {
 
 				before((done) => {
 					ticketSpy = sinon.spy();
-					MailReciever.on(IncomingMailEvent.TICKET, ticketSpy);
+					sut.on(IncomingMailEvent.TICKET, ticketSpy);
 					EmitMock.emit(IMAPConnectionEvent.MAIL, ticket);
 					done();
 				});
@@ -106,7 +109,7 @@ export function run() {
 
 				before((done) => {
 					answerSpy = sinon.spy();
-					MailReciever.on(IncomingMailEvent.ANSWER, answerSpy);
+					sut.on(IncomingMailEvent.ANSWER, answerSpy);
 					EmitMock.emit(IMAPConnectionEvent.MAIL, answer);
 					done();
 				});
@@ -126,7 +129,7 @@ export function run() {
 				let errorSpy;
 				before((done) => {
 					errorSpy = sinon.spy();
-					IMAPHandler.on(IncomingMailEvent.ERROR, errorSpy);
+					sut.on(IncomingMailEvent.ERROR, errorSpy);
 					EmitMock.emit(IMAPConnectionEvent.ERROR, new Error());
 					done();
 				});
@@ -152,7 +155,7 @@ export function run() {
 				let tamperSpy;
 				before((done) => {
 					tamperSpy = sinon.spy();
-					MailReciever.on(IncomingMailEvent.TAMPER, tamperSpy);
+					sut.on(IncomingMailEvent.TAMPER, tamperSpy);
 					EmitMock.emit(IMAPConnectionEvent.CHANGE);
 					done();
 				});
@@ -179,7 +182,7 @@ export function run() {
 				let unauthSpy;
 				before((done) => {
 					unauthSpy = sinon.spy();
-					MailReciever.on(IncomingMailEvent.UNAUTH, unauthSpy);
+					sut.on(IncomingMailEvent.UNAUTH, unauthSpy);
 					EmitMock.emit(IMAPConnectionEvent.UNAUTH);
 					done();
 				});
@@ -201,7 +204,7 @@ export function run() {
 				let messageSpy;
 				before((done) => {
 					messageSpy = sinon.spy();
-					MailReciever.on(IncomingMailEvent.MESSAGE, messageSpy);
+					sut.on(IncomingMailEvent.MESSAGE, messageSpy);
 					EmitMock.emit(IMAPConnectionEvent.SERVER);
 					done();
 				});

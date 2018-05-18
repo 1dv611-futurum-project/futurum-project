@@ -232,6 +232,7 @@ class MailReciever extends events.EventEmitter {
 
 			this.db.getAll('customer', {})
 			.then((customers) => {
+
 				const whitelist = customers.map((customer) => customer.email);
 
 				whitelist.forEach((approved) => {
