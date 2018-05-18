@@ -1,6 +1,8 @@
 /**
  * Customer event types
  */
+
+// Exports
 export enum CustomerEvent {
 	CHANNEL = 'customers',
 	ADD = 'customer_add',

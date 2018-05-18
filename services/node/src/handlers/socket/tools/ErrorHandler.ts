@@ -1,9 +1,11 @@
-
-import Message from '../models/Message';
-
 /**
  * Handles the error messages to client.
  */
+
+// Imports
+import Message from '../models/Message';
+
+// Exports
 export default class ErrorHandler extends Error {
 	private m: Message;
 	private io: any;

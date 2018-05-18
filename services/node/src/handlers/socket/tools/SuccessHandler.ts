@@ -17,6 +17,9 @@ export default class SuccessHandler {
 		this.io = io;
 	}
 
+	/**
+	 * Ticket-success-events.
+	 */
 	public TicketSuccess(collection: string) {
 		switch (collection) {
 			case TicketEvent.ASSIGNEE:
@@ -34,6 +37,9 @@ export default class SuccessHandler {
 		}
 	}
 
+	/**
+	 * Customer-success-events.
+	 */
 	public CustomerSuccess(collection: string, info?: string) {
 		switch (collection) {
 			case CustomerEvent.ADD:
@@ -51,6 +57,9 @@ export default class SuccessHandler {
 		}
 	}
 
+	/**
+	 * Assignee-success-events.
+	 */
 	public AssigneeSuccess(collection: string, info?: string) {
 		switch (collection) {
 			case AssigneeEvent.ADD:
@@ -68,6 +77,9 @@ export default class SuccessHandler {
 		}
 	}
 
+	/**
+	 * Emits the success event.
+	 */
 	public emitSuccessMessage(message: object): void {
 		this.io.emit('messages', JSON.stringify(message));
 	}

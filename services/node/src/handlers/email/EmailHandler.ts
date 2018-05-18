@@ -51,6 +51,9 @@ class EmailHandler {
 		this.MailReciever.connect(this.IMAPConnection);
 	}
 
+	/**
+	 * Starts listener for incoming emails.
+	 */
 	public startMailListener(socket: any) {
 		this.Listener.listen(socket, this.db, this.MailSender, this.MailReciever);
 	}

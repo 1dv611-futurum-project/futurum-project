@@ -36,10 +36,16 @@ export default class SocketHandler {
 		this.onConnect();
 	}
 
+	/**
+	 * Sets the path for the socket.
+	 */
 	private config(): void {
 		this.io = SocketIo({ path: SocketHandler.PATH });
 	}
 
+	/**
+	 * Authorizes the connecting client.
+	 */
 	private authorize(): void {
 		this.io.use(SocketIoJwt.authorize({
 			secret: 'secret',
@@ -47,10 +53,16 @@ export default class SocketHandler {
 		}));
 	}
 
+	/**
+	 * Listens for client connections.
+	 */
 	private listen(): void {
 		this.io.listen(SocketHandler.PORT);
 	}
 
+	/**
+	 * Starts listener and emits all info on client connect.
+	 */
 	private onConnect(): void {
 		this.io.on('connection', (socket: any) => {
 			this.emitter = new Emitter(socket, this.db);

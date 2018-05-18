@@ -1,6 +1,8 @@
 /**
  * Assignee event types
  */
+
+// Exports
 export enum AssigneeEvent {
 	CHANNEL = 'assignees',
 	ADD = 'assignee_add',

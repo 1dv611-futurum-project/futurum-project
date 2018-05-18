@@ -17,6 +17,9 @@ export default class Listener {
 	private mailSender: any;
 	private mailReciever: any;
 
+	/**
+	 * Starts the listeners on incoming mail events.
+	 */
 	public listen(socket: any, db: any, mailSender: any, mailReciever: any) {
 		this.socket = socket;
 		this.db = db;
@@ -28,6 +31,9 @@ export default class Listener {
 		this.errorListener();
 	}
 
+	/**
+	 * Listens for incoming emails.
+	 */
 	private incomingMailListener() {
 		this.mailReciever.on(IncomingMailEvent.TICKET, (mail: IReceivedTicket) => {
 			this.db.addOrUpdate(IncomingMailEvent.TICKET, mail, { mailId: mail.mailId })

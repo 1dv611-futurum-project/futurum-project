@@ -1,6 +1,8 @@
 /**
  * IMAPConnection event types
  */
+
+// Exports
 export enum IMAPConnectionEvent {
 	ERROR = 'error',
 	SERVER = 'server',

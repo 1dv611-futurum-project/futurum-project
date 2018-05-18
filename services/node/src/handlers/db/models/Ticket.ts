@@ -1,15 +1,16 @@
 /**
  * Mongoose Schema Ticket Model.
  */
+
+ // Imports
 import { Document, Schema, Model, model} from 'mongoose';
 import * as autoIncrement from 'mongoose-auto-increment';
 import * as mongoose from 'mongoose';
 import ITicket from './../interfaces/ITicket';
 
-export interface ITicketModel extends ITicket, Document {}
-
 autoIncrement.initialize(mongoose.connection);
 
+// Schema
 const TicketSchema: Schema = new Schema({
 	mailId: {type: String, required: true},
 	replyId: {type: [String], required: false, default: []},
@@ -24,4 +25,6 @@ const TicketSchema: Schema = new Schema({
 
 TicketSchema.plugin(autoIncrement.plugin, { model: 'Ticket', field: 'ticketId', startAt: 100 });
 
+// Exports
+export interface ITicketModel extends ITicket, Document {}
 export default model<ITicketModel>('Ticket', TicketSchema);

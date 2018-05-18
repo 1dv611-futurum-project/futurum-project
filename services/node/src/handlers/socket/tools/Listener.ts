@@ -30,6 +30,9 @@ export default class Listener {
 		this.mailSender = mailSender;
 	}
 
+	/**
+	 * Starts listening for all client-events.
+	 */
 	public startListeners() {
 		this.ticketListener();
 		this.customerListener();
@@ -37,6 +40,9 @@ export default class Listener {
 		// this.settingsListener();
 	}
 
+	/**
+	 * Listens for events concerning ticket-changes.
+	 */
 	private ticketListener() {
 		this.io.on('tickets', (event: string, data: any) => {
 			const ticket = data.ticket;
@@ -159,11 +165,17 @@ export default class Listener {
 	//   });
 	// }
 
+	/**
+	 * Updates ticket in the database.
+	 */
 	private updateTicket(ticket: any, payload: any): any {
 		ticket.replyId.push(payload);
 		return this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId });
 	}
 
+	/**
+	 * Creates and sends a message to an email.
+	 */
 	private handleMessage(ticket, payload): any {
 		const newMessage = ticket.body[ticket.body.length - 1];
 		newMessage.fromName = payload.assignee ? payload.assignee.name || 'Futurum Digital' : 'Futurum Digital';
@@ -173,6 +185,9 @@ export default class Listener {
 		return this.mailSender.sendMessageUpdate(payload);
 	}
 
+	/**
+	 * Adds customer to the database.
+	 */
 	private handleCustomerAdd(result, customer) {
 		if (!result) {
 			return this.db.addOrUpdate('customer', customer, { email: customer.email });
@@ -181,6 +196,9 @@ export default class Listener {
 		}
 	}
 
+	/**
+	 * Handles customer-errors when adding customers.
+	 */
 	private handleCustomerAddError(error: any) {
 		if (error === 'exists') {
 			throw new ErrorHandler(this.io).CustomerExistsError();
@@ -188,6 +206,9 @@ export default class Listener {
 		throw new ErrorHandler(this.io).DbSaveError('customers');
 	}
 
+	/**
+	 * Adds assignee to the database.
+	 */
 	private handleAssigneeAdd(result, assignee) {
 		if (!result) {
 			return this.db.addOrUpdate('assignee', assignee, { email: assignee.email });
@@ -196,6 +217,9 @@ export default class Listener {
 		}
 	}
 
+	/**
+	 * Handles assignee-errors when adding assignees to the database.
+	 */
 	private handleAssigneeAddError(error: any) {
 		if (error === 'exists') {
 			throw new ErrorHandler(this.io).AssigneeExistsError();

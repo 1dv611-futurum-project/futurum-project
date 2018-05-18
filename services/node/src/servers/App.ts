@@ -45,6 +45,9 @@ class App {
 		this.handleDB();
 	}
 
+	/**
+	 * Activates all middleware.
+	 */
 	private middleware(): void {
 		this.express.use(bodyParser.json());
 		this.express.use(bodyParser.urlencoded({ extended: false }));
@@ -55,6 +58,9 @@ class App {
 		this.express.use(middleware.updateIMAPConnection(this.emailHandler));
 	}
 
+	/**
+	 * Mount routes.
+	 */
 	private mountRoutes(): void {
 		this.express.use('/', this.mainRouter);
 		this.express.use('/node', this.mainRouter);
@@ -62,10 +68,16 @@ class App {
 		this.express.all('*', this.emptyHandler);
 	}
 
+	/**
+	 * Sets errorhandler.
+	 */
 	private handleErrors(): void {
 		this.express.use(this.errorHandler);
 	}
 
+	/**
+	 * Connects DB and listens for DB errors.
+	 */
 	private handleDB(): void {
 		this.DBHandler.on('error', (error) => {
 			console.error(error);
@@ -76,6 +88,9 @@ class App {
 		this.DBHandler.connect(App.DB_CONNECTION);
 	}
 
+	/**
+	 * Starts listening for incoming emails.
+	 */
 	private handleIncomingEmails(): void {
 		this.emailHandler.startMailListener(this.socketHandler);
 	}

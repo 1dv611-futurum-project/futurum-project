@@ -19,6 +19,9 @@ export default class Emitter {
 		this.db = db;
 	}
 
+	/**
+	 * Emits all data to the client.
+	 */
 	public emitAll() {
 		this.emitTickets();
 		this.emitAssignees();

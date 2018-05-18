@@ -1,6 +1,8 @@
 /**
  * Ticket event types
  */
+
+// Exports
 export enum TicketEvent {
 	CHANNEL = 'tickets',
 	STATUS = 'ticket_status',

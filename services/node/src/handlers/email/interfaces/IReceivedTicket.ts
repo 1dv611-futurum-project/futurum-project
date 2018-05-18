@@ -15,6 +15,7 @@ export default interface IReceivedTicket {
 	body: IMail[];
 }
 
+// Local interfaces
 interface ICustomer {
 	name: string;
 	email: string;

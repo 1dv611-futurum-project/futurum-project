@@ -13,6 +13,7 @@ export default interface IReceivedEmail {
 	html?: string;
 }
 
+// Local interfaces
 interface ICustomer {
 	name: string;
 	address: string;

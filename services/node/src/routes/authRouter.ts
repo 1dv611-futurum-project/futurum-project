@@ -44,6 +44,9 @@ class AuthRouter {
 		this.authRouter.get('/google/callback/redirect', this.redirectToClient);
 	}
 
+	/**
+	 * Authorizes against gmail with passport.
+	 */
 	private passportAuth(opts: object): ((req: Request, res: Response, next: NextFunction) => void) {
 		return (req: Request, res: Response, next: NextFunction): void => {
 			passport.authenticate('gmail', opts, (err, user, info) => {

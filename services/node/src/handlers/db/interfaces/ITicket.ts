@@ -5,6 +5,7 @@
 // Imports
 import IMail from './IMail';
 
+// Exports
 export default interface ITicket {
 	ticketId?: number;
 	mailId: string;

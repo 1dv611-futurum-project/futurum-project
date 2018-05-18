@@ -1,6 +1,8 @@
 /**
  * Incoming mail event types
  */
+
+// Exports
 export enum IncomingMailEvent {
 	ERROR = 'error',
 	FORWARD = 'forward',

@@ -1,6 +1,8 @@
 /**
  * Message model for error and success communication
  */
+
+// Exports
 export default class Message {
 
 	private type: string;
