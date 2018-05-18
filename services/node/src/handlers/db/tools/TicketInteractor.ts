@@ -195,7 +195,6 @@ class TicketInteractor extends DBInteractor {
 			.then((reference) => {
 				if (info.assignee) {
 					ticket.assignee = reference;
-					console.log(ticket.assignee)
 				}
 
 				resolve(ticket);

@@ -11,6 +11,8 @@ import Message from './../../socket/models/Message';
  * Handles the connection.
  */
 export default class Listener {
+	private static latestErrorSecondsSinceEpoch;
+
 	private socket: any;
 	private db: any;
 	private emitter: any;
@@ -121,13 +123,7 @@ export default class Listener {
 			const message = 'Email error. Reload page and double check emails externally.';
 			this.socket.emitter.emitErrorMessage(new Message('error', message));
 
-			if (mail) {
-				const to = process.env.IMAP_FORWARDING_ADDRESS;
-				const failSubject = 'Ticket-system failed to handle incoming ticket: ' + mail.subject;
-				const forward = {from: mail.from[0].address, body: mail.text, subject: failSubject};
-
-				this.mailSender.forward(forward, mail.messageId, to);
-			} else {
+			if (this.notContinuousError() && !mail) {
 				const to = process.env.IMAP_ERROR_ADDRESS || process.env.IMAP_FORWARDING_ADDRESS;
 				const errorSubject = 'Error: Something is going wrong with the ticket-system handling incoming emails.';
 				const errorBody = 'Ticket-system is recieving errors from incoming emails.' +
@@ -135,7 +131,27 @@ export default class Listener {
 				const send = {body: errorBody, subject: errorSubject, to};
 
 				this.mailSender.send(send);
+			} else if (mail) {
+				const to = process.env.IMAP_FORWARDING_ADDRESS;
+				const failSubject = 'Ticket-system failed to handle incoming ticket: ' + mail.subject;
+				const forward = {from: mail.from[0].address, body: mail.text, subject: failSubject};
+
+				this.mailSender.forward(forward, mail.messageId, to);
 			}
 		});
+	}
+
+	/**
+	 * Checks that the errors are not continuous, so as to not spam error-emails.
+	 */
+	private notContinuousError() {
+		const secondsSinceLastError = (new Date().getTime() / 1000) - (Listener.latestErrorSecondsSinceEpoch || 0);
+
+		if (secondsSinceLastError > 600) {
+			Listener.latestErrorSecondsSinceEpoch = (new Date().getTime() / 1000);
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
