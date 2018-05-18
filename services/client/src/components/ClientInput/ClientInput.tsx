@@ -30,7 +30,8 @@ export class ClientInput extends React.Component<IClientInput, any> {
 			client: {
 				name: '',
 				email: ''
-			}
+			},
+			validationFailed: false
 		};
 	}
 
@@ -52,6 +53,7 @@ export class ClientInput extends React.Component<IClientInput, any> {
 	 */
 	public render() {
 		const { open } = this.props;
+		const { validationFailed } = this.state;
 		const cssClasses = open ? 'client-list client-input' : 'client-list client-input client-input--hidden';
 
 		return (
@@ -80,6 +82,9 @@ export class ClientInput extends React.Component<IClientInput, any> {
 						}
 					</Button>
 				</form>
+				{validationFailed && (
+					<p className='client-input__error'>Alla fält måste fyllas i innan formuläret kan skickas.</p>
+				)}
 			</Paper>
 		);
 	}
@@ -90,6 +95,12 @@ export class ClientInput extends React.Component<IClientInput, any> {
 	 */
 	private handleSubmit = (event: any) => {
 		event.preventDefault();
+
+		if (this.state.client.name.length < 1 || this.state.client.email.length < 1) {
+			this.setState({ validationFailed: true });
+			return;
+		}
+
 		this.props.onClick(this.state.client);
 		this.resetInput(event);
 	}
@@ -114,6 +125,6 @@ export class ClientInput extends React.Component<IClientInput, any> {
 			name: '',
 			email: ''
 		};
-		this.setState({ client });
+		this.setState({ client, validationFailed: false });
 	}
 }
