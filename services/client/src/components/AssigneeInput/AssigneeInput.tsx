@@ -30,7 +30,8 @@ export class AssigneeInput extends React.Component<IAssigneeInput, any> {
 			assignee: {
 				name: '',
 				email: ''
-			}
+			},
+			validationFailed: false
 		};
 	}
 
@@ -53,6 +54,7 @@ export class AssigneeInput extends React.Component<IAssigneeInput, any> {
 	 */
 	public render() {
 		const { open } = this.props;
+		const { validationFailed } = this.state;
 		const cssClasses = open ? 'assignee-list assignee-input' : 'assignee-list assignee-input assignee-input--hidden';
 
 		return (
@@ -81,6 +83,9 @@ export class AssigneeInput extends React.Component<IAssigneeInput, any> {
 						}
 					</Button>
 				</form>
+				{validationFailed && (
+					<p className='assignee-input__error'>Alla fält måste fyllas i innan formuläret kan skickas.</p>
+				)}
 			</Paper>
 		);
 	}
@@ -91,6 +96,12 @@ export class AssigneeInput extends React.Component<IAssigneeInput, any> {
 	 */
 	private handleSubmit = (event: any) => {
 		event.preventDefault();
+
+		if (this.state.assignee.name.length < 1 || this.state.assignee.email.length < 1) {
+			this.setState({ validationFailed: true });
+			return;
+		}
+
 		this.props.onClick(this.state.assignee);
 		this.resetInput(event);
 	}
@@ -114,6 +125,6 @@ export class AssigneeInput extends React.Component<IAssigneeInput, any> {
 			name: '',
 			email: ''
 		};
-		this.setState({ assignee });
+		this.setState({ assignee, validationFailed: false });
 	}
 }

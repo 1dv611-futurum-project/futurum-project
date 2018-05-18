@@ -1,5 +1,5 @@
 /**
- * Client input component
+ * Assignee input component
  */
 .assignee-input {
 	margin-top: 25px;
@@ -28,5 +28,11 @@
 			font-size: 12px !important;
 			width: 250px;
 		}
+	}
+
+	&__error {
+		color: $red;
+		font-size: 10px;
+		margin: 5px 0 0 10px;
 	}
 }
