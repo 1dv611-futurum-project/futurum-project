@@ -28,7 +28,8 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 		super(props);
 
 		this.state = {
-			message: ''
+			message: '',
+			validationFailed: false
 		};
 	}
 
@@ -38,7 +39,10 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 	 */
 	public render() {
 		const { open } = this.props;
+		const { validationFailed } = this.state;
 		const cssClasses = open ? 'message message-input' : 'message message-input message-input--hidden';
+		const footerClasses = validationFailed ?
+			'message-input__footer message-input__footer--error' : 'message-input__footer';
 
 		return (
 			<Paper className={cssClasses}>
@@ -51,7 +55,8 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 					value={this.state.message}
 					onChange={(e) => this.setState({ message: e.target.value})}
 				/>
-				<div className='message-input__footer'>
+				{validationFailed && (<p className='message-input__error'>Det här fältet får inte lämnas tomt.</p>)}
+				<div className={footerClasses}>
 					<Button theme={true} block={true} onClick={this.handleClick}>
 						Skicka
 					</Button>
@@ -65,13 +70,18 @@ export class MessageInput extends React.Component<IMessageInput, any> {
 	 * @private
 	 */
 	private handleClick = () => {
+		if (this.state.message.length < 1) {
+			this.setState({ validationFailed: true });
+			return;
+		}
+
 		this.props.ticket.body.push({
 			received: moment().format(),
 			body: this.state.message,
 			fromName: this.props.ticket.assignee ? this.props.ticket.assignee.name : 'Futurum Digital'
 		});
 
-		this.setState({ message: '' });
+		this.setState({ message: '', validationFailed: false });
 		this.props.onClick(this.props.ticket);
 	}
 }

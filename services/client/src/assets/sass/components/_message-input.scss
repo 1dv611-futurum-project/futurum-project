@@ -28,12 +28,20 @@
 	&__footer {
 		text-align: right;
 
-		&__btn {
-			margin-top: 10px !important;
+		&--error {
+			margin-top: -10px;
+		}
 
+		&__btn {
 			span {
 				font-size: 12px !important;
 			}
 		}
+	}
+
+	&__error {
+		color: $red;
+		font-size: 10px;
+		margin: 0;
 	}
 }
