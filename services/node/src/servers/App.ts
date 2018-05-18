@@ -22,7 +22,7 @@ import Message from '../handlers/socket/models/Message';
  * Express app.
  */
 class App {
-	private static DB_CONNECTION =  'mongodb://futurum-db:27017';
+	private static DB_CONNECTION =  'mongodb://developer:test@ds117070.mlab.com:17070/futurum_test';
 
 	public express: Application;
 	private mainRouter: Router;

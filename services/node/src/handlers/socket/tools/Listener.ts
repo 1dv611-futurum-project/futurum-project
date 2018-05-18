@@ -46,6 +46,7 @@ export default class Listener {
 	private ticketListener() {
 		this.io.on('tickets', (event: string, data: any) => {
 			const ticket = data.ticket;
+			ticket.assignee = ticket.assignee || '-';
 			switch (event) {
 				case TicketEvent.ASSIGNEE:
 					this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })

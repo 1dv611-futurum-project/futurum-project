@@ -195,6 +195,7 @@ class TicketInteractor extends DBInteractor {
 			.then((reference) => {
 				if (info.assignee) {
 					ticket.assignee = reference;
+					console.log(ticket.assignee)
 				}
 
 				resolve(ticket);
@@ -248,7 +249,9 @@ class TicketInteractor extends DBInteractor {
 	 */
 	private getAssigneeReference(info: IReceivedTicket): Promise<string> {
 		return new Promise((resolve, reject) => {
-			if (info.assignee) {
+			if (info.assignee && info.assignee === '-') {
+				resolve(null);
+			} else if (info.assignee) {
 				Assignee.findOne({email: info.assignee.email})
 				.then((assignee) => {
 					resolve(assignee._id);
