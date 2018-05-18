@@ -22,10 +22,6 @@ describe('<SnackbarNotice />', () => {
 
 	it('should have a message', () => {
 		const expected = props.message;
-		expect(wrapper.find(Snackbar).props().message.props.children).to.equal(expected);
+		expect(wrapper.find(Snackbar).props().message.props.children[1]).to.equal(expected);
 	});
-
-	// it('should close on button click', () => {
-	// 	// TODO: Test the close button functionality
-	// });
 });

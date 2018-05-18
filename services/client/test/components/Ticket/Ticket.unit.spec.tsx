@@ -21,7 +21,9 @@ describe('<Ticket />', () => {
 				email: 'email'
 			},
 			created: '2018-04-27T23:25:05.000Z',
-			assignee: 'assignee',
+			assignee: {
+				name: 'assignee'
+			},
 			status: 0
 		},
 		onSend: (fn: any) => fn
@@ -55,6 +57,6 @@ describe('<Ticket />', () => {
 
 	it('should have a ticket assignee', () => {
 		expect(wrapper.find('.ticket__content__information').at(1).text())
-			.to.equal('Tilldelat: ' + props.ticket.assignee);
+			.to.equal('Tilldelat: ' + props.ticket.assignee.name);
 	});
 });
