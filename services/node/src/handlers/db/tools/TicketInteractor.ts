@@ -163,7 +163,7 @@ class TicketInteractor extends DBInteractor {
 			ticket.title = info.title;
 		}
 
-		if (info.status) {
+		if (info.status || info.status === 0) {
 			ticket.status = info.status;
 		}
 
