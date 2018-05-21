@@ -61,7 +61,12 @@ export default class Listener {
 					.then((payload: any) => this.updateTicket(ticket, payload))
 					.then(() => this.emitter.emitAll())
 					.then(() => new SuccessHandler(this.io).TicketSuccess(TicketEvent.STATUS))
-					.catch((error: any) => { throw new ErrorHandler(this.io).DbSaveError('ticket'); })
+					.catch((error: any) => {
+						if (error.name === 'GmailError') {
+							throw new ErrorHandler(this.io).SendMessageError();
+						}
+						throw new ErrorHandler(this.io).DbSaveError('ticket');
+					})
 					.catch((error: any) => error ? console.error(error) : null);
 					break;
 				case TicketEvent.MESSAGE:

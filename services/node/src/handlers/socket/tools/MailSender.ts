@@ -33,6 +33,9 @@ class MailSender {
 				this.emailhandler.Outgoing.send(mail, payload[0].mailId)
 				.then((mailID) => {
 					resolve(mailID);
+				})
+				.catch((err) => {
+					reject(err);
 				});
 			} else {
 				resolve();
