@@ -170,7 +170,9 @@ export default class Listener {
 	 * Updates ticket in the database.
 	 */
 	private updateTicket(ticket: any, payload: any): any {
-		ticket.replyId.push(payload);
+		if (payload) {
+			ticket.replyId.push(payload);
+		}
 		return this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId });
 	}
 
