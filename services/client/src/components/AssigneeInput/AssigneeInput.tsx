@@ -43,7 +43,7 @@ export class AssigneeInput extends React.Component<IAssigneeInput, any> {
 	 */
 	public componentDidUpdate(prevProps: any) {
 		if (this.props !== prevProps && this.props.assignee) {
-			const { assignee } = this.props;
+			const { assignee } = JSON.parse(JSON.stringify(this.props));
 			this.setState({ assignee });
 		}
 	}

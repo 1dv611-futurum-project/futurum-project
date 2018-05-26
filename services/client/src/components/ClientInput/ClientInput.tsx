@@ -42,7 +42,7 @@ export class ClientInput extends React.Component<IClientInput, any> {
 	 */
 	public componentDidUpdate(prevProps: any) {
 		if (this.props !== prevProps && this.props.client) {
-			const { client } = this.props;
+			const { client } = JSON.parse(JSON.stringify(this.props));
 			this.setState({ client });
 		}
 	}
@@ -102,7 +102,7 @@ export class ClientInput extends React.Component<IClientInput, any> {
 		}
 
 		this.props.onClick(this.state.client);
-		this.resetInput(event);
+		this.resetInput();
 	}
 
 	/**
@@ -120,7 +120,7 @@ export class ClientInput extends React.Component<IClientInput, any> {
 	 * @private
 	 * @param {Object} prevProps - The previous props
 	 */
-	private resetInput(event: any) {
+	private resetInput() {
 		const client = {
 			name: '',
 			email: ''
