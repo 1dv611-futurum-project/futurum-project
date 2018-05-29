@@ -52,7 +52,7 @@ export default class Listener {
 					this.db.addOrUpdate('ticket', ticket, { ticketId: ticket.ticketId })
 					.then(() => this.emitter.emitAll())
 					.then(() => new SuccessHandler(this.io).TicketSuccess(TicketEvent.ASSIGNEE))
-					.catch((error: any) => { throw new ErrorHandler(this.io).DbSaveError('ticket'); })
+					.catch((error: any) => { throw new ErrorHandler(this.io).DbSaveError('ticket', error.message); })
 					.catch((error: any) => error ? console.error(error) : null);
 					break;
 				case TicketEvent.STATUS:
@@ -65,7 +65,7 @@ export default class Listener {
 						if (error.name === 'GmailError') {
 							throw new ErrorHandler(this.io).SendMessageError();
 						}
-						throw new ErrorHandler(this.io).DbSaveError('ticket');
+						throw new ErrorHandler(this.io).DbSaveError('ticket', error.message);
 					})
 					.catch((error: any) => error ? console.error(error) : null);
 					break;

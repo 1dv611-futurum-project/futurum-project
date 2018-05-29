@@ -20,8 +20,8 @@ export default class ErrorHandler extends Error {
 		this.emitErrorMessage(this.m);
 	}
 
-	public DbSaveError(collection: string) {
-		this.m = new Message('error', `Ett fel uppstod vid uppdatering av "${collection}"`);
+	public DbSaveError(collection: string, message?: string) {
+		this.m = new Message('error', (message || `Ett fel uppstod vid uppdatering av "${collection}"`));
 		this.emitErrorMessage(this.m);
 	}
 
