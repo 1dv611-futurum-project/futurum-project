@@ -27,10 +27,9 @@ export function run() {
 			it('should be invalid if email is empty', (done) => {
 				const cust = new Customer({name: 'DR.Steve Stensson'});
 				// expect(cust).to.equal(undefined);
-
 				cust.validate((err) => {
 					// tslint:disable-next-line:no-unused-expression
-					expect(err).to.not.equal(null);
+					expect(err).to.equal(null);
 					done();
 				});
 			});

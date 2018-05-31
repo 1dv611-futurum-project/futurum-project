@@ -17,6 +17,19 @@ import Assignee from './../../src/handlers/db/models/Assignee';
 const DBConnectionInstance = new DBConnection();
 const sut = new DBHandler(DBConnectionInstance);
 const correctConnectionString = 'mongodb://futurum-db:27017';
+let idMock;
+let ticketIdMock;
+const dateMock = Date.now();
+let ticket = new Ticket({
+	replyId: [],
+	status: 0,
+	isRead: false,
+	body: [{received: dateMock, body: 'code more tests'}],
+	mailId: 43212,
+	created: dateMock,
+	title: 'Best solutions',
+	assignee: 'Anton',
+});
 
 // Catch expected connection error to allow the tests to continue.
 sut.on('error', () => { console.log(''); });
@@ -46,11 +59,28 @@ export function run() {
 		describe('createNewFromType() ticket', () => {
 			it('should store new instance of Ticket in database', () => {
 				return new Promise((resolve) => {
-					const expected = new Ticket({from: 'mock@mail.com', body: []});
-					sut.createNewFromType('ticket', expected)
-					.then((saved) => {
-						expect(JSON.stringify(saved)).to.equal(JSON.stringify(expected));
-					});
+					sut.addOrUpdate('ticket', ticket)
+						.then((saved) => {
+							if (Array.isArray(saved)) {
+								idMock = saved[0]._id;
+								ticketIdMock = saved[0].ticketId;
+								ticket['_id'] = idMock;
+								ticket['ticketId'] = ticketIdMock;
+								ticket['__v'] = 0;
+								expect(JSON.stringify(saved[0])).to.equal(JSON.stringify(ticket));
+							} else {
+								idMock = saved._id;
+								ticketIdMock = saved.ticketId;
+								ticket['_id'] = idMock;
+								ticket['ticketId'] = ticketIdMock;
+								ticket['__v'] = 0;
+								expect(JSON.stringify(saved)).to.equal(JSON.stringify(ticket));
+							}
+							resolve();
+						})
+						.catch((err) => {
+							console.error(err);
+						});
 				});
 			});
 		});
@@ -58,10 +88,18 @@ export function run() {
 		describe('getOne() ticket', () => {
 			it('should return one object of specific type', () => {
 				return new Promise((resolve) => {
-					const expected = new Ticket({from: 'mock@mail.com', body: []});
-					sut.getOne('ticket', expected).then( (ticket) => {
-						expect(JSON.stringify(ticket)).to.equal(JSON.stringify(expected));
-					});
+					sut.getOne('ticket', {_id: idMock})
+						.then( (result) => {
+							if (Array.isArray(result)) {
+								expect(JSON.stringify(result[0]._id)).to.equal(JSON.stringify(idMock));
+							} else {
+								expect(JSON.stringify(result._id)).to.equal(JSON.stringify(idMock));
+							}
+							resolve();
+						})
+						.catch((err) => {
+							console.error(err);
+						});
 				});
 			});
 		});
@@ -69,12 +107,16 @@ export function run() {
 		describe('addOrUpdate() ticket', () => {
 			it('should update ticket instance in the database', () => {
 				return new Promise((resolve) => {
-					const expected = new Ticket({title: 'Updated title', from: 'mock@mail.com', body: []});
-					const oldTicket = new Ticket({from: 'mock@mail.com', body: []});
-					sut.addOrUpdate('ticket', expected).then((ticket) => {
-						sut.getOne('ticket', oldTicket).then((t) => {
-							expect(JSON.stringify(t)).to.equal(JSON.stringify(expected));
-						});
+					ticket.status = 2;
+					sut.addOrUpdate('ticket', ticket, {_id: idMock}).then((result) => {
+						sut.getOne('ticket', {_id: idMock})
+							.then((t) => {
+								expect(t.status).to.equal(ticket.status);
+								resolve();
+							})
+							.catch((err) => {
+								console.log(err);
+							});
 					});
 				});
 			});
@@ -83,31 +125,22 @@ export function run() {
 		describe('removeOne() ticket', () => {
 			it('should remove ticket instance added in sut', () => {
 				return new Promise((resolve) => {
-					const removeOn = new Ticket({title: 'Updated title', from: 'mock@mail.com', body: []});
-					sut.removeOne('ticket', removeOn);
-					sut.getOne('ticket', removeOn).then( (ticket) => {
-						expect(ticket).to.equal(null);
-						// chai.should().equal(ticket, null);
-						// expect(ticket).to.be.null;
+					sut.removeOne('ticket', {_id: idMock}).then((removed) => {
+						sut.getOne('ticket', {_id: idMock})
+						.then( (result) => {
+							expect(result).to.equal(null);
+							resolve();
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+					})
+					.catch((err) => {
+						console.error(err);
 					});
 				});
 			});
 		});
 
-		describe('createNewFromType(), getOne() and removeOne() customer', () => {
-			it('should store new instance of Customer in database, then get the same instance of customer from database and finally delete the same instance of customer in database', () => {
-				return new Promise((resolve) => {
-					const expected = new Customer({email: ['mock@mail.com'], name: 'customer name'});
-					sut.addOrUpdate('customer', expected)
-					.then((savedCustomer) => {
-						sut.getOne('customer', {_id: savedCustomer._id}).then((getSavedCustomer) => {
-							sut.removeOne('customer', {_id: getSavedCustomer._id}).then((deletedCustomer) => {
-								expect(JSON.stringify(savedCustomer)).to.equal(JSON.stringify(deletedCustomer));
-							});
-						});
-					});
-				});
-			});
-		});
 	});
 }

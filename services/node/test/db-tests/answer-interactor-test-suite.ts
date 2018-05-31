@@ -13,14 +13,23 @@ const sut = new AnswerInteractor();
  */
 export function run() {
 	describe('AnswerInteractor', () => {
+
+		/**
+		 * Not working, todo: figure out why answerInteractor won't throw exceptions.
+		 */
 		describe('addOrUpdate', () => {
 			it('should throw database error', (done) => {
 				return new Promise((resolve) => {
-					sut.addOrUpdate(getAnswer(), resolve).then((result) => {
-						expect(result).should.eventually
-						.be.rejectedWith('Could not add answer to thread in database.')
-						.and.be.an.instanceOf(DBCreationError);
-					});
+					sut.addOrUpdate(getAnswer(), null)
+						.then((result) => {
+							expect(result).should.eventually
+							.be.rejectedWith('Could not add answer to thread in database.')
+							.and.be.an.instanceOf(DBCreationError);
+							resolve();
+						})
+						.catch((err) => {
+							console.error(err);
+						});
 				});
 			});
 		});

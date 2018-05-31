@@ -16,9 +16,6 @@ describe('Testrunner', () => {
 
 // Suites
 import answerInteractorTests = require('./db-tests/answer-interactor-test-suite');
-import assigneeInteractorTests = require('./db-tests/assignee-interactor-test-suite');
-import customerInteractorTests = require('./db-tests/customer-interactor-test-suite');
-import ticketInteractorTests = require('./db-tests/ticket-interactor-test-suite');
 
 import mongooseTests = require('./db-tests/mongoose-models-test-suite');
 import dbConnectionTests = require('./db-tests/db-connection-test-suite');
@@ -32,9 +29,8 @@ import mailSenderTests = require('./email-tests/mail-sender-test-suite');
 // Runs
 mongooseTests.run();
 dbConnectionTests.run();
-// dbHandlerTests.run();
+dbHandlerTests.run();
 // answerInteractorTests.run();
-
 xoauthTests.run();
 mailRecieverTests.run();
 ImapConnectionTests.run();
